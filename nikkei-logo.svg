@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2170 725"><rect width="2170" height="725" fill="#000"/><circle cx="350" cy="362" r="305" fill="#e50914"/><path d="M70 430 C170 500 250 530 350 525 C470 518 555 445 625 310" fill="none" stroke="#777" stroke-width="85"/><path d="M70 430 C170 500 250 530 350 525 C470 518 555 445 625 310" fill="none" stroke="#fff" stroke-width="7" stroke-dasharray="55 35"/><path d="M210 245 L235 205 L270 225 L285 180 L320 195 L345 155 L370 180 L410 155 L425 205 L465 215 L480 255 L520 270 L510 315 L550 340 L530 385 L560 420 L520 455 L490 440 L455 475 L425 445 L390 470 L360 430 L325 450 L300 415 L265 425 L245 385 L210 390 L215 350 L180 330 L195 295 L170 270 Z" fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round"/><text x="760" y="370" font-family="Arial,sans-serif" font-size="150" font-style="italic" font-weight="800" fill="#fff">Nikkei Brasil</text><text x="770" y="490" font-family="Arial,sans-serif" font-size="58" letter-spacing="15" fill="#fff">LOGÍSTICA E TRANSPORTE</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2170 725">
+<defs>
+ <radialGradient id="red" cx="55%" cy="42%" r="68%"><stop offset="0" stop-color="#f20d19"/><stop offset=".72" stop-color="#e30613"/><stop offset="1" stop-color="#b8000b"/></radialGradient>
+</defs>
+<rect width="2170" height="725" fill="#000"/>
+<circle cx="350" cy="362" r="305" fill="url(#red)"/>
+<path d="M85 440 C205 520 330 535 455 455 C535 404 585 330 615 225" fill="none" stroke="#fff" stroke-width="92"/>
+<path d="M85 440 C205 520 330 535 455 455 C535 404 585 330 615 225" fill="none" stroke="#707070" stroke-width="76"/>
+<path d="M105 448 C215 510 320 516 445 440 C515 397 563 326 596 238" fill="none" stroke="#fff" stroke-width="7" stroke-dasharray="48 34"/>
+<path d="M210 245 L238 208 L273 222 L287 181 L325 194 L348 151 L376 179 L414 155 L426 202 L468 216 L476 258 L520 270 L509 314 L550 341 L528 382 L557 420 L520 451 L490 437 L455 474 L423 443 L388 467 L359 430 L323 450 L298 414 L263 425 L244 384 L210 390 L216 350 L181 329 L195 294 L171 270 Z" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+<text x="760" y="382" font-family="Arial,sans-serif" font-size="154" font-style="italic" font-weight="800" fill="#fff">Nikkei Brasil</text>
+<text x="770" y="500" font-family="Arial,sans-serif" font-size="58" letter-spacing="16" fill="#fff">LOGÍSTICA E TRANSPORTE</text>
+</svg>
