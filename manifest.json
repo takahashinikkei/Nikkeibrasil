@@ -1,0 +1,20 @@
+{
+  "name": "Nikkei Brasil",
+  "short_name": "Nikkei Brasil",
+  "description": "Consulta FIPE e gestão de veículos da Nikkei Brasil.",
+  "lang": "pt-BR",
+  "start_url": "./?app=1",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "icon-nikkeibrasil.png",
+      "sizes": "694x690",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
