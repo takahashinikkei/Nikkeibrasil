@@ -1165,50 +1165,6 @@ document.addEventListener('DOMContentLoaded', function(){
 if('serviceWorker' in navigator){
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=1').catch(()=>{}));
 }
-let deferredInstallPrompt=null;
-let installPromptShown=false;
-window.addEventListener('beforeinstallprompt',e=>{
- e.preventDefault(); deferredInstallPrompt=e;
- maybeShowInstallPrompt();
-});
-window.addEventListener('appinstalled',()=>{
- deferredInstallPrompt=null;
- localStorage.setItem('nikkeibrasilInstalled','1');
- document.getElementById('installPrompt')?.style.setProperty('display','none');
-});
-function isStandalone(){
- return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
-}
-function maybeShowInstallPrompt(){
- if(installPromptShown || isStandalone() || localStorage.getItem('nikkeibrasilInstallDismissed')==='1') return;
- installPromptShown=true;
- const p=document.getElementById('installPrompt');
- if(p)p.style.display='flex';
-}
-function closeInstallPrompt(){
- const p=document.getElementById('installPrompt');
- if(p)p.style.display='none';
-}
-function startInstall(){
- if(deferredInstallPrompt){
-   deferredInstallPrompt.prompt();
-   deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null;closeInstallPrompt();});
-   return;
- }
- // iPhone/iPad and browsers without the native prompt: guide the user through the official menu.
- const text=document.getElementById('installPromptText');
- if(text)text.innerHTML='No iPhone, toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>. Ative <b>Abrir como App da Web</b> e toque em <b>Adicionar</b>.';
- const yes=document.getElementById('installYes');
- if(yes)yes.textContent='Entendi';
- if(yes)yes.onclick=()=>closeInstallPrompt();
-}
-document.addEventListener('DOMContentLoaded',()=>{
- document.getElementById('installYes')?.addEventListener('click',startInstall);
- document.getElementById('installNo')?.addEventListener('click',()=>{
-   localStorage.setItem('nikkeibrasilInstallDismissed','1'); closeInstallPrompt();
- });
- setTimeout(maybeShowInstallPrompt,900);
-});
 </script>
 </body>
 </html>
