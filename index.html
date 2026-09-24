@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style id="authStartupStyle">html.auth-pending body > *:not(#sbAuth){visibility:hidden!important}html.auth-pending #sbAuth{visibility:visible!important}</style>
+<script>document.documentElement.classList.add("auth-pending");</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nikkei Brasil">
+<link rel="icon" type="image/png" sizes="694x690" href="icon-nikkeibrasil.png"><link rel="apple-touch-icon" sizes="694x690" href="icon-nikkeibrasil.png">
+<title>Nikkei Brasil</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f3f4f6;color:#111827}
+.app-header{
+  background:#111827;
+  color:#fff;
+  padding:18px 18px 24px;
+  border-radius:0 0 26px 26px;
+  text-align:center;
+}
+.garage-logo{
+  display:block;
+  width:min(180px,48vw);
+  height:auto;
+  margin:0 auto 10px;
+  border-radius:50%;
+  box-shadow:0 0 18px #0008;
+}
+.app-header h1{
+  margin:0 0 4px;
+  font-size:28px;
+  letter-spacing:.4px;
+}
+.app-header p{
+  margin:0;
+  color:#d1d5db;
+  font-size:15px;
+}
+
+main{max-width:780px;margin:-16px auto 40px;padding:0 14px}.card{background:#fff;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 5px 20px #0000000c}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.tab{border:0;background:#e5e7eb;color:#374151;padding:13px 5px;border-radius:13px;font-weight:800;font-size:15px}.tab.active{background:#111827;color:#fff}
+label{display:block;font-size:13px;font-weight:800;color:#4b5563;margin:13px 0 6px}
+select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radius:12px;padding:0 13px;font-size:16px;background:#fff}button{cursor:pointer}
+.primary{background:#1478e5;color:#fff;border:0;font-weight:850;margin-top:15px}.primary:disabled{opacity:.55}.hidden{display:none!important}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result{display:none}.price{font-size:38px;font-weight:900;color:#0b5fc4;margin:6px 0}.muted{color:#6b7280;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.info{background:#f8fafc;padding:12px;border-radius:12px}.info b{display:block;font-size:11px;color:#64748b;margin-bottom:4px}
+.error{background:#fef2f2;color:#991b1b;padding:12px;border-radius:12px;margin-top:12px;display:none}.ok{background:#ecfdf5;color:#065f46;padding:12px;border-radius:12px;margin-top:12px}
+.chart{margin-top:14px;background:#f8fafc;border-radius:15px;padding:10px}.chart svg{width:100%;height:235px}.line{fill:none;stroke:#1478e5;stroke-width:3}.dot{fill:#1478e5}.axis{font-size:10px;fill:#64748b}.val{font-size:10px;fill:#111827;font-weight:800}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.summary .info{font-size:13px}.positive{color:#047857;font-weight:850}.negative{color:#b91c1c;font-weight:850}
+.item{padding:12px 0;border-bottom:1px solid #e5e7eb}.item:last-child{border:0}.badge{display:inline-block;background:#e0ecff;color:#0756a8;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:800}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.actions button{width:auto;flex:1;min-width:140px;height:44px}
+.secondary{background:#f3f4f6;color:#111827;border:1px solid #d1d5db;font-weight:800}
+.gold{background:#b8860b;color:#fff;border:0;font-weight:850}
+.filter-note{background:#fffbeb;color:#854d0e;padding:10px 12px;border-radius:12px;font-size:13px;margin-top:10px}
+.empty{padding:10px 0}
+.favorite-btn{border:0;background:transparent;font-size:22px;padding:0 0 0 8px;width:auto;height:auto}
+.small-btn{width:auto!important;height:38px!important;padding:0 10px!important;font-size:13px!important}
+.favorite-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:10px;padding:8px 10px;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;color:#374151;font-size:13px;font-weight:800;cursor:pointer}
+.favorite-toggle .arrow{font-size:18px;line-height:1}
+.favorite-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.favorite-fields label{font-size:11px;margin:3px 0 4px}
+.favorite-fields input{height:40px;font-size:14px;border-radius:10px;padding:0 10px}
+.favorite-financial{margin-top:8px}
+.favorite-financial .info{padding:8px 10px;font-size:12px}
+.favorite-financial .info b{font-size:9px;margin-bottom:2px}.sold-page{display:none}.sold-back{margin-bottom:12px}.sold-btn{background:#047857;color:#fff;border:0;font-weight:850}.stock-btn{background:#047857;color:#fff;border:0;font-weight:850}.sold-btn{background:#e5e7eb;color:#374151;border:1px solid #cbd5e1}.status-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:8px;font-size:11px;font-weight:900;margin-left:6px;vertical-align:middle}.status-stock{background:#047857;color:#fff}.status-sold{background:#e5e7eb;color:#374151;border:1px solid #cbd5e1}.stock-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.stock-fields label{font-size:11px;margin:3px 0 4px}.stock-fields input{width:100%;min-width:0;max-width:100%;height:40px;font-size:14px;border-radius:10px;padding:0 10px;box-sizing:border-box}.stock-fields input[type="date"]{-webkit-appearance:none;appearance:none;width:100%;min-width:0;max-width:100%;padding-left:10px;padding-right:10px}@media(max-width:520px){.stock-fields{grid-template-columns:1fr 1fr;gap:6px}.stock-fields input{height:38px;font-size:13px}.stock-fields input[type="date"]{width:100%;min-width:0;max-width:100%;font-size:13px}}.progress-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.progress-fields label{font-size:11px;margin:3px 0 4px}.progress-fields input{width:100%!important;min-width:0!important;max-width:100%!important;height:40px;font-size:14px;border-radius:10px;padding:0 10px;box-sizing:border-box}.progress-fields input[type="date"]{-webkit-appearance:none;appearance:none}.progress-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:8px;padding:7px 9px;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;color:#374151;font-size:13px;font-weight:800;cursor:pointer}@media(max-width:520px){.progress-fields{grid-template-columns:1fr 1fr;gap:6px}.progress-fields input{height:38px;font-size:13px}}.stock-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:8px;padding:7px 9px;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;color:#374151;font-size:13px;font-weight:800;cursor:pointer}@media(max-width:520px){.stock-fields{grid-template-columns:1fr 1fr;gap:6px}.stock-fields input{height:38px;font-size:13px}}.stock-nav{border:0;background:#e5e7eb;color:#374151;padding:13px 5px;border-radius:13px;font-weight:800;font-size:15px}.stock-nav.active{background:#111827;color:#fff}.stock-page{display:none}.stock-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.stock-summary .info{padding:10px}.stock-summary .info span{font-size:18px}.stock-profit{font-weight:900}.stock-positive{color:#047857}.stock-negative{color:#b91c1c}@media(max-width:700px){.tabs{grid-template-columns:repeat(2,1fr)}.stock-summary{grid-template-columns:1fr 1fr}}
+.pc-select{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
+.pc-select button{width:24px;height:24px;padding:0;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#64748b;font-size:11px;font-weight:900;cursor:pointer}
+.pc-select button.active{background:#111827;color:#fff;border-color:#111827}
+
+@media(max-width:520px){.favorite-fields{grid-template-columns:1fr 1fr;gap:6px}.favorite-fields input{height:38px;font-size:13px}.favorite-toggle{padding:7px 9px}}
+
+@media(max-width:520px){.row,.grid{grid-template-columns:1fr}.price{font-size:32px}.tabs button{font-size:14px}}
+.required{color:#b91c1c}.filter-note{margin-top:10px;background:#f8fafc;padding:10px 12px;border-radius:12px;color:#475569;font-size:13px;line-height:1.45}\n
+.fixed-reference{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 14px;
+  padding:14px 16px;
+  background:#f3f4f6;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  color:#374151;
+}
+.fixed-reference span{font-size:14px}
+.fixed-reference strong{font-size:15px;color:#a87912}
+
+.stock-page-header{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-right:0}.stock-page-controls{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:14px}.stock-page-controls #stockExpandBtn{margin-top:2px;width:38px!important;min-width:38px!important;height:38px!important;padding:0!important;border:1px solid #d1d5db!important;border-radius:12px!important;background:#f3f4f6!important;color:#111827!important;font-size:22px!important;font-weight:800!important;line-height:36px!important;box-shadow:none!important}.stock-page-header .small-btn{min-width:36px}.stock-class-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}.stock-class-summary .info{padding:10px}.stock-class-summary .info span{font-size:18px;font-weight:800;display:block}.stock-class-summary .info small{display:block;margin-top:7px;font-size:10px;color:#64748b;font-weight:700}.stock-class-summary .info strong{display:block;margin-top:2px;font-size:16px}.stock-compact .stock-details-extra{display:none}.vehicle-extra-controls{.vehicle-color-label{font-size:11px;font-weight:700;color:#64748b;margin-left:4px;white-space:nowrap}.retouch-inline{display:inline-flex;align-items:center;gap:4px;margin-left:12px;white-space:nowrap;font-size:10px;color:#64748b;font-weight:700;vertical-align:middle}.retouch-inline button{width:24px!important;height:24px!important;padding:0!important;border:1px solid #cbd5e1!important;border-radius:6px!important;background:#fff!important;color:#334155!important;font-size:11px!important;font-weight:700!important;cursor:pointer!important;vertical-align:middle}.retouch-inline button.active{background:#172033!important;color:#fff!important;border-color:#172033!important}.sold-color-inline{margin-left:6px;font-size:11px;font-weight:600;color:#64748b}.stock-item-sold{width:auto!important;min-width:0!important;height:28px!important;padding:0 10px!important;border:1px solid #cbd5e1!important;border-radius:7px!important;background:#f8fafc!important;color:#334155!important;font-size:11px!important;font-weight:700!important;cursor:pointer!important;flex:0 0 auto!important}.vehicle-expand-btn{width:36px!important;min-width:36px!important;height:36px!important;padding:0!important;border:1px solid #cbd5e1!important;border-radius:8px!important;background:#f8fafc!important;color:#334155!important;font-size:16px!important;font-weight:700!important;cursor:pointer!important;line-height:34px!important;flex:0 0 36px!important}.actions .negotiation-expand-inline{display:inline-flex!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;flex:0 0 34px!important;flex-grow:0!important;flex-shrink:0!important;flex-basis:34px!important;margin-left:auto!important;padding:0!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important;border:1px solid #d1d5db!important;border-radius:10px!important;background:#f3f4f6!important;color:#111827!important;font-size:20px!important;font-weight:800!important;line-height:32px!important;box-shadow:none!important}.retouch-inline{display:inline-flex!important;align-items:center!important;gap:4px!important;margin-left:12px!important;white-space:nowrap!important;font-size:10px!important;color:#64748b!important;font-weight:700!important;vertical-align:middle!important}.retouch-inline button{width:24px!important;min-width:24px!important;height:24px!important;padding:0!important;border:1px solid #cbd5e1!important;border-radius:6px!important;background:#fff!important;color:#64748b!important;font-size:11px!important;font-weight:900!important;cursor:pointer!important;vertical-align:middle!important}.retouch-inline button.active{background:#111827!important;color:#fff!important;border-color:#111827!important}
+.actions .negotiation-expand-inline{text-indent:-1px!important;line-height:1!important;font-family:Arial,sans-serif!important}#progressList .item{border-bottom:0!important}.progressList .actions{border-bottom:2px solid #c4c9d1!important;padding-bottom:12px!important;margin-bottom:12px!important} .sold-overall-summary{margin-top:16px;padding-top:14px;border-top:2px solid #111827}.sold-overall-title{font-size:13px;font-weight:900;color:#374151;margin-bottom:8px}</style>
+</head>
+<body>
+<header class="app-header">
+  <img class="garage-logo" src="icon-nikkeibrasil.svg" alt="Nikkei Brasil Veículos">
+  <h1>Consulta FIPE</h1>
+  <p>Carros • Motos • Caminhões</p>
+</header>
+<main>
+
+<div class="card">
+ <div class="tabs">
+  <button class="tab active" data-type="cars">🚗 Carros</button>
+  <button class="tab" data-type="motorcycles">🏍️ Motos</button>
+  <button class="tab" data-type="trucks">🚚 Caminhões</button>
+  <button class="stock-nav" id="progressNav">🔄 Em andamento</button>
+  <button class="stock-nav" id="stockNav">📦 Estoque</button>
+  <button class="stock-nav" id="soldNav">🚘 Vendidos</button>
+ </div>
+
+ <label>1. Mês de referência</label>
+ <select id="reference">
+  <option value="">Carregando referências...</option>
+ </select>
+
+ <label>2. Marca <span class="required">(obrigatório)</span></label>
+ <select id="brand"><option>Carregando marcas...</option></select>
+
+ <label>3. Modelo <span class="muted">(selecione o modelo ou o ano primeiro)</span></label>
+ <select id="model" disabled><option>Selecione a marca primeiro</option></select>
+
+ <label>4. Ano / combustível</label>
+ <select id="year" disabled><option>Selecione a marca primeiro</option></select>
+
+ <div class="filter-note">💡 Depois de escolher a marca, você pode começar pelo <b>Modelo</b> ou pelo <b>Ano / combustível</b>. As duas listas mostram somente combinações que realmente existem na FIPE.</div>
+
+ <button class="primary" id="consult" disabled disabled>🔎 Consultar valor FIPE</button>
+ <div class="actions">
+  <button class="secondary" id="clearSearch">↺ Limpar pesquisa</button>
+ </div>
+ <div id="error" class="error"></div>
+</div>
+
+<div class="card stock-page" id="progressPage">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+  <h3 style="margin:0">🔄 Em andamento</h3>
+  <button class="secondary small-btn" onclick="closeProgressPage()">← Voltar</button>
+ </div>
+ <div id="progressList" style="margin-top:10px"><span class="muted">Nenhum veículo em andamento.</span></div>
+</div>
+
+<div class="card stock-page" id="stockPage">
+ <div class="stock-page-header">
+  <h3 style="margin:0">📦 Estoque de veículos</h3>
+  <div class="stock-page-controls">
+   <button class="secondary small-btn" onclick="closeStockPage()">← Voltar</button>
+  </div>
+ </div>
+ <div id="stockList" style="margin-top:10px"><span class="muted">Nenhum veículo em estoque.</span></div>
+ <div class="stock-summary">
+  <div class="info"><b>VALOR FIPE DO ESTOQUE</b><span id="stockFipeTotal">R$ 0</span></div>
+  <div class="info"><b>CUSTO TOTAL</b><span id="stockCostTotal">R$ 0</span></div>
+  <div class="info"><b>LUCRO PROJETADO</b><span id="stockProfitTotal" class="stock-profit">R$ 0</span></div>
+  <div class="info"><b>MARGEM PROJETADA</b><span id="stockMarginTotal">0,00%</span></div>
+ </div>
+ <div class="stock-class-summary">
+  <div class="info"><b>GARAGE 26</b><span id="stockClassP">R$ 0</span><small>LUCRO</small><strong id="stockProfitP">R$ 0</strong></div>
+  <div class="info"><b>CONSIGNADO</b><span id="stockClassC">R$ 0</span><small>LUCRO</small><strong id="stockProfitC">R$ 0</strong></div>
+  <div class="info"><b>NIKKEI</b><span id="stockClassA">R$ 0</span><small>LUCRO</small><strong id="stockProfitA">R$ 0</strong></div>
+ </div>
+ <div class="muted" style="margin-top:8px">Projeção considerando a venda de todos os veículos pelo valor FIPE atual, descontando valor pago e custos extras cadastrados.</div>
+</div>
+
+<div class="card result" id="result">
+ <div class="muted" id="ref"></div>
+ <div class="price" id="price"></div>
+ <h2 id="title" style="margin:4px 0 14px;font-size:21px"></h2>
+ <div class="grid">
+  <div class="info"><b>MARCA</b><span id="rbrand"></span></div>
+  <div class="info"><b>ANO MODELO</b><span id="ryear"></span></div>
+  <div class="info"><b>COMBUSTÍVEL</b><span id="rfuel"></span></div>
+  <div class="info"><b>CÓDIGO FIPE</b><span id="rcode"></span></div>
+ </div>
+ <div class="actions">
+  <button class="gold" id="favoriteBtn">☆ Adicionar ao estoque</button>
+  <button class="secondary" id="negotiateBtn" onclick="addToNegotiation()">🤝 Negociar</button>
+  <button class="secondary" id="shareBtn">↗ Compartilhar cotação</button>
+ </div>
+</div>
+
+<div class="card" id="favoritesCard" style="display:none">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+  <h3 style="margin:0">⭐ Meus veículos</h3>
+  <button class="secondary small-btn" id="clearFavorites">Limpar</button>
+ </div>
+ <div id="favorites"><span class="muted">Nenhum veículo favorito ainda.</span></div>
+</div>
+
+<div class="card sold-page" id="soldPage">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+  <h3 style="margin:0">🚘 Veículos vendidos</h3>
+  <button class="secondary small-btn" onclick="closeSoldPage()">← Voltar</button>
+ </div>
+ <div id="soldList" style="margin-top:8px"><span class="muted">Nenhum veículo vendido ainda.</span></div>
+ <div class="actions"><button class="secondary small-btn" id="clearSold">Limpar vendidos</button></div>
+</div>
+
+<div class="card result" id="historyCard">
+ <h3 style="margin:0">📈 Histórico de preços</h3>
+ <div class="muted" id="historyNote" style="margin-top:4px"></div>
+ <div id="chart" class="chart"></div>
+ <div id="summary" class="summary"></div>
+ <div id="historyRows" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+  <h3 style="margin:0">🕘 Histórico de consultas</h3>
+  <button class="secondary small-btn" id="clearHistory">Limpar</button>
+ </div>
+ <div id="consultHistory"><span class="muted">Nenhuma consulta ainda.</span></div>
+</div>
+
+<div class="card"><div class="muted">O valor FIPE é uma referência média nacional. O preço efetivo pode variar conforme região, conservação, quilometragem, acessórios e condições de negociação.</div></div>
+</main>
+
+<script>
+const BASE="https://fipe.parallelum.com.br/api/v2";
+let type="cars";
+let brandCache=[];
+let currentQuote=null;
+let currentYearData=[];
+let referenceCode="";
+const $=id=>document.getElementById(id);
+
+function headers(){return {}}
+async function api(path, params={}){
+ const q=new URLSearchParams();
+ if(referenceCode) q.set("reference",referenceCode);
+ Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=="")q.set(k,v)});
+ const url=BASE+path+(q.toString()?"?"+q.toString():"");
+ const r=await fetch(url,{headers:headers(),cache:"no-store"});
+ if(!r.ok){
+  if(r.status===429) throw Error("Limite diário da consulta atingido. Tente novamente mais tarde.");
+  if(r.status===401||r.status===403) throw Error("A API recusou a consulta.");
+  throw Error("Não foi possível carregar os dados da FIPE agora.");
+ }
+ return r.json();
+}
+function setError(msg){$("error").textContent=msg;$("error").style.display=msg?"block":"none"}
+function setOptions(sel,items,placeholder,fn){
+ sel.innerHTML=`<option value="">${placeholder}</option>`+items.map(fn).join("");
+ sel.disabled=false;
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function norm(s){return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}
+function fuelFromYearName(name){
+ const n=norm(name);
+ if(n.includes("hibrido")||n.includes("hybrid")) return "Híbrido";
+ if(n.includes("eletrico")||n.includes("electric")) return "Elétrico";
+ if(n.includes("diesel")) return "Diesel";
+ if(n.includes("gasolina")) return "Gasolina";
+ if(n.includes("alcool")) return "Álcool";
+ if(n.includes("flex")) return "Flex";
+ if(n.includes("gnv")) return "GNV";
+ return "";
+}
+function formatYearName(name){
+ return name || "";
+}
+function resetSearch(clearResult=true){
+ $("model").innerHTML='<option value="">Selecione a marca primeiro</option>'; $("model").disabled=true;
+ $("year").innerHTML='<option value="">Selecione a marca primeiro</option>'; $("year").disabled=true;
+ $("consult").disabled=true;
+ currentYearData=[];
+ setError("");
+ if(clearResult){ $("result").style.display="none"; $("historyCard").style.display="none"; currentQuote=null; }
+}
+async function loadReferences(){
+ try{
+  const refs=await api("/references");
+  // O primeiro item normalmente é o mês mais recente; ordenamos pelo código decrescente.
+  const list=(refs||[]).slice().sort((a,b)=>Number(b.code)-Number(a.code));
+  setOptions($("reference"),list,"Selecione o mês",x=>`<option value="${esc(x.code)}">${esc(x.month)}</option>`);
+  if(list.length){
+   $("reference").value=String(list[0].code);
+   referenceCode=String(list[0].code);
+  }
+ }catch(e){
+  $("reference").innerHTML='<option value="">Referência atual</option>';
+ }
+}
+async function loadBrands(){
+ resetSearch(true);
+ $("brand").disabled=true; $("brand").innerHTML="<option>Carregando marcas...</option>";
+ try{
+  brandCache=await api(`/${type}/brands`);
+  setOptions($("brand"),brandCache,"Selecione a marca",x=>`<option value="${x.code}">${esc(x.name)}</option>`);
+ }catch(e){ $("brand").innerHTML='<option value="">Não foi possível carregar</option>'; setError(e.message); }
+}
+async function loadBrandChoices(){
+ const b=$("brand").value;
+ if(!b){resetSearch(true);return}
+ setError("");
+ $("model").disabled=true; $("year").disabled=true; $("consult").disabled=true;
+ $("model").innerHTML="<option>Carregando modelos...</option>";
+ $("year").innerHTML="<option>Carregando anos...</option>";
+ try{
+  // Após a marca, o usuário pode começar pelo modelo OU pelo ano.
+  const [models,years]=await Promise.all([
+   api(`/${type}/brands/${b}/models`),
+   api(`/${type}/brands/${b}/years`)
+  ]);
+  brandCache=models||[];
+  setOptions($("model"),brandCache,"Selecione o modelo",x=>`<option value="${x.code}">${esc(x.name)}</option>`);
+  setOptions($("year"),years||[],"Selecione o ano / combustível",x=>`<option value="${x.code}">${esc(formatYearName(x.name))}</option>`);
+  $("model").disabled=false;
+  $("year").disabled=false;
+ }catch(e){setError(e.message)}
+}
+async function modelChanged(){
+ const b=$("brand").value,m=$("model").value,y=$("year").value;
+ $("consult").disabled=true;
+ if(!b){resetSearch(true);return}
+ if(!m){
+  // Se o modelo for limpo, preservamos o ano escolhido, se houver.
+  if(y){
+   $("consult").disabled=true;
+   return;
+  }
+  try{
+   const years=await api(`/${type}/brands/${b}/years`);
+   setOptions($("year"),years||[],"Selecione o ano / combustível",x=>`<option value="${x.code}">${esc(x.name)}</option>`);
+   $("year").disabled=false;
+  }catch(e){setError(e.message)}
+  return;
+ }
+
+ // Se o usuário já escolheu o ano/combustível, NÃO recarregue o campo Ano.
+ // Basta validar se o modelo escolhido existe naquela combinação.
+ if(y){
+  try{
+   const models=await api(`/${type}/brands/${b}/years/${encodeURIComponent(y)}/models`);
+   const exists=(models||[]).some(x=>String(x.code)===String(m));
+   if(!exists){
+    $("model").value="";
+    $("consult").disabled=true;
+    setError("Este modelo não está disponível para o ano/combustível selecionado.");
+    return;
+   }
+   setError("");
+   $("consult").disabled=false;
+  }catch(e){setError(e.message)}
+  return;
+ }
+
+ // Modelo foi escolhido primeiro: só então carregamos os anos/combustíveis
+ // realmente existentes para esse modelo.
+ $("year").disabled=true; $("year").innerHTML="<option>Carregando anos do modelo...</option>";
+ try{
+  const years=await api(`/${type}/brands/${b}/models/${m}/years`);
+  currentYearData=years||[];
+  setOptions($("year"),currentYearData,"Selecione o ano / combustível",x=>`<option value="${x.code}">${esc(formatYearName(x.name))}</option>`);
+  $("year").disabled=false;
+  $("consult").disabled=true;
+  if(currentYearData.length===1){
+   $("year").value=String(currentYearData[0].code);
+   $("consult").disabled=false;
+  }
+ }catch(e){setError(e.message)}
+}
+async function yearChanged(){
+ const b=$("brand").value,y=$("year").value,m=$("model").value;
+ $("consult").disabled=true;
+ if(!b||!y)return;
+
+ // Se o modelo já foi escolhido, preserve-o e apenas valide a combinação.
+ if(m){
+  try{
+   const models=await api(`/${type}/brands/${b}/years/${encodeURIComponent(y)}/models`);
+   const exists=(models||[]).some(x=>String(x.code)===String(m));
+   if(exists){
+    setError("");
+    $("consult").disabled=false;
+   }else{
+    $("model").value="";
+    setOptions($("model"),models||[],"Selecione o modelo",x=>`<option value="${x.code}">${esc(x.name)}</option>`);
+    $("model").disabled=false;
+    setError("O modelo anterior não existe para este ano/combustível. Selecione um dos modelos disponíveis.");
+   }
+  }catch(e){setError(e.message)}
+  return;
+ }
+
+ // Ano foi escolhido primeiro: carregue somente os modelos existentes
+ // para essa combinação, sem apagar o ano selecionado.
+ $("model").disabled=true; $("model").innerHTML="<option>Carregando modelos deste ano...</option>";
+ try{
+  const models=await api(`/${type}/brands/${b}/years/${encodeURIComponent(y)}/models`);
+  setOptions($("model"),models||[],"Selecione o modelo",x=>`<option value="${x.code}">${esc(x.name)}</option>`);
+  $("model").disabled=false;
+  if((models||[]).length===1){
+   $("model").value=String(models[0].code);
+   $("consult").disabled=false;
+  }
+ }catch(e){setError(e.message)}
+}
+async function consult(){
+ const b=$("brand").value,m=$("model").value,y=$("year").value;
+ if(!b||!m||!y)return;
+ $("consult").disabled=true;$("consult").textContent="Consultando...";
+ try{
+  const x=await api(`/${type}/brands/${b}/models/${m}/years/${encodeURIComponent(y)}`);
+  $("result").style.display="block";
+  $("ref").textContent="Referência: "+(x.referenceMonth||"—");
+  $("price").textContent=x.price||"—";
+  $("title").textContent=`${x.brand||""} ${x.model||""}`.trim();
+  $("rbrand").textContent=x.brand||"—";$("ryear").textContent=x.modelYear||"—";$("rfuel").textContent=x.fuel||"—";$("rcode").textContent=x.codeFipe||"—";
+  currentQuote={brand:x.brand||"",title:`${x.brand||""} ${x.model||""}`.trim(),year:x.modelYear||"",fuel:x.fuel||"",price:x.price||"",code:x.codeFipe||"",ref:x.referenceMonth||"",type,at:new Date().toISOString()};
+  updateFavoriteButton();
+  renderChart([]);
+  loadFipeXHistory(currentQuote).catch(()=>{});
+  saveConsult(currentQuote);
+  $("result").scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(e){setError(e.message)}
+ finally{$("consult").disabled=false;$("consult").textContent="🔎 Consultar valor FIPE"}
+}
+function brNumber(v){
+ const s=String(v||"").replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",",".");
+ const n=Number(s);return Number.isFinite(n)?n:null;
+}
+function money(n){return n==null?"—":n.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0})}
+function monthLabel(s){const m=String(s||"").match(/^(\d{2})\/(\d{4})$/);if(m){const names=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];return names[Number(m[1])-1]+"/"+m[2].slice(2)}return String(s||"").replace(" de ","/").replace("janeiro","jan").replace("fevereiro","fev").replace("março","mar").replace("abril","abr").replace("maio","mai").replace("junho","jun").replace("julho","jul").replace("agosto","ago").replace("setembro","set").replace("outubro","out").replace("novembro","nov").replace("dezembro","dez")}
+
+/* fipeX REST oficial.
+   Histórico: GET /v1/prices/history?model_id=&fuel_id=&year=
+   Preço por referência: GET /v1/prices?model_slug=&fuel_acronym=&year=&ref_date=YYYY-MM
+   A rota /v1/prices é usada primeiro para resolver os IDs; depois /history retorna
+   a série mensal completa. */
+const FIPEX_BASE="https://api.fipex.com.br/v1";
+
+function slugifyFipeX(text){
+  return norm(String(text||""))
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-+|-+$/g,"");
+}
+function fuelAcronym(f){
+  const n=norm(f||"");
+  if(n.includes("flex")) return "f";
+  if(n.includes("gasolina")) return "g";
+  if(n.includes("diesel")) return "d";
+  if(n.includes("hibr")) return "h";
+  if(n.includes("eletric")) return "e";
+  if(n.includes("etanol")) return "e";
+  return String(f||"").trim().charAt(0).toLowerCase()||"f";
+}
+async function fipeXRest(path, params={}){
+  const u=new URL(FIPEX_BASE+path);
+  Object.entries(params).forEach(([k,v])=>{
+    if(v!==undefined&&v!==null&&String(v)!=="")u.searchParams.set(k,String(v));
+  });
+  const r=await fetch(u.toString(),{cache:"no-store",headers:{Accept:"application/json"}});
+  const txt=await r.text();
+  let data=null; try{data=JSON.parse(txt)}catch(_){}
+  if(!r.ok) throw Error(`fipeX ${r.status}: ${data?.message||txt.slice(0,180)}`);
+  return data;
+}
+function fipeXData(d){return d?.data??d;}
+function extractFipeXIds(d){
+  const x=fipeXData(d)||{};
+  const modelId=x?.model?.id??x?.model_id??x?.modelId;
+  const fuelId=x?.fuel?.id??x?.fuel_id??x?.fuelId??x?.combustivel?.id;
+  return {modelId,fuelId};
+}
+function normalizeHistoryRest(d){
+  const arr=Array.isArray(d?.data)?d.data:(Array.isArray(d)?d:[]);
+  return arr.map(x=>{
+    const y=Number(x.year??x.ano??x.reference_year??x.ano_referencia);
+    const m=Number(x.month??x.mes??x.reference_month??x.mes_referencia);
+    let price=null;
+    if(Number.isFinite(Number(x.market_price_cents)))price=Number(x.market_price_cents)/100;
+    else if(Number.isFinite(Number(x.price_cents)))price=Number(x.price_cents)/100;
+    else price=brNumber(x.formatted_price??x.valor_formatado??x.price??x.valor);
+    return {year:y,month:m,price};
+  }).filter(x=>x.year>=2000&&x.month>=1&&x.month<=12&&x.price!=null);
+}
+function referencePeriods(y,m,n){
+  const a=[]; let yy=y,mm=m;
+  for(let i=0;i<n;i++){
+    a.push({year:yy,month:mm,ref:`${yy}-${String(mm).padStart(2,"0")}`});
+    mm--; if(mm===0){mm=12;yy--;}
+  }
+  return a;
+}
+function normalizeCurrentQuoteIds(d){
+  const x=fipeXData(d)||{};
+  const ids=extractFipeXIds(d);
+  // Alguns formatos da API podem colocar o combustível dentro de vehicle/make/model.
+  const fuelCandidates=[
+    x?.fuel,x?.combustivel,x?.vehicle?.fuel,x?.vehicle?.combustivel,
+    x?.price?.fuel,x?.model?.fuel
+  ].filter(Boolean);
+  if(!ids.fuelId){
+    for(const f of fuelCandidates){
+      if(f.id){ids.fuelId=f.id;break;}
+    }
+  }
+  return ids;
+}
+async function fipeXResolveIds(q, ref){
+  const modelSlug=slugifyFipeX(q.title);
+  const fuel=fuelAcronym(q.fuel);
+  const attempts=[
+    {model_slug:modelSlug,fuel_acronym:fuel,year:q.year,ref_date:ref},
+    {model_slug:modelSlug,fuel_acronym:fuel,year:q.year},
+  ];
+  let last=null;
+  for(const params of attempts){
+    try{
+      const d=await fipeXRest("/prices",params);
+      const ids=normalizeCurrentQuoteIds(d);
+      if(ids.modelId&&ids.fuelId)return ids;
+      last=d;
+    }catch(e){last=e;}
+  }
+  return null;
+}
+async function loadFipeXHistory(q){
+  if(!q?.code)return;
+  const card=$("historyCard");
+  try{
+    const ref=parseReferenceLabel(q.ref);
+    if(!ref.year||!ref.month)throw Error("Referência inválida");
+    const periods=referencePeriods(ref.year,ref.month,6);
+
+    // Primeiro tenta resolver UUIDs usando a própria rota REST /v1/prices,
+    // que aceita model_slug + fuel_acronym + year.
+    let ids=await fipeXResolveIds(q,periods[0].ref);
+    let history=[];
+
+    if(ids?.modelId&&ids?.fuelId){
+      const d=await fipeXRest("/prices/history",{
+        model_id:ids.modelId,
+        fuel_id:ids.fuelId,
+        year:q.year
+      });
+      history=normalizeHistoryRest(d);
+    }
+
+    // Fallback robusto: /v1/prices permite ref_date e slug.
+    // Fazemos somente os seis meses solicitados, sem inventar dados.
+    if(!history.length){
+      const responses=await Promise.all(periods.map(async p=>{
+        try{
+          const d=await fipeXRest("/prices",{
+            model_slug:slugifyFipeX(q.title),
+            fuel_acronym:fuelAcronym(q.fuel),
+            year:q.year,
+            ref_date:p.ref
+          });
+          const x=fipeXData(d)||{};
+          const cents=Number(x.price_cents??x.market_price_cents);
+          const price=Number.isFinite(cents)?cents/100:brNumber(x.formatted_price??x.valor_formatado??x.price);
+          if(price==null)return null;
+          return {month:`${String(p.month).padStart(2,"0")}/${p.year}`,price,reference:p.year*100+p.month};
+        }catch(e){return null;}
+      }));
+      history=responses.filter(Boolean);
+    }else{
+      const wanted=new Set(periods.map(p=>p.year*100+p.month));
+      history=history.filter(x=>wanted.has(x.year*100+x.month))
+        .map(x=>({month:`${String(x.month).padStart(2,"0")}/${x.year}`,price:x.price,reference:x.year*100+x.month}));
+    }
+
+    history.sort((a,b)=>a.reference-b.reference);
+    if(!history.length)throw Error("fipeX não retornou histórico para este veículo");
+    renderChart(history);
+  }catch(e){
+    card.style.display="none";
+    console.warn("Garagem26 histórico fipeX:",e);
+  }
+}
+function refKey(label){
+ const s=norm(label||"");
+ const months={janeiro:1,fevereiro:2,marco:3,abril:4,maio:5,junho:6,julho:7,agosto:8,setembro:9,outubro:10,novembro:11,dezembro:12,jan:1,fev:2,mar:3,abr:4,mai:5,jun:6,jul:7,ago:8,set:9,out:10,nov:11,dez:12};
+ const ym=String(label||"").match(/(\d{1,2})\/(20\d{2})/);
+ if(ym) return Number(ym[2])*100+Number(ym[1]);
+ const year=Number((s.match(/20\d{2}/)||[])[0]||0);
+ const month=Object.entries(months).find(([name])=>s.includes(name))?.[1]||0;
+ return year*100+month;
+}
+function renderChart(history){
+ const a=(history||[]).map(x=>({month:x.month,price:brNumber(x.price),ref:x.reference||refKey(x.month)})).filter(x=>x.price!=null).sort((a,b)=>a.ref-b.ref);
+ if(!a.length){$("historyCard").style.display="none";return}
+ // 6 referências, terminando na referência selecionada quando disponível.
+ let end=a.length;
+ if(currentQuote?.ref){const rk=refKey(currentQuote.ref); const idx=a.findIndex(x=>x.ref===rk); if(idx>=0) end=idx+1;}
+ const shown=a.slice(Math.max(0,end-6),end);
+ if(!shown.length)return;
+ $("historyCard").style.display="block";
+ const vals=shown.map(x=>x.price), min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
+ const W=720,H=235,L=52,R=12,T=22,B=38;
+ const pts=shown.map((x,i)=>({x:L+i*(W-L-R)/Math.max(1,shown.length-1),y:T+(max-x.price)*(H-T-B)/range,...x}));
+ const poly=pts.map(p=>`${p.x},${p.y}`).join(" ");
+ const dots=pts.map(p=>`<circle class="dot" cx="${p.x}" cy="${p.y}" r="3.2"/><text class="val" x="${p.x}" y="${p.y-9}" text-anchor="middle">${Math.round(p.price/1000)}k</text>`).join("");
+ const labels=pts.map((p,i)=>`<text class="axis" x="${p.x}" y="${H-12}" text-anchor="middle">${monthLabel(p.month)}</text>`).join("");
+ $("chart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline class="line" points="${poly}"/>${dots}${labels}</svg>`;
+ const first=shown[0].price,last=shown[shown.length-1].price,chg=(last-first)/first*100;
+ $("summary").innerHTML=`<div class="info"><b>INÍCIO</b>${money(first)}</div><div class="info"><b>ATUAL</b>${money(last)}</div><div class="info"><b>VARIAÇÃO</b><span class="${chg>=0?'positive':'negative'}">${chg>=0?"+":""}${chg.toFixed(1)}%</span></div>`;
+ const rows=shown.slice().reverse().map((x,i)=>{const newer=shown[shown.length-i-1]; const prev=shown[shown.length-i-2]; const base=prev?.price; const pct=base?((newer.price-base)/base*100):null; return `<div class="item" style="display:grid;grid-template-columns:1.4fr 1fr .7fr;gap:8px"><span>${esc(x.month)}</span><b>${money(x.price)}</b><span class="${pct!=null?(pct>=0?'positive':'negative'):''}">${pct==null?'—':(pct>=0?'+':'')+pct.toFixed(2)+'%'}</span></div>`}).join("");
+ $("historyRows").innerHTML=`<div class="item" style="display:grid;grid-template-columns:1.4fr 1fr .7fr;gap:8px;font-weight:800"><span>Mês de referência</span><span>Valor (R$)</span><span>Var. (%)</span></div>${rows}`;
+ $("historyNote").textContent=`Últimas ${shown.length} referências mensais · dados históricos do fipeX · 6 meses`;
+}
+
+function quoteKey(q){return [q.type,q.code,q.year,q.fuel,q.title].join("|")}
+function getFavorites(){return JSON.parse(localStorage.getItem("fipeFavorites")||"[]")}
+function isFavorite(q){return getFavorites().some(x=>quoteKey(x)===quoteKey(q))}
+function updateFavoriteButton(){
+ if(!currentQuote)return;
+ $("favoriteBtn").textContent=isFavorite(currentQuote)?"★ Remover do estoque":"☆ Adicionar aos meus veículos";
+ $("favoriteBtn").className=isFavorite(currentQuote)?"gold":"secondary";
+}
+function toggleFavorite(q=currentQuote){
+ if(!q)return;
+ let f=getFavorites();
+ const i=f.findIndex(x=>quoteKey(x)===quoteKey(q));
+ if(i>=0) f.splice(i,1); else f=[q,...f].slice(0,30);
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ updateFavoriteButton(); renderFavorites();
+}
+function saveFavoriteField(i,field,value){
+ let f=getFavorites();
+ if(!f[i])return;
+ if(field==="plate") value=String(value||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,7);
+ if(field==="purchaseValue"||field==="saleValue"||field==="extraCost"||field==="documentationCost"||field==="maintenanceCost"||field==="km") value=value===""?"":Number(value);
+ f[i][field]=value;
+ f[i].detailsOpen=true;
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderFavorites();
+ if(typeof renderStock==="function" && $("stockPage") && $("stockPage").style.display!=="none") renderStock();
+ updateFavoriteButton();
+}
+function toggleFavoriteDetails(i){
+ let f=getFavorites();
+ if(!f[i])return;
+ f[i].detailsOpen=!f[i].detailsOpen;
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderFavorites();
+}
+function favoriteFinancialResult(x){
+ const paid=Number(x.purchaseValue)||0;
+ const sold=Number(x.saleValue)||0;
+ const extra=Number(x.extraCost)||0;
+ const doc=Number(x.documentationCost)||0;
+ const maintenance=Number(x.maintenanceCost)||0;
+ if(!paid||!sold) return {text:paid&&!sold?"Venda ainda não informada":"Informe valor pago e valor de venda",pct:null,cls:""};
+ const result=sold-paid-extra-doc-maintenance;
+ const pct=(result/paid)*100;
+ return {text:(result>=0?"+":"-")+Math.abs(result).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}),pct,cls:result>=0?"positive":"negative"};
+}
+function favoriteSaleLabel(x){
+ const sold=Number(x.saleValue);
+ return sold>0?" • Venda: "+sold.toLocaleString("pt-BR",{style:"currency",currency:"BRL"}):"";
+}
+function setFavoritePC(i,value){
+ let f=getFavorites(); if(!f[i])return;
+ f[i].pc=value;
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderFavorites();
+ if($("stockPage") && $("stockPage").style.display!=="none") renderStock();
+}
+function renderFavorites(){
+ const f=getFavorites();
+ if(!f.length){$("favorites").innerHTML='<span class="muted">Nenhum veículo favorito ainda.</span>';return}
+ $("favorites").innerHTML=f.map((x,i)=>{
+  const r=favoriteFinancialResult(x);
+  const open=!!x.detailsOpen;
+  return `<div class="item">
+  <div style="display:flex;justify-content:space-between;gap:8px">
+   <div style="min-width:0"><b>${esc(x.title)}</b><span class="status-badge status-stock">✓ Em estoque</span>
+    <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} •
+      <span>${esc(x.price||"")}
+       <span class="pc-select" title="Classificação">
+        <button class="${x.pc==="P"?"active":""}" onclick="setFavoritePC(${i},'P')">P</button>
+        <button class="${x.pc==="C"?"active":""}" onclick="setFavoritePC(${i},'C')">C</button>
+       </span>
+      </span>
+    </div>
+    <div class="muted">FIPE: ${esc(x.code||"")}${esc(favoriteSaleLabel(x))}</div>
+   </div>
+   <button class="favorite-btn" title="Remover" onclick="removeFavorite(${i})">★</button>
+  </div>
+
+  <button class="favorite-toggle" onclick="toggleFavoriteDetails(${i})">
+   <span>${open?"−":"＋"} ${open?"Ocultar dados do veículo":"Dados do veículo"}</span>
+   <span class="arrow">${open?"⌃":"⌄"}</span>
+  </button>
+
+  ${open?`<div class="favorite-fields">
+   <div>
+    <label>PLACA</label>
+    <input value="${esc(x.plate||"")}" maxlength="7" placeholder="ABC1D23" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7)" onchange="saveFavoriteField(${i},'plate',this.value)">
+   </div>
+   <div>
+    <label>CUSTOS EXTRA</label>
+    <input type="number" min="0" step="0.01" inputmode="decimal" value="${x.extraCost??""}" placeholder="R$ 0,00" onchange="saveFavoriteField(${i},'extraCost',this.value)">
+   </div>
+   <div>
+    <label>DATA DE COMPRA</label>
+    <input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveFavoriteField(${i},'purchaseDate',this.value)">
+   </div>
+   <div>
+    <label>VALOR PAGO</label>
+    <input type="number" min="0" step="0.01" inputmode="decimal" value="${x.purchaseValue??""}" placeholder="R$ 0,00" onchange="saveFavoriteField(${i},'purchaseValue',this.value)">
+   </div>
+   <div>
+    <label>DATA DE VENDA</label>
+    <input type="date" value="${esc(x.saleDate||"")}" onchange="saveFavoriteField(${i},'saleDate',this.value)">
+   </div>
+   <div>
+    <label>VALOR VENDIDO</label>
+    <input type="number" min="0" step="0.01" inputmode="decimal" value="${x.saleValue??""}" placeholder="R$ 0,00" onchange="saveFavoriteField(${i},'saleValue',this.value)">
+   </div>
+  </div>
+
+  <div class="summary favorite-financial">
+   <div class="info"><b>LUCRO / PREJUÍZO</b><span class="${r.cls}">${r.text}</span></div>
+   <div class="info"><b>RESULTADO (%)</b><span class="${r.cls}">${r.pct==null?"—":(r.pct>=0?"+":"")+r.pct.toFixed(2)+"%"}</span></div>
+  </div>`:""}
+
+  <div class="actions"><button class="secondary small-btn" onclick="shareQuote(${JSON.stringify(x).replace(/</g,"\u003c")})">Compartilhar</button></div>
+ </div>`;
+ }).join("");
+}
+function stockTotals(){
+ const f=getFavorites();
+ let fipe=0,cost=0;
+ f.forEach(x=>{fipe+=Number(x.priceValue)||0;cost+=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0)});
+ const profit=fipe-cost;
+ const margin=cost>0?(profit/cost)*100:0;
+ return {fipe,cost,profit,margin};
+}
+function stockPriceValue(x){
+ const n=String(x.price||"").replace(/[^0-9,.-]/g,"").replace(/\./g,"").replace(",",".");
+ return Number(n)||0;
+}
+function toggleStockDetails(i){
+ let f=getFavorites(); if(!f[i])return;
+ f[i].stockDetailsOpen=!f[i].stockDetailsOpen;
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderStock();
+}
+function renderStock(){
+ const f=getFavorites();
+ let fipe=0,cost=0,classTotals={P:0,C:0,A:0},classCosts={P:0,C:0,A:0};
+ f.forEach(x=>{
+  const pv=stockPriceValue(x);
+  const itemCost=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0);
+  fipe+=pv;
+  cost+=itemCost;
+  if(["P","C","A"].includes(x.pc)){
+   classTotals[x.pc]+=pv;
+   classCosts[x.pc]+=itemCost;
+  }
+ });
+ const profit=fipe-cost, margin=cost>0?(profit/cost)*100:0;
+ $("stockFipeTotal").textContent=money(fipe);
+ $("stockCostTotal").textContent=money(cost);
+ $("stockProfitTotal").textContent=money(profit);
+ $("stockProfitTotal").className="stock-profit "+(profit>=0?"stock-positive":"stock-negative");
+ $("stockMarginTotal").textContent=(margin>=0?"+":"")+margin.toFixed(2)+"%";
+ $("stockClassP").textContent=money(classTotals.P);
+ $("stockClassC").textContent=money(classTotals.C);
+ $("stockClassA").textContent=money(classTotals.A);
+ $("stockProfitP").textContent=money(classTotals.P-classCosts.P);
+ $("stockProfitC").textContent=money(classTotals.C-classCosts.C);
+ $("stockProfitA").textContent=money(classTotals.A-classCosts.A);
+
+ $("stockList").innerHTML=f.length?f.map((x,i)=>{
+   const costItem=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0);
+   const pv=stockPriceValue(x), sale=Number(x.saleValue)||0, p=(sale>0?sale:pv)-costItem;
+   const km=x.km?Number(x.km).toLocaleString("pt-BR")+" km":"";
+   const itemOpen=!!x.stockItemDetailsOpen;
+   return `<div class="item">
+    <div style="min-width:0">
+     <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+      <b>${esc(x.title)}</b>
+      <span class="status-badge status-stock">✓ Em estoque</span>
+     </div>
+     <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • FIPE: ${esc(x.price||"")}${sale>0?' • Saldo devedor: '+money(sale):''}${km?' • KM: '+esc(km):''}
+      <span class="pc-select"><button class="${x.pc==="P"?"active":""}" onclick="setFavoritePC(${i},'P')">P</button><button class="${x.pc==="C"?"active":""}" onclick="setFavoritePC(${i},'C')">C</button><button class="${x.pc==="A"?"active":""}" onclick="setFavoritePC(${i},'A')">A</button></span>
+     </div>
+     <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}Custo: ${money(costItem)}${x.color?" • Cor: "+esc(x.color):""} • Lucro: <span class="${p>=0?"stock-positive":"stock-negative"}">${money(p)}</span></div>
+    </div>
+    <div class="stock-details-extra" style="display:${(stockDetailsExpanded||itemOpen)?"block":"none"};margin-top:8px">
+      <div class="stock-fields">
+       <div><label>PLACA</label><input value="${esc(x.plate||"")}" maxlength="7" placeholder="ABC1D23" onchange="saveFavoriteField(${i},'plate',this.value)"></div>
+       <div><label>KM</label><input type="number" min="0" value="${x.km??""}" onchange="saveFavoriteField(${i},'km',this.value)"></div>
+       <div><label>DATA DE COMPRA</label><input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveFavoriteField(${i},'purchaseDate',this.value)"></div>
+       <div><label>VALOR PAGO</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveFavoriteField(${i},'purchaseValue',this.value)"></div>
+       <div><label>DATA DE VENDA</label><input type="date" value="${esc(x.saleDate||"")}" onchange="saveFavoriteField(${i},'saleDate',this.value)"></div>
+       <div><label>VALOR DE VENDA</label><input type="number" min="0" step="0.01" value="${x.saleValue??""}" onchange="saveFavoriteField(${i},'saleValue',this.value)"></div>
+       <div><label>DOCUMENTAÇÃO / VISTORIA</label><input type="number" min="0" step="0.01" value="${x.documentationCost??""}" onchange="saveFavoriteField(${i},'documentationCost',this.value)"></div>
+       <div><label>MANUTENÇÕES / PREJUÍZO</label><input type="number" min="0" step="0.01" value="${x.maintenanceCost??""}" onchange="saveFavoriteField(${i},'maintenanceCost',this.value)"></div>
+       <div><label>COR</label><input value="${esc(x.color||"")}" placeholder="Cor" onchange="saveFavoriteField(${i},'color',this.value)"></div>
+       <div><label>CUSTOS EXTRA</label><input type="number" min="0" step="0.01" value="${x.extraCost??""}" onchange="saveFavoriteField(${i},'extraCost',this.value)"></div>
+      </div>
+    </div>
+    <div class="actions">
+     <button class="secondary small-btn" onclick="moveToSold(${i})">Vendido</button>
+     <button class="secondary small-btn" onclick="removeStock(${i})">Remover</button>
+     <button class="negotiation-expand-inline" style="display:inline-flex!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;flex:0 0 34px!important;flex-grow:0!important;flex-shrink:0!important;flex-basis:34px!important;margin:0 0 0 auto!important;padding:0!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important" title="${itemOpen?"Recolher":"Abrir dados"}" onclick="toggleStockItemDetails(${i})">${itemOpen?"−":"＋"}</button>
+    </div>
+   </div>`;
+ }).join(""):'<span class="muted">Nenhum veículo em estoque.</span>';
+}
+function toggleStockItemDetails(i){
+ let f=getFavorites(); if(!f[i])return;
+ f[i].stockItemDetailsOpen=!f[i].stockItemDetailsOpen;
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderStock();
+}
+function openStockPage(){
+ document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="stockPage")el.style.display="none"});
+ $("stockPage").style.display="block";
+ $("stockNav").classList.add("active");
+ renderStock();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+let stockDetailsExpanded=false;
+function toggleStockDetailsPage(){
+ stockDetailsExpanded=!stockDetailsExpanded;
+ renderStock();
+}
+function closeStockPage(){
+ $("stockPage").style.display="none";
+ $("stockNav").classList.remove("active");
+ document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="stockPage")el.style.display=""});
+ $("favoritesCard").style.display="none";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function getNegotiations(){return JSON.parse(localStorage.getItem("fipeNegotiations")||"[]")}
+function addToNegotiation(){
+ if(!currentQuote)return;
+ let n=getNegotiations();
+ const item={...currentQuote,negotiationAt:new Date().toISOString()};
+ n=[item,...n.filter(v=>quoteKey(v)!==quoteKey(item))].slice(0,100);
+ localStorage.setItem("fipeNegotiations",JSON.stringify(n));
+ renderNegotiations();
+ alert("Veículo adicionado em Em andamento.");
+}
+function saveNegotiationField(i,field,value){
+ let n=getNegotiations();if(!n[i])return;
+ if(["purchaseValue","entryValue","saleValue","extraCost","documentationCost","maintenanceCost"].includes(field)) value=value===""?"":Number(value);
+ if(field==="plate") value=String(value||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,7);
+ n[i][field]=value;localStorage.setItem("fipeNegotiations",JSON.stringify(n));renderNegotiations();
+}
+function toggleNegotiationDetails(i){
+ let n=getNegotiations();if(!n[i])return;
+ n[i].detailsOpen=!n[i].detailsOpen;localStorage.setItem("fipeNegotiations",JSON.stringify(n));renderNegotiations();
+}
+function renderNegotiations(){
+ const el=$("progressList");if(!el)return;
+ const n=getNegotiations();
+ el.innerHTML=n.length?n.map((x,i)=>{
+  const cost=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0);
+  const purchase=Number(x.purchaseValue)||0;
+  const entry=Number(x.entryValue)||0;
+  const sale=Math.max(0,purchase-entry);
+  const fipe=stockPriceValue(x);
+  const profit=fipe-cost;
+  const km=x.km?Number(x.km).toLocaleString("pt-BR")+" km":"";
+  const open=!!x.detailsOpen;
+  return `<div class="item">
+   <div style="display:flex;justify-content:space-between;gap:8px">
+    <div style="min-width:0"><b>${esc(x.title)}</b><span class="status-badge" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa">🔄 Em andamento</span>
+     <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • FIPE: ${esc(x.price||"")}${sale>0?' • Venda: '+money(sale):''}${km?' • KM: '+esc(km):''}
+      <span class="pc-select"><button class="${x.pc==="P"?"active":""}" onclick="saveNegotiationField(${i},'pc','P')">P</button><button class="${x.pc==="C"?"active":""}" onclick="saveNegotiationField(${i},'pc','C')">C</button><button class="${x.pc==="A"?"active":""}" onclick="saveNegotiationField(${i},'pc','A')">A</button></span>
+     </div>
+     <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}Custo: ${money(cost)}${x.color?" • Cor: "+esc(x.color):""} • Lucro: <span class="${profit>=0?"stock-positive":"stock-negative"}">${money(profit)}</span></div>
+
+    </div>
+    </div>
+   </div>
+   ${open?`<div class="progress-fields">
+    <div><label>PLACA</label><input value="${esc(x.plate||"")}" maxlength="7" placeholder="ABC1D23" onchange="saveNegotiationField(${i},'plate',this.value)"></div>
+    <div><label>KM</label><input type="number" min="0" value="${x.km??""}" onchange="saveNegotiationField(${i},'km',this.value)"></div>
+    <div><label>DATA DE COMPRA</label><input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveNegotiationField(${i},'purchaseDate',this.value)"></div>
+    <div><label>VALOR DA COMPRA</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveNegotiationField(${i},'purchaseValue',this.value)"></div>
+    <div><label>VALOR DE ENTRADA</label><input type="number" min="0" step="0.01" value="${x.entryValue??""}" onchange="saveNegotiationField(${i},'entryValue',this.value)"></div>
+    <div><label>SALDO DEVEDOR</label><input type="number" min="0" step="0.01" value="${Math.max(0,(Number(x.purchaseValue)||0)-(Number(x.entryValue)||0))}" readonly></div>
+    <div><label>DOCUMENTAÇÃO / VISTORIA</label><input type="number" min="0" step="0.01" value="${x.documentationCost??""}" onchange="saveNegotiationField(${i},'documentationCost',this.value)"></div>
+    <div><label>MANUTENÇÕES / PREJUÍZO</label><input type="number" min="0" step="0.01" value="${x.maintenanceCost??""}" onchange="saveNegotiationField(${i},'maintenanceCost',this.value)"></div>
+    <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveNegotiationField(${i},'color',this.value)"></div>
+    <div><label>CUSTOS EXTRA</label><input type="number" min="0" step="0.01" value="${x.extraCost??""}" onchange="saveNegotiationField(${i},'extraCost',this.value)"></div>
+   </div>
+   <div class="summary favorite-financial">
+    <div class="info"><b>LUCRO</b><span class="${profit>=0?"stock-positive":"stock-negative"}">${money(profit)}</span></div>
+    <div class="info"><b>MARGEM</b><span>${cost>0?(profit/cost*100).toFixed(2)+"%":"—"}</span></div>
+   </div>`:""}
+   <div class="actions"><button class="secondary small-btn" onclick="completeNegotiation(${i})">Concluído</button><button class="secondary small-btn" onclick="removeNegotiation(${i})">Remover</button><button class="negotiation-expand-inline" style="display:inline-flex!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;flex:0 0 34px!important;flex-grow:0!important;flex-shrink:0!important;flex-basis:34px!important;margin:0 0 0 auto!important;padding:0!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important" title="${open?"Recolher":"Abrir dados"}" onclick="toggleNegotiationDetails(${i})">${open?"−":"＋"}</button></div>
+  </div>`;
+ }).join(""):'<span class="muted">Nenhum veículo em andamento.</span>';
+}
+
+function openProgressPage(){
+ document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="progressPage")el.style.display="none"});
+ $("progressPage").style.display="block";$("progressNav").classList.add("active");renderNegotiations();
+ $("progressPage").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function closeProgressPage(){
+ $("progressPage").style.display="none";$("progressNav").classList.remove("active");
+ document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="progressPage")el.style.display=""});
+ $("favoritesCard").style.display="none";window.scrollTo({top:0,behavior:"smooth"});
+}
+function completeNegotiation(i){
+ const n=getNegotiations(),x=n[i];
+ if(!x)return;
+ let f=getFavorites();
+ const item={...x,stockItemDetailsOpen:false,detailsOpen:false,addedToStockAt:new Date().toISOString()};
+ f=[item,...f.filter(v=>quoteKey(v)!==quoteKey(item))].slice(0,100);
+ n.splice(i,1);
+ localStorage.setItem("fipeNegotiations",JSON.stringify(n));
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderNegotiations();
+ renderFavorites();
+ updateFavoriteButton();
+ openProgressPage();
+ alert("Veículo movido para Em estoque.");
+}
+function consultNegotiation(i){
+ const q=getNegotiations()[i];if(!q)return;
+ currentQuote=q;$("result").style.display="block";
+ $("ref").textContent="Referência: "+(q.ref||"—");$("price").textContent=q.price||"—";$("title").textContent=q.title||"";
+ $("rbrand").textContent=q.brand||"—";$("ryear").textContent=q.year||"—";$("rfuel").textContent=q.fuel||"—";$("rcode").textContent=q.code||"—";
+ $("historyCard").style.display="none";closeProgressPage();$("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function removeNegotiation(i){let n=getNegotiations();n.splice(i,1);localStorage.setItem("fipeNegotiations",JSON.stringify(n));renderNegotiations()}
+function getSold(){return JSON.parse(localStorage.getItem("fipeSold")||"[]")}
+function openSoldPage(){
+ document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="soldPage")el.style.display="none"});
+ $("soldPage").style.display="block";
+ renderSold();
+ $("soldPage").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function closeSoldPage(){
+ $("soldPage").style.display="none";
+ document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="soldPage")el.style.display=""});
+ $("favoritesCard").style.display="none";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function moveToSold(i){
+ let f=getFavorites(),x=f[i];
+ if(!x)return;
+ let sold=getSold();
+ const item={...x,soldAt:new Date().toISOString(),detailsOpen:false};
+ sold=[item,...sold.filter(v=>quoteKey(v)!==quoteKey(item))].slice(0,100);
+ f.splice(i,1);
+ localStorage.setItem("fipeSold",JSON.stringify(sold));
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderFavorites();
+ renderSold();
+ updateFavoriteButton();
+ openSoldPage();
+}
+function toggleSoldDetails(i){
+ let s=getSold(); if(!s[i])return;
+ s[i].detailsOpen=!s[i].detailsOpen;
+ localStorage.setItem("fipeSold",JSON.stringify(s));
+ renderSold();
+}
+function renderSold(){
+ const s=getSold();
+ if(!s.length){$("soldList").innerHTML='<span class="muted">Nenhum veículo vendido ainda.</span>';return}
+ const totals=s.reduce((acc,x)=>{const cost=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0);const profit=(Number(x.saleValue)||0)-cost;acc.cost+=cost;acc.profit+=profit;return acc;},{cost:0,profit:0});
+ const overallMargin=totals.cost>0?(totals.profit/totals.cost*100):null;
+ $("soldList").innerHTML=s.map((x,i)=>{
+  const r=favoriteFinancialResult(x);
+  const open=!!x.detailsOpen;
+  const cost=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0);
+  const profit=(Number(x.saleValue)||0)-cost;
+  return `<div class="item">
+   <div style="display:flex;justify-content:space-between;gap:8px">
+    <div style="min-width:0">
+     <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+      <b>${esc(x.title)}</b><span class="status-badge status-sold">✓ Vendido</span>
+     </div>
+     <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • FIPE: ${esc(x.price||"")}${x.km?" • KM: "+Number(x.km).toLocaleString("pt-BR")+" km":""}</div>
+     <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}Venda: ${x.saleValue?money(Number(x.saleValue)):"—"}${x.saleDate?" • "+esc(x.saleDate):""} • Lucro: <span class="${r.cls}">${r.text}</span></div>
+    </div>
+    <button class="negotiation-expand-inline" style="display:inline-flex!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;flex:0 0 34px!important;flex-grow:0!important;flex-shrink:0!important;flex-basis:34px!important;margin:0 0 0 auto!important;padding:0!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important" title="${open?"Recolher":"Abrir dados"}" onclick="toggleSoldDetails(${i})">${open?"−":"＋"}</button>
+   </div>
+   ${open?`<div class="sold-details-extra" style="margin-top:8px">
+    <div class="stock-fields">
+     <div><label>PLACA</label><input value="${esc(x.plate||"")}" maxlength="7" onchange="saveSoldField(${i},'plate',this.value)"></div>
+     <div><label>KM</label><input type="number" min="0" value="${x.km??""}" onchange="saveSoldField(${i},'km',this.value)"></div>
+     <div><label>DATA DE COMPRA</label><input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveSoldField(${i},'purchaseDate',this.value)"></div>
+     <div><label>VALOR PAGO</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveSoldField(${i},'purchaseValue',this.value)"></div>
+     <div><label>DATA DE VENDA</label><input type="date" value="${esc(x.saleDate||"")}" onchange="saveSoldField(${i},'saleDate',this.value)"></div>
+     <div><label>VALOR DE VENDA</label><input type="number" min="0" step="0.01" value="${x.saleValue??""}" onchange="saveSoldField(${i},'saleValue',this.value)"></div>
+     <div><label>DOCUMENTAÇÃO / VISTORIA</label><input type="number" min="0" step="0.01" value="${x.documentationCost??""}" onchange="saveSoldField(${i},'documentationCost',this.value)"></div>
+     <div><label>MANUTENÇÕES / PREJUÍZO</label><input type="number" min="0" step="0.01" value="${x.maintenanceCost??""}" onchange="saveSoldField(${i},'maintenanceCost',this.value)"></div>
+     <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveSoldField(${i},'color',this.value)"></div>
+     <div><label>CUSTOS EXTRA</label><input type="number" min="0" step="0.01" value="${x.extraCost??""}" onchange="saveSoldField(${i},'extraCost',this.value)"></div>
+    </div>
+    <div class="summary favorite-financial">
+     <div class="info"><b>LUCRO</b><span class="${r.cls}">${r.text}</span></div>
+     
+     <div class="info"><b>RESULTADO (%)</b><span class="${r.cls}">${r.pct==null?"—":(r.pct>=0?"+":"")+r.pct.toFixed(2)+"%"}</span></div>
+    </div>
+   </div>`:""}
+   <div class="actions"><button class="secondary small-btn" onclick="removeSold(${i})">Remover</button><button class="secondary small-btn" onclick="shareQuote(${JSON.stringify(x).replace(/</g,"\\u003c")})">Compartilhar</button></div>
+  </div>`;
+ }).join("")+`<div class="sold-overall-summary"><div class="sold-overall-title">RESULTADO GERAL</div><div class="summary favorite-financial"><div class="info"><b>LUCRO GERAL</b><span class="${totals.profit>=0?"stock-positive":"stock-negative"}">${money(totals.profit)}</span></div><div class="info"><b>MARGEM GERAL</b><span>${overallMargin==null?"—":(overallMargin>=0?"+":"")+overallMargin.toFixed(2)+"%"}</span></div></div></div>`;
+}
+function saveSoldField(i,field,value){
+ let s=getSold(); if(!s[i])return;
+ if(["purchaseValue","saleValue","extraCost","documentationCost","km"].includes(field)) value=value===""?"":Number(value);
+ if(field==="plate") value=String(value||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,7);
+ s[i][field]=value; s[i].detailsOpen=true;
+ localStorage.setItem("fipeSold",JSON.stringify(s)); renderSold();
+}
+function removeSold(i){
+ let s=getSold();
+ if(!s[i])return;
+ s.splice(i,1);
+ localStorage.setItem("fipeSold",JSON.stringify(s));
+ renderSold();
+}
+function consultSold(i){
+ const q=getSold()[i];if(!q)return;
+ currentQuote=q;$("result").style.display="block";
+ $("ref").textContent="Referência: "+(q.ref||"—");$("price").textContent=q.price||"—";$("title").textContent=q.title||"";
+ $("rbrand").textContent=q.brand||"—";$("ryear").textContent=q.year||"—";$("rfuel").textContent=q.fuel||"—";$("rcode").textContent=q.code||"—";
+ $("historyCard").style.display="none";closeSoldPage();updateFavoriteButton();$("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function removeFavorite(i){
+ let f=getFavorites(); f.splice(i,1); localStorage.setItem("fipeFavorites",JSON.stringify(f)); renderFavorites(); updateFavoriteButton();
+}
+function removeStock(i){
+ let f=getFavorites();
+ if(!f[i])return;
+ f.splice(i,1);
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ renderFavorites();
+ renderStock();
+ updateFavoriteButton();
+}
+async function consultFavorite(i){
+ const q=getFavorites()[i]; if(!q)return;
+ currentQuote=q;
+ $("result").style.display="block";
+ $("ref").textContent="Referência: "+(q.ref||"—");
+ $("price").textContent=q.price||"—";
+ $("title").textContent=q.title||"";
+ $("rbrand").textContent=q.brand||"—";$("ryear").textContent=q.year||"—";$("rfuel").textContent=q.fuel||"—";$("rcode").textContent=q.code||"—";
+ $("historyCard").style.display="none";
+ updateFavoriteButton();
+ $("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function shareQuote(q=currentQuote){
+ if(!q)return;
+ const text=`Nikkei Brasil - Cotação FIPE\n${q.title||""}\nAno: ${q.year||"—"}\nCombustível: ${q.fuel||"—"}\nValor FIPE: ${q.price||"—"}\nCódigo FIPE: ${q.code||"—"}\nReferência: ${q.ref||"—"}\n\nConsulta: ${location.href}`;
+ try{
+  if(navigator.share){await navigator.share({title:"Cotação FIPE - Nikkei Brasil",text});}
+  else {await navigator.clipboard.writeText(text);setError("Cotação copiada para a área de transferência.");setTimeout(()=>setError(""),3000);}
+ }catch(e){}
+}
+function saveConsult(x){
+ let h=JSON.parse(localStorage.getItem("fipeConsults")||"[]");
+ const item={...x,brand:x.brand||"",type,at:new Date().toISOString()};
+ h=[item,...h].slice(0,30);
+ localStorage.setItem("fipeConsults",JSON.stringify(h));
+ renderConsults();
+}
+function renderConsults(){
+ let h=JSON.parse(localStorage.getItem("fipeConsults")||"[]");
+ $("consultHistory").innerHTML=h.length?h.map((x,i)=>`<div class="item">
+  <div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(x.title)}</b><div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • ${esc(x.price||"")}</div><div class="muted">${new Date(x.at).toLocaleString("pt-BR")} • FIPE: ${esc(x.code||"")}</div></div><button class="favorite-btn" title="Favoritar" onclick="toggleHistoryFavorite(${i})">${isFavorite(x)?"★":"☆"}</button></div>
+  <div class="actions"><button class="secondary small-btn" onclick="consultHistory(${i})">Consultar novamente</button><button class="secondary small-btn" onclick="shareQuote(${JSON.stringify(x).replace(/</g,"\\u003c")})">Compartilhar</button></div>
+ </div>`).join(""):'<span class="muted">Nenhuma consulta ainda.</span>';
+}
+function consultHistory(i){
+ const h=JSON.parse(localStorage.getItem("fipeConsults")||"[]");
+ const q=h[i];
+ if(!q)return;
+ currentQuote=q;
+ $("result").style.display="block";
+ $("ref").textContent="Referência: "+(q.ref||"—");
+ $("price").textContent=q.price||"—";
+ $("title").textContent=q.title||"";
+ $("rbrand").textContent=q.brand||"—";
+ $("ryear").textContent=q.year||"—";
+ $("rfuel").textContent=q.fuel||"—";
+ $("rcode").textContent=q.code||"—";
+ $("historyCard").style.display="none";
+ updateFavoriteButton();
+ $("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function toggleHistoryFavorite(i){
+ const h=JSON.parse(localStorage.getItem("fipeConsults")||"[]"); if(h[i]) toggleFavorite(h[i]);
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ t.classList.add("active");
+ type=t.dataset.type;
+ loadBrands();
+});
+$("stockNav").onclick=()=>openStockPage();
+$("progressNav").onclick=()=>openProgressPage();
+$("soldNav").onclick=()=>openSoldPage();
+$("reference").onchange=async()=>{
+ referenceCode=$("reference").value;
+ const b=$("brand").value;
+ if(!b)return;
+
+ // Trocar o mês altera somente a referência da cotação.
+ // Preserve Modelo e Ano/Combustível para facilitar a próxima pesquisa.
+ const selectedModel=$("model").value;
+ const selectedYear=$("year").value;
+
+ await loadBrandChoices();
+
+ // Restaura as seleções anteriores sempre que elas continuarem disponíveis.
+ // A referência não deve limpar os filtros do veículo.
+ if(selectedModel && Array.from($("model").options).some(o=>String(o.value)===String(selectedModel))){
+   $("model").value=selectedModel;
+ }
+ if(selectedYear && Array.from($("year").options).some(o=>String(o.value)===String(selectedYear))){
+   $("year").value=selectedYear;
+ }
+
+ // Se ambos continuam selecionados, mantenha a consulta pronta.
+ if($("brand").value && $("model").value && $("year").value){
+   $("consult").disabled=false;
+ }
+};
+$("brand").onchange=loadBrandChoices;
+$("model").onchange=modelChanged;
+$("year").onchange=yearChanged;
+$("consult").onclick=consult;
+$("clearSearch").onclick=()=>resetSearch(true);
+$("favoriteBtn").onclick=()=>toggleFavorite();
+$("shareBtn").onclick=()=>shareQuote();
+$("clearHistory").onclick=()=>{localStorage.removeItem("fipeConsults");renderConsults()};
+$("clearFavorites").onclick=()=>{localStorage.removeItem("fipeFavorites");renderFavorites();updateFavoriteButton()};
+$("favoritesCard").style.display="none";renderConsults();renderFavorites();renderSold();$("clearSold").onclick=()=>{localStorage.removeItem("fipeSold");renderSold()};
+(async()=>{await loadReferences(); await loadBrands()})();
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const el = document.getElementById('referenceMonth');
+  if (el) {
+    const now = new Date();
+    el.textContent = now.toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
+  }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./k1.js?v=2"></script>
+<script src="./k2.js?v=2"></script>
+<script src="./k3.js?v=2"></script>
+<script src="./k4.js?v=2"></script>
+<script src="./k5.js?v=2"></script>
+<script src="./k6.js?v=2"></script>
+<script src="./k7.js?v=2"></script>
+<script src="./supabase-sync.js?v=1"></script>
+<script>
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=1').catch(()=>{}));
+}
+let deferredInstallPrompt=null;
+let installPromptShown=false;
+window.addEventListener('beforeinstallprompt',e=>{
+ e.preventDefault(); deferredInstallPrompt=e;
+ maybeShowInstallPrompt();
+});
+window.addEventListener('appinstalled',()=>{
+ deferredInstallPrompt=null;
+ localStorage.setItem('nikkeibrasilInstalled','1');
+ document.getElementById('installPrompt')?.style.setProperty('display','none');
+});
+function isStandalone(){
+ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+}
+function maybeShowInstallPrompt(){
+ if(installPromptShown || isStandalone() || localStorage.getItem('nikkeibrasilInstallDismissed')==='1') return;
+ installPromptShown=true;
+ const p=document.getElementById('installPrompt');
+ if(p)p.style.display='flex';
+}
+function closeInstallPrompt(){
+ const p=document.getElementById('installPrompt');
+ if(p)p.style.display='none';
+}
+function startInstall(){
+ if(deferredInstallPrompt){
+   deferredInstallPrompt.prompt();
+   deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null;closeInstallPrompt();});
+   return;
+ }
+ // iPhone/iPad and browsers without the native prompt: guide the user through the official menu.
+ const text=document.getElementById('installPromptText');
+ if(text)text.innerHTML='No iPhone, toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>. Ative <b>Abrir como App da Web</b> e toque em <b>Adicionar</b>.';
+ const yes=document.getElementById('installYes');
+ if(yes)yes.textContent='Entendi';
+ if(yes)yes.onclick=()=>closeInstallPrompt();
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ document.getElementById('installYes')?.addEventListener('click',startInstall);
+ document.getElementById('installNo')?.addEventListener('click',()=>{
+   localStorage.setItem('nikkeibrasilInstallDismissed','1'); closeInstallPrompt();
+ });
+ setTimeout(maybeShowInstallPrompt,900);
+});
+</script>
+<div id="installPrompt" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(17,24,39,.62);align-items:center;justify-content:center;padding:20px">
+  <div style="width:min(390px,100%);background:#fff;border-radius:22px;padding:24px;box-shadow:0 18px 60px #0004;text-align:center">
+    <div style="font-size:42px;margin-bottom:8px">📱</div>
+    <h2 style="margin:0 0 8px;color:#111827">Adicionar Nikkei Brasil?</h2>
+    <p id="installPromptText" style="margin:0;color:#64748b;line-height:1.5">Tenha o Nikkei Brasil na tela inicial para abrir como aplicativo.</p>
+    <button id="installYes" style="margin-top:18px;background:#111827;color:#fff;border:0;border-radius:12px;height:46px;font-weight:800">Sim, adicionar</button>
+    <button id="installNo" style="margin-top:8px;background:#f3f4f6;color:#111827;border:1px solid #d1d5db;border-radius:12px;height:44px;font-weight:700">Agora não</button>
+  </div>
+</div>
+</body>
+</html>
