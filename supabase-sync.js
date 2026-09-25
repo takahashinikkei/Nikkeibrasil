@@ -70,7 +70,7 @@ async function loadHistory(){
  if(typeof renderConsults==='function')renderConsults();
 }
 async function syncConsultHistory(item){
- if(!sb||!user||syncing||!item)return;
+ if(!sb||syncing||!item)return;
  const x=item;
  const {error}=await sb.from('consult_history').insert({user_id:null,type:x.type||'cars',title:x.title||'Veículo',brand:x.brand||null,model:x.model||null,
  year:x.year!=null?String(x.year):null,fuel:x.fuel||null,code:x.code||null,price:x.price||null,price_value:x.priceValue!=null?Number(x.priceValue)||null:null,
