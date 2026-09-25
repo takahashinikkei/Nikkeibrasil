@@ -104,13 +104,16 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 <body><div id="moduleGate">
   <div class="module-gate-box">
     <h1>Nikkei Brasil</h1>
-    <p>Selecione o setor para entrar</p>
-    <div class="module-buttons">
+    <p id="moduleGateText">Selecione o setor para entrar</p>
+    <div class="module-buttons" id="sectorButtons">
       <button data-module="Master">Master</button>
       <button data-module="Motoristas">Motoristas</button>
       <button data-module="Frota">Frota</button>
       <button data-module="Operacional">Operacional</button>
       <button data-module="Financeiro">Financeiro</button>
+    </div>
+    <div class="module-buttons" id="masterButtons" style="display:none">
+      <button data-action="vehicles">🚗 Veículos</button>
     </div>
   </div>
 </div>
@@ -1189,19 +1192,30 @@ if('serviceWorker' in navigator){
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
   const gate=document.getElementById('moduleGate');
-  document.querySelectorAll('#moduleGate button').forEach(btn=>{
+  const sectorButtons=document.getElementById('sectorButtons');
+  const masterButtons=document.getElementById('masterButtons');
+  const gateText=document.getElementById('moduleGateText');
+
+  document.querySelectorAll('#sectorButtons button').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const module=btn.dataset.module;
-      // MASTER é o acesso administrativo exclusivo e libera todo o Controle Geral existente.
-      // Os demais setores ficam reservados para as telas/permissões que serão implementadas depois.
       if(module==='Master'){
-        gate.style.display='none';
+        // Master é o acesso administrativo exclusivo e libera todo o Controle Geral.
         document.body.dataset.module='Master';
         document.body.dataset.access='full';
+        sectorButtons.style.display='none';
+        masterButtons.style.display='grid';
+        gateText.textContent='Master';
         return;
       }
       alert('Este setor será configurado posteriormente.');
     });
+  });
+
+  document.querySelector('#masterButtons [data-action="vehicles"]').addEventListener('click',()=>{
+    gate.style.display='none';
+    document.body.dataset.module='Master';
+    document.body.dataset.access='full';
   });
 });
 </script></body>
