@@ -3,7 +3,6 @@
 const SUPABASE_URL='https://qincxigrvlvudsqcukxt.supabase.co';
 const SUPABASE_KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
 const AUTH_REDIRECT='https://takahashinikkei.github.io/Nikkeibrasil/';
-const LOCAL_RESET_KEY='nikkei_local_reset_v1';
 if((location.hostname==='localhost'||location.hostname==='127.0.0.1')&&location.hash.includes('access_token=')){location.replace(AUTH_REDIRECT+location.hash);return;}
 let sb=null,user=null,syncing=false,ready=false;
 const originalSet=localStorage.setItem.bind(localStorage),originalRemove=localStorage.removeItem.bind(localStorage);
@@ -101,18 +100,13 @@ function patchStorage(){
   if(k==='fipeConsults')sb.from('consult_history').delete().is('user_id',null);
  };
 }
-function resetLocalDataOnce(){
- if(localStorage.getItem(LOCAL_RESET_KEY)==='done') return;
- ['fipeFavorites','fipeNegotiations','fipeSold','fipeConsults'].forEach(k=>originalRemove(k));
- originalSet(LOCAL_RESET_KEY,'done');
-}
 async function init(){
  document.documentElement.classList.add('auth-pending');
- resetLocalDataOnce();
  if(!window.supabase?.createClient){console.error('Supabase JS não carregado');document.documentElement.classList.remove('auth-pending');return;}
  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  patchStorage();
  user=null;
+ await migrateLegacy();
  await loadVehicles();
  await loadHistory();
  ready=true;
