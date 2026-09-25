@@ -109,12 +109,12 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 .color-fin-row .color-field,.color-fin-row .fin-field{min-width:0;width:100%}
 .fin-options{display:flex!important;gap:5px!important}
 .fin-options .vehicle-type-option{width:42px!important;min-width:42px!important;height:36px!important;padding:0!important}
-.fin-details-row{display:grid!important;grid-template-columns:1fr 1fr 1fr 1fr 1.05fr!important;gap:5px!important;margin:6px 0 0!important;width:100%!important;grid-column:1/-1!important}
+.fin-details-row{display:grid!important;grid-template-columns:1.15fr 1.15fr .75fr 1.05fr 1.05fr!important;gap:5px!important;margin:6px 0 0!important;width:100%!important;grid-column:1/-1!important}
 .fin-details-row>div{min-width:0}
 .fin-details-row input{min-width:0!important;width:100%!important}
 .fin-details-row label{font-size:9px!important}
 .fin-total-input{font-weight:900;background:#f8fafc!important}
-.stock-list .item{border-bottom:3px solid #334155!important;padding-bottom:14px!important;margin-bottom:14px!important}.stock-list .item .actions{padding-bottom:0!important;margin-bottom:0!important}
+.stock-list .item{border-bottom:4px solid #111827!important;padding-bottom:15px!important;margin-bottom:15px!important}.stock-list .item .actions{padding-bottom:0!important;margin-bottom:0!important}
 @media(max-width:700px){
  .color-fin-row .fin-field .vehicle-type-option{min-width:34px!important;padding:7px 8px!important}
  .fin-details-row{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important}
@@ -840,10 +840,10 @@ function renderStock(){
         <div class="fin-field"><label>FIN.</label><div class="fin-options"><button type="button" class="vehicle-type-option ${x.financiado==="S"?"active":""}" onclick="setFinanciado(${i},'S')">S</button><button type="button" class="vehicle-type-option ${x.financiado==="N"?"active":""}" onclick="setFinanciado(${i},'N')">N</button></div></div>
        </div>
        ${x.financiado==="S"?`<div class="fin-details fin-details-row">
-         <div><label>PARC.</label><input type="number" min="0" step="1" value="${financingRemaining(x)}" onchange="saveFinParcelasTotal(${i},this.value)"></div>
-         <div><label>VALOR</label><input type="number" min="0" step="0.01" value="${x.finValor??""}" onchange="saveFavoriteField(${i},'finValor',this.value);renderStock()"></div>
          <div><label>INÍCIO</label><input type="date" value="${esc(x.finInicio||x.finVcto||"")}" onchange="saveFavoriteField(${i},'finInicio',this.value);renderStock()"></div>
          <div><label>TÉRMINO</label><input type="date" readonly value="${esc(financingTermino(x)||"")}"></div>
+         <div><label>PARC.</label><input type="number" min="0" step="1" value="${financingRemaining(x)}" onchange="saveFinParcelasTotal(${i},this.value)"></div>
+         <div><label>VALOR</label><input type="number" min="0" step="0.01" value="${x.finValor??""}" onchange="saveFavoriteField(${i},'finValor',this.value);renderStock()"></div>
          <div><label>SALDO DEVEDOR</label><input readonly class="fin-total-input" value="${money(financingTotal(x))}"></div>
        </div>`:""}
        <div class="vehicle-type-field">
