@@ -834,21 +834,47 @@ function renderStock(){
    </div>`;
  }).join(""):'<span class="muted">Nenhum veículo em estoque.</span>';
 }
+function clearVehicleBodyData(x){
+ x.bodyType="";
+ x.pallets="";
+ x.bodyHeight="";
+ x.bodyWidth="";
+ x.bodyLength="";
+}
+function persistVehicleFavorites(f){
+ localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ if(window.nikkeiSyncVehicles) window.nikkeiSyncVehicles("fipeFavorites",f,JSON.stringify(f));
+}
 function setVehicleType(i,type){
  let f=getFavorites(); if(!f[i])return;
  f[i].vehicleType=type;
  f[i].vehicleSubtype="";
- localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ clearVehicleBodyData(f[i]);
+ persistVehicleFavorites(f);
  renderStock();
 }
 function calcCubage(x){const a=Number(x.bodyHeight)||0,w=Number(x.bodyWidth)||0,l=Number(x.bodyLength)||0;return (a*w*l).toFixed(2);}
-function setBodyType(i,type){let f=getFavorites();if(!f[i])return;f[i].bodyType=type;localStorage.setItem("fipeFavorites",JSON.stringify(f));if(window.nikkeiSyncVehicles)window.nikkeiSyncVehicles("fipeFavorites",f,JSON.stringify(f));renderStock();}
-function saveVehicleSpec(i,field,value){let f=getFavorites();if(!f[i])return;f[i][field]=value;localStorage.setItem("fipeFavorites",JSON.stringify(f));if(window.nikkeiSyncVehicles)window.nikkeiSyncVehicles("fipeFavorites",f,JSON.stringify(f));renderStock();}
+function setBodyType(i,type){
+ let f=getFavorites();if(!f[i])return;
+ f[i].bodyType=type;
+ f[i].pallets="";
+ f[i].bodyHeight="";
+ f[i].bodyWidth="";
+ f[i].bodyLength="";
+ persistVehicleFavorites(f);
+ renderStock();
+}
+function saveVehicleSpec(i,field,value){
+ let f=getFavorites();if(!f[i])return;
+ f[i][field]=value;
+ persistVehicleFavorites(f);
+ renderStock();
+}
 function setVehicleSubtype(i,type){
  let f=getFavorites(); if(!f[i])return;
  f[i].vehicleSubtype=type;
- localStorage.setItem("fipeFavorites",JSON.stringify(f));
- if(window.nikkeiSyncVehicles) window.nikkeiSyncVehicles("fipeFavorites",f,JSON.stringify(f));
+ clearVehicleBodyData(f[i]);
+ persistVehicleFavorites(f);
  renderStock();
 }
 
