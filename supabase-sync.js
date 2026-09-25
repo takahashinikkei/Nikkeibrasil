@@ -3,6 +3,7 @@
 const SUPABASE_URL='https://qincxigrvlvudsqcukxt.supabase.co';
 const SUPABASE_KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
 const AUTH_REDIRECT='https://takahashinikkei.github.io/Nikkeibrasil/';
+const LOCAL_RESET_KEY='nikkei_local_reset_v1';
 if((location.hostname==='localhost'||location.hostname==='127.0.0.1')&&location.hash.includes('access_token=')){location.replace(AUTH_REDIRECT+location.hash);return;}
 let sb=null,user=null,syncing=false,ready=false;
 const originalSet=localStorage.setItem.bind(localStorage),originalRemove=localStorage.removeItem.bind(localStorage);
@@ -11,7 +12,7 @@ const keyStatus=k=>k==='fipeFavorites'?'stock':k==='fipeNegotiations'?'progress'
 function vehiclePayload(x,status){
  return {id:x.id||crypto.randomUUID(),status,type:x.type||'cars',title:x.title||'Veículo',brand:x.brand||null,model:x.model||null,
  year:x.year!=null?String(x.year):null,fuel:x.fuel||null,code:x.code||null,price:x.price||null,price_value:x.priceValue!=null?Number(x.priceValue)||null:null,
- reference_code:x.referenceCode||x.refCode||null,plate:x.plate||null,km:x.km!==''&&x.km!=null?Number(x.km)||0:null,color:x.color||null,pc:x.pc||null,
+ reference_code:x.referenceCode||x.refCode||null,plate:x.plate||null,km:x.km!==''&&x.km!=null?Number(x.km)||0:null,color:x.color||null,vehicle_type:x.vehicleType||null,pc:x.pc||null,
  purchase_date:x.purchaseDate||null,purchase_value:x.purchaseValue!==''&&x.purchaseValue!=null?Number(x.purchaseValue)||0:null,
  entry_value:x.entryValue!==''&&x.entryValue!=null?Number(x.entryValue)||0:null,sale_date:x.saleDate||null,
  sale_value:x.saleValue!==''&&x.saleValue!=null?Number(x.saleValue)||0:null,extra_cost:Number(x.extraCost)||0,
@@ -21,7 +22,7 @@ function vehiclePayload(x,status){
 }
 function vehicleFromRow(r){
  return {...r,id:r.id,type:r.type,title:r.title,brand:r.brand||'',model:r.model||'',year:r.year||'',fuel:r.fuel||'',code:r.code||'',price:r.price||'',
- priceValue:r.price_value,referenceCode:r.reference_code||'',plate:r.plate||'',km:r.km,color:r.color||'',pc:r.pc||'',purchaseDate:r.purchase_date||'',
+ priceValue:r.price_value,referenceCode:r.reference_code||'',plate:r.plate||'',km:r.km,color:r.color||'',vehicleType:r.vehicle_type||'',pc:r.pc||'',purchaseDate:r.purchase_date||'',
  purchaseValue:r.purchase_value,entryValue:r.entry_value,saleDate:r.sale_date||'',saleValue:r.sale_value,extraCost:r.extra_cost||0,
  documentationCost:r.documentation_cost||0,maintenanceCost:r.maintenance_cost||0,detailsOpen:!!r.details_open,retoque:r.retoque,
  retoqueObservacao:r.retoque_observacao||'',observacoes:r.observacoes||''};
@@ -97,8 +98,14 @@ function patchStorage(){
   if(k==='fipeConsults')sb.from('consult_history').delete().is('user_id',null);
  };
 }
+function resetLocalDataOnce(){
+ if(localStorage.getItem(LOCAL_RESET_KEY)==='done') return;
+ ['fipeFavorites','fipeNegotiations','fipeSold','fipeConsults'].forEach(k=>originalRemove(k));
+ originalSet(LOCAL_RESET_KEY,'done');
+}
 async function init(){
  document.documentElement.classList.add('auth-pending');
+ resetLocalDataOnce();
  if(!window.supabase?.createClient){console.error('Supabase JS não carregado');document.documentElement.classList.remove('auth-pending');return;}
  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  patchStorage();
