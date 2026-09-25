@@ -1159,7 +1159,7 @@ $("year").onchange=yearChanged;
 $("consult").onclick=consult;
 $("clearSearch").onclick=()=>resetSearch(true);
 $("favoriteBtn").onclick=()=>toggleFavorite();
-$("clearHistory").onclick=()=>{localStorage.removeItem("fipeConsults");renderConsults()};
+$("clearHistory").onclick=async()=>{localStorage.removeItem("fipeConsults");if(window.nikkeiClearHistory)await window.nikkeiClearHistory();renderConsults()};
 $("clearFavorites").onclick=()=>{localStorage.removeItem("fipeFavorites");renderFavorites();updateFavoriteButton()};
 $("favoritesCard").style.display="none";renderConsults();renderFavorites();
 (async()=>{await loadReferences(); await loadBrands()})();
