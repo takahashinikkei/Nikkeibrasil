@@ -121,7 +121,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  .fin-details-row input{font-size:11px!important;padding:7px 4px!important}
  .fin-details-row label{font-size:8px!important}
 }
-</style></head>
+.driver-page{display:none}.driver-list{margin-top:14px}.driver-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.driver-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.driver-name{font-weight:900;font-size:17px}.driver-meta{color:#6b7280;font-size:13px;margin-top:4px}.driver-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:6px}.driver-type-menu button{height:30px;padding:0 3px;font-size:11px;font-weight:800;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#475569}.driver-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.driver-form .row{margin-top:0}.driver-cnh{display:flex;gap:6px;align-items:center;margin-top:8px}.driver-cnh button{width:auto;height:36px;font-size:12px;padding:0 10px}.driver-actions{display:flex;gap:8px;margin-top:12px}.driver-actions button{height:40px;font-size:13px}@media(max-width:520px){.driver-type-menu{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.driver-type-menu button{font-size:10px;height:30px}.driver-actions button{font-size:12px}}</style></head>
 <body><div id="moduleGate">
   <div class="module-gate-box">
     <h1>Nikkei Brasil</h1>
@@ -143,6 +143,33 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   <h1>Controle Geral</h1>
   
 </header>
+<div class="card driver-page" id="driverPage">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+  <h2 style="margin:0">👨‍✈️ Motoristas</h2>
+  <button class="secondary small-btn" onclick="closeDriversPage()">← Voltar</button>
+ </div>
+ <div class="driver-form">
+  <label>Nome</label><input id="driverName" type="text" placeholder="Nome completo">
+  <div class="row">
+   <div><label>Endereço</label><input id="driverAddress" type="text" placeholder="Endereço"></div>
+   <div><label>Celular</label><input id="driverPhone" type="tel" placeholder="Celular"></div>
+  </div>
+  <label>Tipo de veículo</label>
+  <div class="driver-type-menu" id="driverTypeMenu">
+   <button type="button" data-dt="CM" onclick="driverType('CM')">Caminhão</button>
+  </div>
+  <div class="driver-type-menu" id="driverSubtypeMenu" style="display:none"></div>
+  <div class="driver-type-menu" id="driverBodyMenu" style="display:none"></div>
+  <div class="driver-cnh">
+   <input id="driverCnhFile" type="file" accept=".pdf,image/*" style="display:none">
+   <button type="button" class="secondary" onclick="document.getElementById('driverCnhFile').click()">📎 Incluir CNH</button>
+   <span id="driverCnhStatus" class="muted">Nenhuma CNH</span>
+  </div>
+  <button class="primary" type="button" onclick="saveDriver()">Salvar motorista</button>
+ </div>
+ <div id="driverList" class="driver-list"><span class="muted">Carregando motoristas...</span></div>
+</div>
+
 <main>
 
 <div class="card">
@@ -1333,6 +1360,76 @@ if('serviceWorker' in navigator){
 }
 </script>
 <script>
+let currentDriver={id:null,name:'',address:'',phone:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
+function driverType(t){
+ if(currentDriver.vehicleType===t){currentDriver.vehicleType='';currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
+ else {currentDriver.vehicleType=t;currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
+ renderDriverTypeMenu();
+}
+function driverSubtype(t){
+ if(currentDriver.vehicleSubtype===t){currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
+ else {currentDriver.vehicleSubtype=t;currentDriver.bodyType='';}
+ renderDriverTypeMenu();
+}
+function driverBody(t){
+ currentDriver.bodyType=currentDriver.bodyType===t?'':t;
+ renderDriverTypeMenu();
+}
+function renderDriverTypeMenu(){
+ const sub=document.getElementById('driverSubtypeMenu'),body=document.getElementById('driverBodyMenu');
+ const labels={VAN:'Van','3/4':'3/4',TOCO:'Toco',TRUCK:'Truck',BITRUCK:'Bitruck'};
+ sub.style.display=currentDriver.vehicleType==='CM'?'grid':'none';
+ sub.innerHTML=currentDriver.vehicleType==='CM' && !currentDriver.vehicleSubtype
+  ? Object.entries(labels).map(([k,v])=>'<button type="button" onclick="driverSubtype(&quot;'+k+'&quot;)">'+v+'</button>').join('')
+  : currentDriver.vehicleType==='CM' ? '<button type="button" class="active">'+labels[currentDriver.vehicleSubtype]+'</button>' : '';
+ body.style.display=currentDriver.vehicleType==='CM'&&currentDriver.vehicleSubtype?'grid':'none';
+ body.innerHTML=currentDriver.vehicleType==='CM'&&currentDriver.vehicleSubtype
+  ? (currentDriver.bodyType==='BAU'
+    ? '<button type="button" class="active">Baú</button>'
+    : currentDriver.bodyType==='SIDER'
+      ? '<button type="button" class="active">Sider</button>'
+      : '<button type="button" onclick="driverBody(&quot;BAU&quot;)">Baú</button><button type="button" onclick="driverBody(&quot;SIDER&quot;)">Sider</button>')
+  : '';
+ document.querySelectorAll('#driverTypeMenu button').forEach(b=>b.classList.toggle('active',currentDriver.vehicleType==='CM'));
+}
+function resetDriverForm(){
+ currentDriver={id:null,name:'',address:'',phone:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
+ document.getElementById('driverName').value='';document.getElementById('driverAddress').value='';document.getElementById('driverPhone').value='';
+ document.getElementById('driverCnhFile').value='';document.getElementById('driverCnhStatus').textContent='Nenhuma CNH';renderDriverTypeMenu();
+}
+function editDriver(id){window.nikkeiEditDriver&&window.nikkeiEditDriver(id)}
+async function saveDriver(){
+ currentDriver.name=document.getElementById('driverName').value.trim();
+ currentDriver.address=document.getElementById('driverAddress').value.trim();
+ currentDriver.phone=document.getElementById('driverPhone').value.trim();
+ if(!currentDriver.name){alert('Informe o nome do motorista.');return}
+ const file=document.getElementById('driverCnhFile').files[0];
+ try{
+  const saved=await window.nikkeiSaveDriver({...currentDriver});
+  if(file)await window.nikkeiUploadDriverCnh(saved.id,file);
+  alert('Motorista salvo.');
+  resetDriverForm();
+  await window.nikkeiLoadDrivers();
+ }catch(e){alert('Não foi possível salvar: '+(e.message||e))}
+}
+function renderDrivers(list){
+ document.getElementById('driverList').innerHTML=list.length?list.map(x=>'<div class="driver-item"><div class="driver-head"><span class="driver-name">'+esc(x.name)+'</span><span class="badge">'+esc(driverVehicleLabel(x))+'</span></div><div class="driver-meta">'+esc(x.address||'Sem endereço')+' • '+esc(x.phone||'Sem celular')+'</div><div class="driver-cnh">'+(x.cnhPath?'<button class="secondary" onclick="nikkeiDownloadDriverCnh(&quot;'+x.id+'&quot;)">⬇️ Baixar CNH</button>':'<span class="muted">CNH não cadastrada</span>')+'<button class="secondary" onclick="editDriver(&quot;'+x.id+'&quot;)">Editar</button><button class="secondary" onclick="nikkeiDeleteDriver(&quot;'+x.id+'&quot;)">Excluir</button></div></div>').join(''):'<span class="muted">Nenhum motorista cadastrado.</span>';
+}
+function driverVehicleLabel(x){return [x.vehicleType==='CM'?'Caminhão':'',x.vehicleSubtype||'',x.bodyType==='BAU'?'Baú':x.bodyType==='SIDER'?'Sider':''].filter(Boolean).join(' • ')||'Sem veículo'}
+function openDriversPage(){
+ document.getElementById('moduleGate').style.display='none';
+ document.querySelector('header.app-header').style.display='none';
+ document.querySelector('main').style.display='none';
+ document.getElementById('driverPage').style.display='block';
+ resetDriverForm();
+ window.nikkeiLoadDrivers&&window.nikkeiLoadDrivers();
+}
+function closeDriversPage(){
+ document.getElementById('driverPage').style.display='none';
+ document.querySelector('header.app-header').style.display='';
+ document.querySelector('main').style.display='';
+ document.getElementById('moduleGate').style.display='flex';
+}
 document.addEventListener('DOMContentLoaded',()=>{
   const gate=document.getElementById('moduleGate');
   const sectorButtons=document.getElementById('sectorButtons');
@@ -1343,7 +1440,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     btn.addEventListener('click',()=>{
       const module=btn.dataset.module;
       if(module==='Master'){
-        // Master é o acesso administrativo exclusivo e libera todo o Controle Geral.
         document.body.dataset.module='Master';
         document.body.dataset.access='full';
         sectorButtons.style.display='none';
@@ -1351,6 +1447,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         gateText.textContent='Master';
         return;
       }
+      if(module==='Motoristas'){openDriversPage();return;}
       alert('Este setor será configurado posteriormente.');
     });
   });
