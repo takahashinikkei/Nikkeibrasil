@@ -814,11 +814,12 @@ function renderStock(){
        <div class="vehicle-type-field">
         <label>TIPO DE VEÍCULO</label>
         <div class="vehicle-type-options">
-         <button type="button" class="vehicle-type-option ${x.vehicleType==="CM"?"active":""}" onclick="setVehicleType(${i},'CM')">CM</button><button type="button" class="vehicle-type-option ${x.vehicleType==="CV"?"active":""}" onclick="setVehicleType(${i},'CV')">CV</button><button type="button" class="vehicle-type-option ${x.vehicleType==="CR"?"active":""}" onclick="setVehicleType(${i},'CR')">CR</button><button type="button" class="vehicle-type-option ${x.vehicleType==="CARRO"?"active":""}" onclick="setVehicleType(${i},'CARRO')">CARRO</button>
+         <button type="button" class="vehicle-type-option ${x.vehicleType==="CM"?"active":""}" onclick="setVehicleType(${i},'CM')">Caminhão</button><button type="button" class="vehicle-type-option ${x.vehicleType==="CV"?"active":""}" onclick="setVehicleType(${i},'CV')">Cavalo</button><button type="button" class="vehicle-type-option ${x.vehicleType==="CR"?"active":""}" onclick="setVehicleType(${i},'CR')">Carreta</button><button type="button" class="vehicle-type-option ${x.vehicleType==="CARRO"?"active":""}" onclick="setVehicleType(${i},'CARRO')">Carro</button>
         </div>
        </div>      </div>
     </div>
     <div class="actions">
+     <button class="secondary small-btn" onclick="moveToSold(${i})">Vendido</button>
      <button class="secondary small-btn" onclick="removeStock(${i})">Remover</button>
      <button class="negotiation-expand-inline" style="display:inline-flex!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;flex:0 0 34px!important;flex-grow:0!important;flex-shrink:0!important;flex-basis:34px!important;margin:0 0 0 auto!important;padding:0!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important" title="${itemOpen?"Recolher":"Abrir dados"}" onclick="toggleStockItemDetails(${i})">${itemOpen?"−":"＋"}</button>
     </div>
