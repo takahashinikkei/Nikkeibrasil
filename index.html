@@ -800,7 +800,7 @@ function renderStock(){
       <span class="status-badge status-stock">✓ Em estoque</span>
      </div>
      <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • FIPE: ${esc(x.price||"")}${sale>0?' • Saldo devedor: '+money(sale):''}${km?' • KM: '+esc(km):''}
-      <span class="pc-select"><button class="${x.pc==="P"?"active":""}" onclick="setFavoritePC(${i},'P')">P</button><button class="${x.pc==="C"?"active":""}" onclick="setFavoritePC(${i},'C')">C</button><button class="${x.pc==="A"?"active":""}" onclick="setFavoritePC(${i},'A')">A</button></span>
+
      </div>
      <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}Custo: ${money(costItem)}${x.color?" • Cor: "+esc(x.color):""} • Lucro: <span class="${p>=0?"stock-positive":"stock-negative"}">${money(p)}</span></div>
     </div>
@@ -819,7 +819,6 @@ function renderStock(){
       </div>
     </div>
     <div class="actions">
-     <button class="secondary small-btn" onclick="moveToSold(${i})">Vendido</button>
      <button class="secondary small-btn" onclick="removeStock(${i})">Remover</button>
      <button class="negotiation-expand-inline" style="display:inline-flex!important;width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;flex:0 0 34px!important;flex-grow:0!important;flex-shrink:0!important;flex-basis:34px!important;margin:0 0 0 auto!important;padding:0!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important" title="${itemOpen?"Recolher":"Abrir dados"}" onclick="toggleStockItemDetails(${i})">${itemOpen?"−":"＋"}</button>
     </div>
