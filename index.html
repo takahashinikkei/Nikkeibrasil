@@ -901,8 +901,16 @@ function persistVehicleFavorites(f){
 }
 function setVehicleType(i,type){
  let f=getFavorites(); if(!f[i])return;
- // Ao trocar de um tipo já selecionado para outro, primeiro volta ao menu inicial.
- // Isso permite corrigir um clique sem ficar preso nas opções do tipo anterior.
+ // Clicar novamente no tipo já selecionado volta ao menu inicial.
+ if(f[i].vehicleType===type){
+   f[i].vehicleType="";
+   f[i].vehicleSubtype="";
+   clearVehicleBodyData(f[i]);
+   persistVehicleFavorites(f);
+   renderStock();
+   return;
+ }
+ // Clicar em outro tipo também volta ao menu inicial para permitir nova escolha.
  if(f[i].vehicleType && f[i].vehicleType!==type){
    f[i].vehicleType="";
    f[i].vehicleSubtype="";
