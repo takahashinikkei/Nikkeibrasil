@@ -651,6 +651,7 @@ function saveFavoriteField(i,field,value){
  f[i][field]=value;
  f[i].detailsOpen=true;
  localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ if(window.nikkeiSyncVehicles) window.nikkeiSyncVehicles("fipeFavorites",f,JSON.stringify(f));
  renderFavorites();
  if(typeof renderStock==="function" && $("stockPage") && $("stockPage").style.display!=="none") renderStock();
  updateFavoriteButton();
