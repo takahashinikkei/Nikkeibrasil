@@ -804,7 +804,7 @@ function renderStock(){
       <b>${esc(x.title)}</b>
       <span class="status-badge status-stock">✓ Em estoque</span>
      </div>
-     <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • FIPE: ${esc(x.price||"")}${sale>0?' • Saldo devedor: '+money(sale):''}${km?' • KM: '+esc(km):'}</div>
+     <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • FIPE: ${esc(x.price||"")}${sale>0?' • Saldo devedor: '+money(sale):''}${km?' • KM: '+esc(km):''}</div>
      ${(x.bodyType==="BAU"||x.bodyType==="SIDER")?`<div class="vehicle-header-spec"><b>${x.bodyType==="BAU"?"Baú":"Sider"}</b> • ${Number(x.pallets)||0} paletes • ${calcCubage(x)} m³</div>`:""}
      <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}${x.color?"Cor: "+esc(x.color):""}</div>
     </div>
