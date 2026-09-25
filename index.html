@@ -802,21 +802,14 @@ function renderStock(){
      <div class="muted">${esc(String(x.year))} • ${esc(x.fuel||"")} • FIPE: ${esc(x.price||"")}${sale>0?' • Saldo devedor: '+money(sale):''}${km?' • KM: '+esc(km):''}
 
      </div>
-     <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}Custo: ${money(costItem)}${x.color?" • Cor: "+esc(x.color):""} • Lucro: <span class="${p>=0?"stock-positive":"stock-negative"}">${money(p)}</span></div>
+     <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}${x.color?"Cor: "+esc(x.color):""}</div>
     </div>
     <div class="stock-details-extra" style="display:${(stockDetailsExpanded||itemOpen)?"block":"none"};margin-top:8px">
       <div class="stock-fields">
        <div><label>PLACA</label><input value="${esc(x.plate||"")}" maxlength="7" placeholder="ABC1D23" onchange="saveFavoriteField(${i},'plate',this.value)"></div>
        <div><label>KM</label><input type="number" min="0" value="${x.km??""}" onchange="saveFavoriteField(${i},'km',this.value)"></div>
        <div><label>DATA DE COMPRA</label><input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveFavoriteField(${i},'purchaseDate',this.value)"></div>
-       <div><label>VALOR PAGO</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveFavoriteField(${i},'purchaseValue',this.value)"></div>
-       <div><label>DATA DE VENDA</label><input type="date" value="${esc(x.saleDate||"")}" onchange="saveFavoriteField(${i},'saleDate',this.value)"></div>
-       <div><label>VALOR DE VENDA</label><input type="number" min="0" step="0.01" value="${x.saleValue??""}" onchange="saveFavoriteField(${i},'saleValue',this.value)"></div>
-       <div><label>DOCUMENTAÇÃO / VISTORIA</label><input type="number" min="0" step="0.01" value="${x.documentationCost??""}" onchange="saveFavoriteField(${i},'documentationCost',this.value)"></div>
-       <div><label>MANUTENÇÕES / PREJUÍZO</label><input type="number" min="0" step="0.01" value="${x.maintenanceCost??""}" onchange="saveFavoriteField(${i},'maintenanceCost',this.value)"></div>
-       <div><label>COR</label><input value="${esc(x.color||"")}" placeholder="Cor" onchange="saveFavoriteField(${i},'color',this.value)"></div>
-       <div><label>CUSTOS EXTRA</label><input type="number" min="0" step="0.01" value="${x.extraCost??""}" onchange="saveFavoriteField(${i},'extraCost',this.value)"></div>
-      </div>
+       <div><label>VALOR PAGO</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveFavoriteField(${i},'purchaseValue',this.value)"></div>       <div><label>COR</label><input value="${esc(x.color||"")}" placeholder="Cor" onchange="saveFavoriteField(${i},'color',this.value)"></div>      </div>
     </div>
     <div class="actions">
      <button class="secondary small-btn" onclick="removeStock(${i})">Remover</button>
@@ -899,12 +892,7 @@ function renderNegotiations(){
     <div><label>DATA DE COMPRA</label><input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveNegotiationField(${i},'purchaseDate',this.value)"></div>
     <div><label>VALOR DA COMPRA</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveNegotiationField(${i},'purchaseValue',this.value)"></div>
     <div><label>VALOR DE ENTRADA</label><input type="number" min="0" step="0.01" value="${x.entryValue??""}" onchange="saveNegotiationField(${i},'entryValue',this.value)"></div>
-    <div><label>SALDO DEVEDOR</label><input type="number" min="0" step="0.01" value="${Math.max(0,(Number(x.purchaseValue)||0)-(Number(x.entryValue)||0))}" readonly></div>
-    <div><label>DOCUMENTAÇÃO / VISTORIA</label><input type="number" min="0" step="0.01" value="${x.documentationCost??""}" onchange="saveNegotiationField(${i},'documentationCost',this.value)"></div>
-    <div><label>MANUTENÇÕES / PREJUÍZO</label><input type="number" min="0" step="0.01" value="${x.maintenanceCost??""}" onchange="saveNegotiationField(${i},'maintenanceCost',this.value)"></div>
-    <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveNegotiationField(${i},'color',this.value)"></div>
-    <div><label>CUSTOS EXTRA</label><input type="number" min="0" step="0.01" value="${x.extraCost??""}" onchange="saveNegotiationField(${i},'extraCost',this.value)"></div>
-   </div>
+    <div><label>SALDO DEVEDOR</label><input type="number" min="0" step="0.01" value="${Math.max(0,(Number(x.purchaseValue)||0)-(Number(x.entryValue)||0))}" readonly></div>    <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveNegotiationField(${i},'color',this.value)"></div>   </div>
    <div class="summary favorite-financial">
     <div class="info"><b>LUCRO</b><span class="${profit>=0?"stock-positive":"stock-negative"}">${money(profit)}</span></div>
     <div class="info"><b>MARGEM</b><span>${cost>0?(profit/cost*100).toFixed(2)+"%":"—"}</span></div>
@@ -1006,14 +994,7 @@ function renderSold(){
      <div><label>PLACA</label><input value="${esc(x.plate||"")}" maxlength="7" onchange="saveSoldField(${i},'plate',this.value)"></div>
      <div><label>KM</label><input type="number" min="0" value="${x.km??""}" onchange="saveSoldField(${i},'km',this.value)"></div>
      <div><label>DATA DE COMPRA</label><input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveSoldField(${i},'purchaseDate',this.value)"></div>
-     <div><label>VALOR PAGO</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveSoldField(${i},'purchaseValue',this.value)"></div>
-     <div><label>DATA DE VENDA</label><input type="date" value="${esc(x.saleDate||"")}" onchange="saveSoldField(${i},'saleDate',this.value)"></div>
-     <div><label>VALOR DE VENDA</label><input type="number" min="0" step="0.01" value="${x.saleValue??""}" onchange="saveSoldField(${i},'saleValue',this.value)"></div>
-     <div><label>DOCUMENTAÇÃO / VISTORIA</label><input type="number" min="0" step="0.01" value="${x.documentationCost??""}" onchange="saveSoldField(${i},'documentationCost',this.value)"></div>
-     <div><label>MANUTENÇÕES / PREJUÍZO</label><input type="number" min="0" step="0.01" value="${x.maintenanceCost??""}" onchange="saveSoldField(${i},'maintenanceCost',this.value)"></div>
-     <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveSoldField(${i},'color',this.value)"></div>
-     <div><label>CUSTOS EXTRA</label><input type="number" min="0" step="0.01" value="${x.extraCost??""}" onchange="saveSoldField(${i},'extraCost',this.value)"></div>
-    </div>
+     <div><label>VALOR PAGO</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveSoldField(${i},'purchaseValue',this.value)"></div>     <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveSoldField(${i},'color',this.value)"></div>    </div>
     <div class="summary favorite-financial">
      <div class="info"><b>LUCRO</b><span class="${r.cls}">${r.text}</span></div>
      
