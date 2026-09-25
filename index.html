@@ -150,9 +150,10 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  </div>
  <div class="driver-form">
   <label>Nome</label><input id="driverName" type="text" placeholder="Nome completo">
+  <label>Endereço</label><input id="driverAddress" type="text" placeholder="Endereço">
   <div class="row">
-   <div><label>Endereço</label><input id="driverAddress" type="text" placeholder="Endereço"></div>
-   <div><label>Celular</label><input id="driverPhone" type="tel" placeholder="Celular"></div>
+   <div><label>Celular WhatsApp</label><input id="driverPhone" type="tel" placeholder="Celular WhatsApp"></div>
+   <div><label>Tel. recado</label><input id="driverPhoneAlt" type="tel" placeholder="Telefone para recado"></div>
   </div>
   <label>Tipo de veículo</label>
   <div class="driver-type-menu" id="driverTypeMenu">
@@ -160,6 +161,9 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   </div>
   <div class="driver-type-menu" id="driverSubtypeMenu" style="display:none"></div>
   <div class="driver-type-menu" id="driverBodyMenu" style="display:none"></div>
+  <div id="driverPlateWrap" style="display:none;margin-top:8px">
+   <label>Placa</label><input id="driverPlate" type="text" placeholder="Placa do veículo" maxlength="8">
+  </div>
   <div class="driver-cnh">
    <input id="driverCnhFile" type="file" accept=".pdf,image/*" style="display:none">
    <button type="button" class="secondary" onclick="document.getElementById('driverCnhFile').click()">📎 Incluir CNH</button>
@@ -1360,7 +1364,7 @@ if('serviceWorker' in navigator){
 }
 </script>
 <script>
-let currentDriver={id:null,name:'',address:'',phone:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
+let currentDriver={id:null,name:'',address:'',phone:'',phoneAlt:'',plate:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
 function driverType(t){
  if(currentDriver.vehicleType===t){currentDriver.vehicleType='';currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
  else {currentDriver.vehicleType=t;currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
@@ -1377,6 +1381,8 @@ function driverBody(t){
 }
 function renderDriverTypeMenu(){
  const sub=document.getElementById('driverSubtypeMenu'),body=document.getElementById('driverBodyMenu');
+ const plateWrap=document.getElementById('driverPlateWrap');
+ const plate=document.getElementById('driverPlate');
  const labels={VAN:'Van','3/4':'3/4',TOCO:'Toco',TRUCK:'Truck',BITRUCK:'Bitruck'};
  sub.style.display=currentDriver.vehicleType==='CM'?'grid':'none';
  sub.innerHTML=currentDriver.vehicleType==='CM' && !currentDriver.vehicleSubtype
@@ -1391,10 +1397,14 @@ function renderDriverTypeMenu(){
       : '<button type="button" onclick="driverBody(&quot;BAU&quot;)">Baú</button><button type="button" onclick="driverBody(&quot;SIDER&quot;)">Sider</button>')
   : '';
  document.querySelectorAll('#driverTypeMenu button').forEach(b=>b.classList.toggle('active',currentDriver.vehicleType==='CM'));
+ const needsPlate=currentDriver.vehicleType==='CM' && ['VAN','3/4','TOCO','TRUCK'].includes(currentDriver.vehicleSubtype);
+ plateWrap.style.display=needsPlate?'block':'none';
+ if(!needsPlate) plate.value='';
+ else plate.value=currentDriver.plate||'';
 }
 function resetDriverForm(){
- currentDriver={id:null,name:'',address:'',phone:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
- document.getElementById('driverName').value='';document.getElementById('driverAddress').value='';document.getElementById('driverPhone').value='';
+ currentDriver={id:null,name:'',address:'',phone:'',phoneAlt:'',plate:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
+ document.getElementById('driverName').value='';document.getElementById('driverAddress').value='';document.getElementById('driverPhone').value='';document.getElementById('driverPhoneAlt').value='';document.getElementById('driverPlate').value='';
  document.getElementById('driverCnhFile').value='';document.getElementById('driverCnhStatus').textContent='Nenhuma CNH';renderDriverTypeMenu();
 }
 function editDriver(id){window.nikkeiEditDriver&&window.nikkeiEditDriver(id)}
@@ -1402,6 +1412,8 @@ async function saveDriver(){
  currentDriver.name=document.getElementById('driverName').value.trim();
  currentDriver.address=document.getElementById('driverAddress').value.trim();
  currentDriver.phone=document.getElementById('driverPhone').value.trim();
+ currentDriver.phoneAlt=document.getElementById('driverPhoneAlt').value.trim();
+ currentDriver.plate=document.getElementById('driverPlate').value.trim().toUpperCase();
  if(!currentDriver.name){alert('Informe o nome do motorista.');return}
  const file=document.getElementById('driverCnhFile').files[0];
  try{
@@ -1413,7 +1425,7 @@ async function saveDriver(){
  }catch(e){alert('Não foi possível salvar: '+(e.message||e))}
 }
 function renderDrivers(list){
- document.getElementById('driverList').innerHTML=list.length?list.map(x=>'<div class="driver-item"><div class="driver-head"><span class="driver-name">'+esc(x.name)+'</span><span class="badge">'+esc(driverVehicleLabel(x))+'</span></div><div class="driver-meta">'+esc(x.address||'Sem endereço')+' • '+esc(x.phone||'Sem celular')+'</div><div class="driver-cnh">'+(x.cnhPath?'<button class="secondary" onclick="nikkeiDownloadDriverCnh(&quot;'+x.id+'&quot;)">⬇️ Baixar CNH</button>':'<span class="muted">CNH não cadastrada</span>')+'<button class="secondary" onclick="editDriver(&quot;'+x.id+'&quot;)">Editar</button><button class="secondary" onclick="nikkeiDeleteDriver(&quot;'+x.id+'&quot;)">Excluir</button></div></div>').join(''):'<span class="muted">Nenhum motorista cadastrado.</span>';
+ document.getElementById('driverList').innerHTML=list.length?list.map(x=>'<div class="driver-item"><div class="driver-head"><span class="driver-name">'+esc(x.name)+'</span><span class="badge">'+esc(driverVehicleLabel(x))+'</span></div><div class="driver-meta">'+esc(x.address||'Sem endereço')+' • WhatsApp: '+esc(x.phone||'Sem celular')+(x.phoneAlt?' • Recado: '+esc(x.phoneAlt):'')+(x.plate?' • Placa: '+esc(x.plate):'')+'</div><div class="driver-cnh">'+(x.cnhPath?'<button class="secondary" onclick="nikkeiDownloadDriverCnh(&quot;'+x.id+'&quot;)">⬇️ Baixar CNH</button>':'<span class="muted">CNH não cadastrada</span>')+'<button class="secondary" onclick="editDriver(&quot;'+x.id+'&quot;)">Editar</button><button class="secondary" onclick="nikkeiDeleteDriver(&quot;'+x.id+'&quot;)">Excluir</button></div></div>').join(''):'<span class="muted">Nenhum motorista cadastrado.</span>';
 }
 function driverVehicleLabel(x){return [x.vehicleType==='CM'?'Caminhão':'',x.vehicleSubtype||'',x.bodyType==='BAU'?'Baú':x.bodyType==='SIDER'?'Sider':''].filter(Boolean).join(' • ')||'Sem veículo'}
 function openDriversPage(){
