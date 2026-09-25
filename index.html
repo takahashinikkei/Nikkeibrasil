@@ -129,9 +129,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   <button class="tab active" data-type="cars">🚗 Carros</button>
   <button class="tab" data-type="motorcycles">🏍️ Motos</button>
   <button class="tab" data-type="trucks">🚚 Caminhões</button>
-  <button class="stock-nav" id="progressNav">🔄 Em andamento</button>
-  <button class="stock-nav" id="stockNav">📦 Estoque</button>
-  <button class="stock-nav" id="soldNav">🚘 Vendidos</button>
+  <button class="stock-nav" id="stockNav">🚚 Frota completa</button>
  </div>
 
  <label>1. Mês de referência</label>
@@ -157,7 +155,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  <div id="error" class="error"></div>
 </div>
 
-<div class="card stock-page" id="progressPage">
+<div class="card stock-page" id="progressPage" style="display:none!important">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
   <h3 style="margin:0">🔄 Em andamento</h3>
   <button class="secondary small-btn" onclick="closeProgressPage()">← Voltar</button>
@@ -167,7 +165,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 
 <div class="card stock-page" id="stockPage">
  <div class="stock-page-header">
-  <h3 style="margin:0">📦 Estoque de veículos</h3>
+  <h3 style="margin:0">🚚 Frota completa</h3>
   <div class="stock-page-controls">
    <button class="secondary small-btn" onclick="closeStockPage()">← Voltar</button>
   </div>
@@ -212,7 +210,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  <div id="favorites"><span class="muted">Nenhum veículo favorito ainda.</span></div>
 </div>
 
-<div class="card sold-page" id="soldPage">
+<div class="card sold-page" id="soldPage" style="display:none!important">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
   <h3 style="margin:0">🚘 Veículos vendidos</h3>
   <button class="secondary small-btn" onclick="closeSoldPage()">← Voltar</button>
@@ -919,11 +917,12 @@ function renderNegotiations(){
  }).join(""):'<span class="muted">Nenhum veículo em andamento.</span>';
 }
 
-function openProgressPage(){
+function openProgressPage(){ return; /*
  document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="progressPage")el.style.display="none"});
  $("progressPage").style.display="block";$("progressNav").classList.add("active");renderNegotiations();
  $("progressPage").scrollIntoView({behavior:"smooth",block:"start"});
 }
+*/
 function closeProgressPage(){
  $("progressPage").style.display="none";$("progressNav").classList.remove("active");
  document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="progressPage")el.style.display=""});
@@ -953,7 +952,7 @@ function consultNegotiation(i){
 }
 function removeNegotiation(i){let n=getNegotiations();n.splice(i,1);localStorage.setItem("fipeNegotiations",JSON.stringify(n));renderNegotiations()}
 function getSold(){return JSON.parse(localStorage.getItem("fipeSold")||"[]")}
-function openSoldPage(){
+function openSoldPage(){ return; /*
  document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="soldPage")el.style.display="none"});
  $("soldPage").style.display="block";
  renderSold();
