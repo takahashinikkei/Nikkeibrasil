@@ -125,13 +125,13 @@ async function loadDrivers(){
  if(!sb)return [];
  const {data,error}=await sb.from('drivers').select('*').order('created_at',{ascending:false});
  if(error){console.warn('Supabase drivers:',error.message);return [];}
- const list=(data||[]).map(r=>({id:r.id,name:r.name||'',address:r.address||'',phone:r.phone||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',cnhPath:r.cnh_path||'',cnhName:r.cnh_name||'',cnhMime:r.cnh_mime||''}));
+ const list=(data||[]).map(r=>({id:r.id,name:r.name||'',address:r.address||'',phone:r.phone||'',phoneAlt:r.phone_alt||'',plate:r.plate||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',cnhPath:r.cnh_path||'',cnhName:r.cnh_name||'',cnhMime:r.cnh_mime||''}));
  window.__nikkeiDrivers=list;
  if(typeof renderDrivers==='function')renderDrivers(list);
  return list;
 }
 function driverPayload(x){
- return {id:x.id||crypto.randomUUID(),name:x.name||'',address:x.address||null,phone:x.phone||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,cnh_path:x.cnhPath||null,cnh_name:x.cnhName||null,cnh_mime:x.cnhMime||null,updated_at:new Date().toISOString()};
+ return {id:x.id||crypto.randomUUID(),name:x.name||'',address:x.address||null,phone:x.phone||null,phone_alt:x.phoneAlt||null,plate:x.plate||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,cnh_path:x.cnhPath||null,cnh_name:x.cnhName||null,cnh_mime:x.cnhMime||null,updated_at:new Date().toISOString()};
 }
 window.nikkeiLoadDrivers=loadDrivers;
 window.nikkeiSaveDriver=async(x)=>{
