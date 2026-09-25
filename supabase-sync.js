@@ -12,7 +12,7 @@ const keyStatus=k=>k==='fipeFavorites'?'stock':k==='fipeNegotiations'?'progress'
 function vehiclePayload(x,status){
  return {id:x.id||crypto.randomUUID(),status,type:x.type||'cars',title:x.title||'Veículo',brand:x.brand||null,model:x.model||null,
  year:x.year!=null?String(x.year):null,fuel:x.fuel||null,code:x.code||null,price:x.price||null,price_value:x.priceValue!=null?Number(x.priceValue)||null:null,
- reference_code:x.referenceCode||x.refCode||null,plate:x.plate||null,km:x.km!==''&&x.km!=null?Number(x.km)||0:null,color:x.color||null,vehicle_type:x.vehicleType||null,pc:x.pc||null,
+ reference_code:x.referenceCode||x.refCode||null,plate:x.plate||null,km:x.km!==''&&x.km!=null?Number(x.km)||0:null,color:x.color||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,pc:x.pc||null,
  purchase_date:x.purchaseDate||null,purchase_value:x.purchaseValue!==''&&x.purchaseValue!=null?Number(x.purchaseValue)||0:null,
  entry_value:x.entryValue!==''&&x.entryValue!=null?Number(x.entryValue)||0:null,sale_date:x.saleDate||null,
  sale_value:x.saleValue!==''&&x.saleValue!=null?Number(x.saleValue)||0:null,extra_cost:Number(x.extraCost)||0,
@@ -22,7 +22,7 @@ function vehiclePayload(x,status){
 }
 function vehicleFromRow(r){
  return {...r,id:r.id,type:r.type,title:r.title,brand:r.brand||'',model:r.model||'',year:r.year||'',fuel:r.fuel||'',code:r.code||'',price:r.price||'',
- priceValue:r.price_value,referenceCode:r.reference_code||'',plate:r.plate||'',km:r.km,color:r.color||'',vehicleType:r.vehicle_type||'',pc:r.pc||'',purchaseDate:r.purchase_date||'',
+ priceValue:r.price_value,referenceCode:r.reference_code||'',plate:r.plate||'',km:r.km,color:r.color||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',pc:r.pc||'',purchaseDate:r.purchase_date||'',
  purchaseValue:r.purchase_value,entryValue:r.entry_value,saleDate:r.sale_date||'',saleValue:r.sale_value,extraCost:r.extra_cost||0,
  documentationCost:r.documentation_cost||0,maintenanceCost:r.maintenance_cost||0,detailsOpen:!!r.details_open,retoque:r.retoque,
  retoqueObservacao:r.retoque_observacao||'',observacoes:r.observacoes||''};
