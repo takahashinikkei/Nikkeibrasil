@@ -272,7 +272,12 @@ async function api(path, params={}){
  if(referenceCode) q.set("reference",referenceCode);
  Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=="")q.set(k,v)});
  const url=BASE+path+(q.toString()?"?"+q.toString():"");
- const r=await fetch(url,{headers:headers(),cache:"no-store"});
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),8000);
+ let r;
+ try{r=await fetch(url,{headers:headers(),cache:"no-store",signal:controller.signal});}
+ catch(e){clearTimeout(timer); if(e.name==="AbortError") throw Error("A FIPE demorou para responder. O restante do sistema continua disponível."); throw Error("Não foi possível conectar à FIPE agora.");}
+ clearTimeout(timer);
  if(!r.ok){
   if(r.status===429) throw Error("Limite diário da consulta atingido. Tente novamente mais tarde.");
   if(r.status===401||r.status===403) throw Error("A API recusou a consulta.");
@@ -1245,7 +1250,11 @@ $("favoriteBtn").onclick=()=>toggleFavorite();
 $("clearHistory").onclick=async()=>{localStorage.removeItem("fipeConsults");if(window.nikkeiClearHistory)await window.nikkeiClearHistory();renderConsults()};
 $("clearFavorites").onclick=()=>{localStorage.removeItem("fipeFavorites");renderFavorites();updateFavoriteButton()};
 $("favoritesCard").style.display="none";renderConsults();renderFavorites();
-(async()=>{await loadReferences(); await loadBrands()})();
+(async()=>{
+  // A FIPE é apenas um módulo do sistema. Se a API estiver fora do ar,
+  // o restante (estoque, andamento, vendidos e histórico) deve continuar funcionando.
+  await Promise.allSettled([loadReferences(),loadBrands()]);
+})();
 </script>
 
 
