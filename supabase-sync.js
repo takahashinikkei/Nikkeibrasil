@@ -121,6 +121,61 @@ window.nikkeiDownloadVehicleDocument=async(vehicleId)=>{
 window.nikkeiSyncVehicles=(key,next,prev)=>syncVehicles(key,next,prev);
 window.nikkeiSyncConsult=item=>syncConsultHistory(item);
 window.nikkeiClearHistory=async()=>{if(sb){await sb.from('consult_history').delete().is('user_id',null);}};
+async function loadDrivers(){
+ if(!sb)return [];
+ const {data,error}=await sb.from('drivers').select('*').order('created_at',{ascending:false});
+ if(error){console.warn('Supabase drivers:',error.message);return [];}
+ const list=(data||[]).map(r=>({id:r.id,name:r.name||'',address:r.address||'',phone:r.phone||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',cnhPath:r.cnh_path||'',cnhName:r.cnh_name||'',cnhMime:r.cnh_mime||''}));
+ window.__nikkeiDrivers=list;
+ if(typeof renderDrivers==='function')renderDrivers(list);
+ return list;
+}
+function driverPayload(x){
+ return {id:x.id||crypto.randomUUID(),name:x.name||'',address:x.address||null,phone:x.phone||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,cnh_path:x.cnhPath||null,cnh_name:x.cnhName||null,cnh_mime:x.cnhMime||null,updated_at:new Date().toISOString()};
+}
+window.nikkeiLoadDrivers=loadDrivers;
+window.nikkeiSaveDriver=async(x)=>{
+ if(!sb)throw new Error('Banco de dados indisponível.');
+ const row=driverPayload(x);
+ const {data,error}=await sb.from('drivers').upsert(row,{onConflict:'id'}).select().single();
+ if(error)throw error;
+ return {id:data.id,...x,id:data.id};
+};
+window.nikkeiEditDriver=async(id)=>{
+ const x=(window.__nikkeiDrivers||[]).find(v=>v.id===id);if(!x)return;
+ currentDriver={...x};
+ document.getElementById('driverName').value=x.name||'';
+ document.getElementById('driverAddress').value=x.address||'';
+ document.getElementById('driverPhone').value=x.phone||'';
+ document.getElementById('driverCnhStatus').textContent=x.cnhPath?(x.cnhName||'CNH cadastrada'):'Nenhuma CNH';
+ renderDriverTypeMenu();
+};
+window.nikkeiDeleteDriver=async(id)=>{
+ if(!confirm('Excluir este motorista?'))return;
+ const x=(window.__nikkeiDrivers||[]).find(v=>v.id===id);
+ if(x?.cnhPath)await sb.storage.from('driver-documents').remove([x.cnhPath]);
+ const {error}=await sb.from('drivers').delete().eq('id',id);
+ if(error)throw error;
+ await loadDrivers();
+};
+window.nikkeiUploadDriverCnh=async(id,file)=>{
+ if(!sb||!id||!file)throw new Error('CNH inválida.');
+ const old=(window.__nikkeiDrivers||[]).find(v=>v.id===id);
+ if(old?.cnhPath)await sb.storage.from('driver-documents').remove([old.cnhPath]);
+ const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'')||'bin';
+ const path='drivers/'+id+'/cnh-'+Date.now()+'.'+ext;
+ const {data,error}=await sb.storage.from('driver-documents').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});
+ if(error)throw error;
+ const {error:updateError}=await sb.from('drivers').update({cnh_path:data.path,cnh_name:file.name,cnh_mime:file.type||'application/octet-stream',updated_at:new Date().toISOString()}).eq('id',id);
+ if(updateError)throw updateError;
+ await loadDrivers();
+};
+window.nikkeiDownloadDriverCnh=async(id)=>{
+ const x=(window.__nikkeiDrivers||[]).find(v=>v.id===id);if(!x?.cnhPath)throw new Error('Nenhuma CNH cadastrada.');
+ const {data,error}=await sb.storage.from('driver-documents').download(x.cnhPath);
+ if(error)throw error;
+ const url=URL.createObjectURL(data),a=document.createElement('a');a.href=url;a.download=x.cnhName||'CNH';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
 function patchStorage(){
  localStorage.setItem=function(k,v){
   const prev=localStorage.getItem(k);originalSet(k,v);
@@ -151,6 +206,7 @@ async function init(){
  await migrateLegacy();
  await loadVehicles();
  await loadHistory();
+ await loadDrivers();
  ready=true;
  document.documentElement.classList.remove('auth-pending');
  sb.channel('vehicles-live').on('postgres_changes',{event:'*',schema:'public',table:'vehicles'},()=>{clearTimeout(window.__sbRefresh);window.__sbRefresh=setTimeout(loadVehicles,250)}).subscribe();
