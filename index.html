@@ -1191,8 +1191,16 @@ document.addEventListener('DOMContentLoaded',()=>{
   const gate=document.getElementById('moduleGate');
   document.querySelectorAll('#moduleGate button').forEach(btn=>{
     btn.addEventListener('click',()=>{
-      gate.style.display='none';
-      document.body.dataset.module=btn.dataset.module;
+      const module=btn.dataset.module;
+      // MASTER é o acesso administrativo exclusivo e libera todo o Controle Geral existente.
+      // Os demais setores ficam reservados para as telas/permissões que serão implementadas depois.
+      if(module==='Master'){
+        gate.style.display='none';
+        document.body.dataset.module='Master';
+        document.body.dataset.access='full';
+        return;
+      }
+      alert('Este setor será configurado posteriormente.');
     });
   });
 });
