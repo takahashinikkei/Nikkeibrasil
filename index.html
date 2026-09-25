@@ -841,6 +841,7 @@ function setVehicleSubtype(i,type){
  let f=getFavorites(); if(!f[i])return;
  f[i].vehicleSubtype=type;
  localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ if(window.nikkeiSyncVehicles) window.nikkeiSyncVehicles("fipeFavorites",f,JSON.stringify(f));
  renderStock();
 }
 
