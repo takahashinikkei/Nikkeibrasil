@@ -15,7 +15,7 @@ function vehiclePayload(x,status){
  purchase_date:x.purchaseDate||null,purchase_value:x.purchaseValue!==''&&x.purchaseValue!=null?Number(x.purchaseValue)||0:null,
  entry_value:x.entryValue!==''&&x.entryValue!=null?Number(x.entryValue)||0:null,sale_date:x.saleDate||null,
  sale_value:x.saleValue!==''&&x.saleValue!=null?Number(x.saleValue)||0:null,extra_cost:Number(x.extraCost)||0,
- documentation_cost:Number(x.documentationCost)||0,maintenance_cost:Number(x.maintenanceCost)||0,details_open:!!x.detailsOpen,
+ documentation_cost:Number(x.documentationCost)||0,maintenance_cost:Number(x.maintenanceCost)||0,document_path:x.documentPath||null,document_name:x.documentName||null,document_mime:x.documentMime||null,details_open:!!x.detailsOpen,
  retoque:x.retoque==null?null:!!x.retoque,retoque_observacao:x.retoqueObservacao||null,observacoes:x.observacoes||null,
  created_by:x.created_by||null,updated_by:null};
 }
@@ -23,7 +23,7 @@ function vehicleFromRow(r){
  return {...r,id:r.id,type:r.type,title:r.title,brand:r.brand||'',model:r.model||'',year:r.year||'',fuel:r.fuel||'',code:r.code||'',price:r.price||'',
  priceValue:r.price_value,referenceCode:r.reference_code||'',plate:r.plate||'',km:r.km,color:r.color||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',pallets:r.pallets??'',bodyHeight:r.body_height??'',bodyWidth:r.body_width??'',bodyLength:r.body_length??'',financiado:r.financiado||'',finParcelas:r.fin_parcelas??'',finParcelasTotal:r.fin_parcelas_total??r.fin_parcelas??'',finValor:r.fin_valor??'',finVcto:r.fin_vcto||'',pc:r.pc||'',purchaseDate:r.purchase_date||'',
  purchaseValue:r.purchase_value,entryValue:r.entry_value,saleDate:r.sale_date||'',saleValue:r.sale_value,extraCost:r.extra_cost||0,
- documentationCost:r.documentation_cost||0,maintenanceCost:r.maintenance_cost||0,detailsOpen:!!r.details_open,retoque:r.retoque,
+ documentationCost:r.documentation_cost||0,maintenanceCost:r.maintenance_cost||0,documentPath:r.document_path||'',documentName:r.document_name||'',documentMime:r.document_mime||'',detailsOpen:!!r.details_open,retoque:r.retoque,
  retoqueObservacao:r.retoque_observacao||'',observacoes:r.observacoes||''};
 }
 function replaceCache(k,items){syncing=true;try{originalSet(k,JSON.stringify(items));}finally{syncing=false;}}
@@ -76,6 +76,48 @@ async function syncConsultHistory(item){
  reference_code:x.referenceCode||x.refCode||x.ref||null,consulted_at:x.at||new Date().toISOString()});
  if(error)console.warn('Supabase history save:',error.message);
 }
+async function deleteVehicleDocument(path){
+ if(!sb||!path)return;
+ const {error}=await sb.storage.from('vehicle-documents').remove([path]);
+ if(error)console.warn('Supabase document delete:',error.message);
+}
+async function uploadVehicleDocument(vehicleId,file){
+ if(!sb||!vehicleId||!file)throw new Error('Documento inválido.');
+ const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'')||'bin';
+ const path=`vehicles/${vehicleId}/document-${Date.now()}.${ext}`;
+ const {data,error}=await sb.storage.from('vehicle-documents').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});
+ if(error)throw error;
+ return {path:data.path,name:file.name,mime:file.type||'application/octet-stream'};
+}
+window.nikkeiUploadVehicleDocument=async(vehicleId,file)=>{
+ const f=JSON.parse(localStorage.getItem('fipeFavorites')||'[]');
+ const i=f.findIndex(x=>x.id===vehicleId);
+ if(i<0)throw new Error('Veículo não encontrado.');
+ if(f[i].documentPath)await deleteVehicleDocument(f[i].documentPath);
+ const d=await uploadVehicleDocument(vehicleId,file);
+ f[i].documentPath=d.path;f[i].documentName=d.name;f[i].documentMime=d.mime;
+ originalSet('fipeFavorites',JSON.stringify(f));
+ await syncVehicles('fipeFavorites',f,JSON.stringify(f));
+ if(typeof renderStock==='function')renderStock();
+};
+window.nikkeiDeleteVehicleDocument=async(vehicleId)=>{
+ const f=JSON.parse(localStorage.getItem('fipeFavorites')||'[]');
+ const i=f.findIndex(x=>x.id===vehicleId);
+ if(i<0)return;
+ if(f[i].documentPath)await deleteVehicleDocument(f[i].documentPath);
+ f[i].documentPath='';f[i].documentName='';f[i].documentMime='';
+ originalSet('fipeFavorites',JSON.stringify(f));
+ await syncVehicles('fipeFavorites',f,JSON.stringify(f));
+ if(typeof renderStock==='function')renderStock();
+};
+window.nikkeiDownloadVehicleDocument=async(vehicleId)=>{
+ const f=JSON.parse(localStorage.getItem('fipeFavorites')||'[]');
+ const x=f.find(v=>v.id===vehicleId);
+ if(!x?.documentPath)throw new Error('Nenhum documento cadastrado.');
+ const {data,error}=await sb.storage.from('vehicle-documents').download(x.documentPath);
+ if(error)throw error;
+ const url=URL.createObjectURL(data);const a=document.createElement('a');a.href=url;a.download=x.documentName||'documento';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
 window.nikkeiSyncVehicles=(key,next,prev)=>syncVehicles(key,next,prev);
 window.nikkeiSyncConsult=item=>syncConsultHistory(item);
 window.nikkeiClearHistory=async()=>{if(sb){await sb.from('consult_history').delete().is('user_id',null);}};
