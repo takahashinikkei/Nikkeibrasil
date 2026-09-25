@@ -1121,8 +1121,6 @@ document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
  loadBrands();
 });
 $("stockNav").onclick=()=>openStockPage();
-$("progressNav").onclick=()=>openProgressPage();
-$("soldNav").onclick=()=>openSoldPage();
 $("reference").onchange=async()=>{
  referenceCode=$("reference").value;
  const b=$("brand").value;
@@ -1158,7 +1156,7 @@ $("favoriteBtn").onclick=()=>toggleFavorite();
 $("shareBtn").onclick=()=>shareQuote();
 $("clearHistory").onclick=()=>{localStorage.removeItem("fipeConsults");renderConsults()};
 $("clearFavorites").onclick=()=>{localStorage.removeItem("fipeFavorites");renderFavorites();updateFavoriteButton()};
-$("favoritesCard").style.display="none";renderConsults();renderFavorites();renderSold();$("clearSold").onclick=()=>{localStorage.removeItem("fipeSold");renderSold()};
+$("favoritesCard").style.display="none";renderConsults();renderFavorites();
 (async()=>{await loadReferences(); await loadBrands()})();
 </script>
 
