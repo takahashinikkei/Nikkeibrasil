@@ -197,8 +197,6 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  </div>
  <div class="actions">
   <button class="gold" id="favoriteBtn">☆ Adicionar ao estoque</button>
-  <button class="secondary" id="negotiateBtn" onclick="addToNegotiation()">🤝 Negociar</button>
-  <button class="secondary" id="shareBtn">↗ Compartilhar cotação</button>
  </div>
 </div>
 
@@ -631,7 +629,7 @@ function getFavorites(){return JSON.parse(localStorage.getItem("fipeFavorites")|
 function isFavorite(q){return getFavorites().some(x=>quoteKey(x)===quoteKey(q))}
 function updateFavoriteButton(){
  if(!currentQuote)return;
- $("favoriteBtn").textContent=isFavorite(currentQuote)?"★ Remover do estoque":"☆ Adicionar aos meus veículos";
+ $("favoriteBtn").textContent=isFavorite(currentQuote)?"🗑️ Excluir da frota":"☆ Adicionar à frota";
  $("favoriteBtn").className=isFavorite(currentQuote)?"gold":"secondary";
 }
 function toggleFavorite(q=currentQuote){
@@ -1153,7 +1151,6 @@ $("year").onchange=yearChanged;
 $("consult").onclick=consult;
 $("clearSearch").onclick=()=>resetSearch(true);
 $("favoriteBtn").onclick=()=>toggleFavorite();
-$("shareBtn").onclick=()=>shareQuote();
 $("clearHistory").onclick=()=>{localStorage.removeItem("fipeConsults");renderConsults()};
 $("clearFavorites").onclick=()=>{localStorage.removeItem("fipeFavorites");renderFavorites();updateFavoriteButton()};
 $("favoritesCard").style.display="none";renderConsults();renderFavorites();
