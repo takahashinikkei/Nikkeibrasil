@@ -832,14 +832,14 @@ function renderStock(){
        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
         <b>${esc(x.title)}</b>
         ${x.plate?`<span class="stock-plate">${esc(x.plate)}</span>`:""}
+        ${(km||x.color)?`<span class="muted" style="font-weight:400">${km?` • KM: ${esc(km)}`:""}${km&&x.color?" • ":""}${x.color?`Cor: ${esc(x.color)}`:""}</span>`:""}
         <span class="status-badge status-stock">✓ Em estoque</span>
        </div>
      <div class="muted">${esc(String(x.year))} • FIPE: ${esc(x.price||"")}${x.financiado==="S"&&financingTotalInstallments(x)>0?` • ${financingRemaining(x)}x de ${money(x.finValor||0)} • Total devido: ${money(financingTotal(x))}`:""}<span class="vehicle-document" data-document-vehicle="${esc(x.id||"")}">${x.documentPath
          ? `<button type="button" class="doc-btn" onclick="downloadVehicleDocument('${esc(x.id||"")}')">⬇ Download</button><button type="button" class="doc-btn doc-delete" onclick="deleteVehicleDocument('${esc(x.id||"")}')">Excluir</button>`
          : `<button type="button" class="doc-btn" onclick="document.getElementById('docInput-${esc(x.id||"")}').click()">📎 Incluir documento</button><input id="docInput-${esc(x.id||"")}" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none" onchange="uploadVehicleDocument('${esc(x.id||"")}',this.files[0])">`}</span></div>
-     ${(x.vehicleType||x.vehicleSubtype||x.bodyType)?`<div class="vehicle-header-spec"><b>${x.vehicleType==="CM"?"Caminhão":x.vehicleType==="CV"?"Cavalo":x.vehicleType==="CR"?"Carreta":x.vehicleType==="CARRO"?"Carro":""}</b>${x.vehicleSubtype?` • ${x.vehicleSubtype==="VAN"?"Van":x.vehicleSubtype==="3/4"?"3/4":x.vehicleSubtype==="TOCO"?(x.vehicleType==="CV"?"4x2":"Toco"):x.vehicleSubtype==="TRUCK"?"Truck":x.vehicleSubtype==="6X2"?"6x2":x.vehicleSubtype==="6X4"?"6x4":x.vehicleSubtype==="BAU"?"Baú":x.vehicleSubtype==="SIDER"?"Sider":x.vehicleSubtype}`:""}${x.bodyType?` • ${x.bodyType==="BAU"?"Baú":"Sider"}`:""}</div>`:""}
-     ${(km||x.color)?`<div class="muted">${km?`KM: ${esc(km)}`:""}${km&&x.color?" • ":""}${x.color?`Cor: ${esc(x.color)}`:""}</div>`:""}
-     ${(x.bodyType||((x.vehicleType==="CR")&&(x.vehicleSubtype==="BAU"||x.vehicleSubtype==="SIDER")))?`<div class="vehicle-header-spec"> ${Number(x.pallets)||0} paletes • ${calcCubage(x)} m³</div>`:""}
+     ${(x.vehicleType||x.vehicleSubtype||x.bodyType)?`<div class="vehicle-header-spec" style="font-weight:400">${x.vehicleType==="CM"?"Caminhão":x.vehicleType==="CV"?"Cavalo":x.vehicleType==="CR"?"Carreta":x.vehicleType==="CARRO"?"Carro":""}${x.vehicleSubtype?` • ${x.vehicleSubtype==="VAN"?"Van":x.vehicleSubtype==="3/4"?"3/4":x.vehicleSubtype==="TOCO"?(x.vehicleType==="CV"?"4x2":"Toco"):x.vehicleSubtype==="TRUCK"?"Truck":x.vehicleSubtype==="6X2"?"6x2":x.vehicleSubtype==="6X4"?"6x4":x.vehicleSubtype==="BAU"?"Baú":x.vehicleSubtype==="SIDER"?"Sider":x.vehicleSubtype}`:""}${x.bodyType?` • ${x.bodyType==="BAU"?"Baú":"Sider"}`:""}${x.bodyType||((x.vehicleType==="CR")&&(x.vehicleSubtype==="BAU"||x.vehicleSubtype==="SIDER"))?` • ${Number(x.pallets)||0} paletes • ${calcCubage(x)} m³`:""}</div>`:""}
+     ${(km||x.color)?`<div class="muted" style="font-weight:400">${km?`KM: ${esc(km)}`:""}${km&&x.color?" • ":""}${x.color?`Cor: ${esc(x.color)}`:""}</div>`:""}
        </div>
       </div>
      </div>
