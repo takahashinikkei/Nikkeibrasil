@@ -856,7 +856,7 @@ function renderStock(){
          <div><label>TÉRMINO</label><input type="date" readonly value="${esc(financingTermino(x)||"")}"></div>
          <div><label>PARC.</label><input type="number" min="0" step="1" value="${financingRemaining(x)}" onchange="saveFinParcelasTotal(${i},this.value)"></div>
          <div><label>VALOR</label><input type="number" min="0" step="0.01" value="${x.finValor??""}" onchange="saveFavoriteField(${i},'finValor',this.value);renderStock()"></div>
-         <div><label>SALDO DEVEDOR</label><input readonly class="fin-total-input" value="${money(financingTotal(x))}"></div>
+         <div><label>SALDO</label><input readonly class="fin-total-input" value="${money(financingTotal(x))}"></div>
        </div>`:""}
        <div class="vehicle-type-field">
         <label>TIPO DE VEÍCULO</label>
@@ -1044,7 +1044,7 @@ function renderNegotiations(){
     <div><label>DATA DE COMPRA</label><input type="date" value="${esc(x.purchaseDate||"")}" onchange="saveNegotiationField(${i},'purchaseDate',this.value)"></div>
     <div><label>VALOR DA COMPRA</label><input type="number" min="0" step="0.01" value="${x.purchaseValue??""}" onchange="saveNegotiationField(${i},'purchaseValue',this.value)"></div>
     <div><label>VALOR DE ENTRADA</label><input type="number" min="0" step="0.01" value="${x.entryValue??""}" onchange="saveNegotiationField(${i},'entryValue',this.value)"></div>
-    <div><label>SALDO DEVEDOR</label><input type="number" min="0" step="0.01" value="${Math.max(0,(Number(x.purchaseValue)||0)-(Number(x.entryValue)||0))}" readonly></div>    <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveNegotiationField(${i},'color',this.value)"></div>   </div>
+    <div><label>SALDO</label><input type="number" min="0" step="0.01" value="${Math.max(0,(Number(x.purchaseValue)||0)-(Number(x.entryValue)||0))}" readonly></div>    <div><label>COR</label><input  value="${esc(x.color||"")}" placeholder="Cor" onchange="saveNegotiationField(${i},'color',this.value)"></div>   </div>
    <div class="summary favorite-financial">
     <div class="info"><b>LUCRO</b><span class="${profit>=0?"stock-positive":"stock-negative"}">${money(profit)}</span></div>
     <div class="info"><b>MARGEM</b><span>${cost>0?(profit/cost*100).toFixed(2)+"%":"—"}</span></div>
