@@ -77,6 +77,9 @@ async function syncConsultHistory(item){
  reference_code:x.referenceCode||x.refCode||x.ref||null,consulted_at:x.at||new Date().toISOString()});
  if(error)console.warn('Supabase history save:',error.message);
 }
+window.nikkeiSyncVehicles=(key,next,prev)=>syncVehicles(key,next,prev);
+window.nikkeiSyncConsult=item=>syncConsultHistory(item);
+window.nikkeiClearHistory=async()=>{if(sb){await sb.from('consult_history').delete().is('user_id',null);}};
 function patchStorage(){
  localStorage.setItem=function(k,v){
   const prev=localStorage.getItem(k);originalSet(k,v);
