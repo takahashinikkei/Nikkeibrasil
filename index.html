@@ -863,12 +863,13 @@ function renderStock(){
    </div>`;
  }).join(""):'<span class="muted">Nenhum veículo em estoque.</span>';
 }
-function financingElapsedMonths(x){const raw=x.finVcto||"";if(!raw)return 0;const start=new Date(raw+"T00:00:00"),now=new Date();if(isNaN(start.getTime())||start>now)return 0;let m=(now.getFullYear()-start.getFullYear())*12+(now.getMonth()-start.getMonth());if(now.getDate()<start.getDate())m--;return Math.max(0,m);}
+function financingElapsedMonths(x){const raw=x.finInicio||x.finVcto||"";if(!raw)return 0;const start=new Date(raw+"T00:00:00"),now=new Date();if(isNaN(start.getTime())||start>now)return 0;let m=(now.getFullYear()-start.getFullYear())*12+(now.getMonth()-start.getMonth());if(now.getDate()<start.getDate())m--;return Math.max(0,m);}
 function financingTotalInstallments(x){return Number(x.finParcelasTotal??x.finParcelas)||0;}
 function financingRemaining(x){return Math.max(0,financingTotalInstallments(x)-financingElapsedMonths(x));}
 function financingTotal(x){return financingRemaining(x)*(Number(x.finValor)||0);}
+function financingTermino(x){const raw=x.finInicio||x.finVcto||"";const total=financingTotalInstallments(x);if(!raw||!total)return "";const d=new Date(raw+"T00:00:00");if(isNaN(d.getTime()))return "";d.setMonth(d.getMonth()+total);return d.toISOString().slice(0,10);}
 function saveFinParcelasTotal(i,value){let f=getFavorites();if(!f[i])return;f[i].finParcelasTotal=value===""?"":Number(value);if(f[i].finParcelasTotal!==""&&(!f[i].finParcelas||Number(f[i].finParcelas)===0))f[i].finParcelas=f[i].finParcelasTotal;persistVehicleFavorites(f);renderStock();}
-function setFinanciado(i,value){let f=getFavorites();if(!f[i])return;f[i].financiado=value;if(value!=="S"){f[i].finParcelas="";f[i].finValor="";f[i].finVcto="";}persistVehicleFavorites(f);renderStock();}
+function setFinanciado(i,value){let f=getFavorites();if(!f[i])return;f[i].financiado=value;if(value!=="S"){f[i].finParcelas="";f[i].finValor="";f[i].finInicio="";f[i].finVcto="";}persistVehicleFavorites(f);renderStock();}
 function clearVehicleBodyData(x){
  x.bodyType="";
  x.pallets="";
