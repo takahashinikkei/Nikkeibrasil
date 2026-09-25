@@ -917,12 +917,11 @@ function renderNegotiations(){
  }).join(""):'<span class="muted">Nenhum veículo em andamento.</span>';
 }
 
-function openProgressPage(){ return; /*
+function openProgressPage(){ return;
  document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="progressPage")el.style.display="none"});
  $("progressPage").style.display="block";$("progressNav").classList.add("active");renderNegotiations();
  $("progressPage").scrollIntoView({behavior:"smooth",block:"start"});
 }
-*/
 function closeProgressPage(){
  $("progressPage").style.display="none";$("progressNav").classList.remove("active");
  document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="progressPage")el.style.display=""});
@@ -952,7 +951,7 @@ function consultNegotiation(i){
 }
 function removeNegotiation(i){let n=getNegotiations();n.splice(i,1);localStorage.setItem("fipeNegotiations",JSON.stringify(n));renderNegotiations()}
 function getSold(){return JSON.parse(localStorage.getItem("fipeSold")||"[]")}
-function openSoldPage(){ return; /*
+function openSoldPage(){ return;
  document.querySelectorAll("main > .card").forEach(el=>{if(el.id!=="soldPage")el.style.display="none"});
  $("soldPage").style.display="block";
  renderSold();
