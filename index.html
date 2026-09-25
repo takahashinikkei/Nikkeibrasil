@@ -640,6 +640,7 @@ function toggleFavorite(q=currentQuote){
  const i=f.findIndex(x=>quoteKey(x)===quoteKey(q));
  if(i>=0) f.splice(i,1); else f=[q,...f].slice(0,30);
  localStorage.setItem("fipeFavorites",JSON.stringify(f));
+ if(window.nikkeiSyncVehicles) window.nikkeiSyncVehicles("fipeFavorites",f,JSON.stringify(getFavorites()));
  updateFavoriteButton(); renderFavorites();
 }
 function saveFavoriteField(i,field,value){
