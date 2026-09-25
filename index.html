@@ -1087,6 +1087,7 @@ function saveConsult(x){
  const item={...x,brand:x.brand||"",type,at:new Date().toISOString()};
  h=[item,...h].slice(0,30);
  localStorage.setItem("fipeConsults",JSON.stringify(h));
+ if(window.nikkeiSyncConsult) window.nikkeiSyncConsult(item);
  renderConsults();
 }
 function renderConsults(){
