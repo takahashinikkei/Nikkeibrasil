@@ -176,10 +176,10 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  </div>
  <div id="stockList" style="margin-top:10px"><span class="muted">Nenhum veículo em estoque.</span></div>
  <div class="stock-summary">
-  <div class="info"><b>VALOR FIPE DO ESTOQUE</b><span id="stockFipeTotal">R$ 0</span></div>
+  <div class="info"><b>FIPE FROTA</b><span id="stockFipeTotal">R$ 0</span></div>
   <div class="info"><b>CUSTO TOTAL</b><span id="stockCostTotal">R$ 0</span></div>
-  <div class="info"><b>LUCRO PROJETADO</b><span id="stockProfitTotal" class="stock-profit">R$ 0</span></div>
-  <div class="info"><b>MARGEM PROJETADA</b><span id="stockMarginTotal">0,00%</span></div>
+  <div class="info"><b>DEPRECIAÇÃO</b><span id="stockProfitTotal" class="stock-profit">R$ 0</span></div>
+  <div class="info"><b>PARCELAS DEVIDAS</b><span id="stockMarginTotal">R$ 0</span></div>
  </div>
  <div class="stock-class-summary">
   <div class="info"><b>GARAGE 26</b><span id="stockClassP">R$ 0</span><small>LUCRO</small><strong id="stockProfitP">R$ 0</strong></div>
@@ -752,11 +752,13 @@ function renderFavorites(){
 }
 function stockTotals(){
  const f=getFavorites();
- let fipe=0,cost=0;
- f.forEach(x=>{fipe+=Number(x.priceValue)||0;cost+=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0)});
- const profit=fipe-cost;
- const margin=cost>0?(profit/cost)*100:0;
- return {fipe,cost,profit,margin};
+ let fipe=0,cost=0,debt=0;
+ f.forEach(x=>{
+  fipe+=stockPriceValue(x);
+  cost+=Number(x.purchaseValue)||0;
+  if(x.financiado==="S") debt+=financingTotal(x);
+ });
+ return {fipe,cost,depreciation:cost-fipe,debt};
 }
 function stockPriceValue(x){
  const n=String(x.price||"").replace(/[^0-9,.-]/g,"").replace(/\./g,"").replace(",",".");
@@ -781,12 +783,14 @@ function renderStock(){
    classCosts[x.pc]+=itemCost;
   }
  });
- const profit=fipe-cost, margin=cost>0?(profit/cost)*100:0;
+ const depreciation=cost-fipe;
+ let debt=0;
+ f.forEach(x=>{if(x.financiado==="S") debt+=financingTotal(x);});
  $("stockFipeTotal").textContent=money(fipe);
  $("stockCostTotal").textContent=money(cost);
- $("stockProfitTotal").textContent=money(profit);
- $("stockProfitTotal").className="stock-profit "+(profit>=0?"stock-positive":"stock-negative");
- $("stockMarginTotal").textContent=(margin>=0?"+":"")+margin.toFixed(2)+"%";
+ $("stockProfitTotal").textContent=money(depreciation);
+ $("stockProfitTotal").className="stock-profit "+(depreciation<=0?"stock-positive":"stock-negative");
+ $("stockMarginTotal").textContent=money(debt);
  $("stockClassP").textContent=money(classTotals.P);
  $("stockClassC").textContent=money(classTotals.C);
  $("stockClassA").textContent=money(classTotals.A);
@@ -835,8 +839,8 @@ function renderStock(){
         </div>
         ${x.vehicleType==="CM"?`<div class="vehicle-subtype-options"><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="VAN"?"active":""}" onclick="setVehicleSubtype(${i},'VAN')">Van</button><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="3/4"?"active":""}" onclick="setVehicleSubtype(${i},'3/4')">3/4</button><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="TOCO"?"active":""}" onclick="setVehicleSubtype(${i},'TOCO')">Toco</button><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="TRUCK"?"active":""}" onclick="setVehicleSubtype(${i},'TRUCK')">Truck</button></div>`:x.vehicleType==="CV"?`<div class="vehicle-subtype-options"><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="TOCO"?"active":""}" onclick="setVehicleSubtype(${i},'TOCO')">4x2</button><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="6X2"?"active":""}" onclick="setVehicleSubtype(${i},'6X2')">6x2</button><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="6X4"?"active":""}" onclick="setVehicleSubtype(${i},'6X4')">6x4</button></div>`:x.vehicleType==="CR"?`<div class="vehicle-subtype-options"><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="BAU"?"active":""}" onclick="setVehicleSubtype(${i},'BAU')">Baú</button><button type="button" class="vehicle-subtype-option ${x.vehicleSubtype==="SIDER"?"active":""}" onclick="setVehicleSubtype(${i},'SIDER')">Sider</button></div>`:""}
         ${(x.vehicleType==="CM"&&["VAN","3/4","TOCO","TRUCK"].includes(x.vehicleSubtype))?`<div class="vehicle-body-options"><button type="button" class="vehicle-subtype-option ${x.bodyType==="BAU"?"active":""}" onclick="setBodyType(${i},'BAU')">Baú</button><button type="button" class="vehicle-subtype-option ${x.bodyType==="SIDER"?"active":""}" onclick="setBodyType(${i},'SIDER')">Sider</button></div>`:""}
-        ${(x.vehicleType==="CR"&&["BAU","SIDER"].includes(x.vehicleSubtype))?`<div class="vehicle-body-options vehicle-body-fixed"><button type="button" class="vehicle-subtype-option active">${x.vehicleSubtype==="BAU"?"Baú":"Sider"}</button></div>`:""}
-        ${x.vehicleSubtype?`<div class="vehicle-dimensions"><div><label>PALETES</label><input type="number" min="0" value="${x.pallets??""}" onchange="saveVehicleSpec(${i},'pallets',this.value)"></div><div><label>ALTURA (M)</label><input type="number" min="0" step="0.01" value="${x.bodyHeight??""}" onchange="saveVehicleSpec(${i},'bodyHeight',this.value)"></div><div><label>LARGURA (M)</label><input type="number" min="0" step="0.01" value="${x.bodyWidth??""}" onchange="saveVehicleSpec(${i},'bodyWidth',this.value)"></div><div><label>COMPRIMENTO (M)</label><input type="number" min="0" step="0.01" value="${x.bodyLength??""}" onchange="saveVehicleSpec(${i},'bodyLength',this.value)"></div><div class="cubage-field"><label>CUBAGEM (M³)</label><input readonly value="${calcCubage(x)}"></div></div>`:""}
+        ${(x.vehicleType==="CR"&&["BAU","SIDER"].includes(x.vehicleSubtype))?``:""}
+        ${((x.vehicleType==="CM"&&["VAN","3/4","TOCO","TRUCK"].includes(x.vehicleSubtype)&&["BAU","SIDER"].includes(x.bodyType))||(x.vehicleType==="CR"&&["BAU","SIDER"].includes(x.vehicleSubtype)))?`<div class="vehicle-dimensions"><div><label>PALETES</label><input type="number" min="0" value="${x.pallets??""}" onchange="saveVehicleSpec(${i},'pallets',this.value)"></div><div><label>ALTURA (M)</label><input type="number" min="0" step="0.01" value="${x.bodyHeight??""}" onchange="saveVehicleSpec(${i},'bodyHeight',this.value)"></div><div><label>LARGURA (M)</label><input type="number" min="0" step="0.01" value="${x.bodyWidth??""}" onchange="saveVehicleSpec(${i},'bodyWidth',this.value)"></div><div><label>COMPRIMENTO (M)</label><input type="number" min="0" step="0.01" value="${x.bodyLength??""}" onchange="saveVehicleSpec(${i},'bodyLength',this.value)"></div><div class="cubage-field"><label>CUBAGEM (M³)</label><input readonly value="${calcCubage(x)}"></div></div>`:""}
        </div>      </div>
     </div>
     <div class="actions">
