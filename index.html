@@ -114,7 +114,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 .fin-details-row input{min-width:0!important;width:100%!important}
 .fin-details-row label{font-size:9px!important}
 .fin-total-input{font-weight:900;background:#f8fafc!important}
-.stock-list .item{border-bottom:4px solid #111827!important;padding-bottom:15px!important;margin-bottom:15px!important}.stock-km{font-weight:400}.stock-head-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.vehicle-document{display:flex;justify-content:flex-end;align-items:center;gap:5px}.doc-btn{border:1px solid #cbd5e1;background:#f8fafc;color:#111827;border-radius:8px;padding:7px 12px;font-weight:800;font-size:11px;cursor:pointer;white-space:nowrap}.doc-btn:hover{background:#eef2f7}.doc-delete{color:#991b1b;border-color:#e5b7b7;background:#fff}.vehicle-document:empty{display:none}@media(max-width:600px){.stock-head-row{grid-template-columns:1fr}.vehicle-document{justify-content:flex-start;flex-wrap:wrap}}.stock-list .item .actions{padding-bottom:0!important;margin-bottom:0!important}
+.stock-list .item{border-bottom:4px solid #111827!important;padding-bottom:15px!important;margin-bottom:15px!important}.stock-km{font-weight:400}.stock-head-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.vehicle-document{display:inline-flex;align-items:center;gap:4px;margin-left:8px;vertical-align:middle}.doc-btn{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;height:28px!important;min-width:0!important;padding:0 8px!important;border:1px solid #cbd5e1;background:#f8fafc;color:#111827;border-radius:7px;font-weight:800;font-size:10px;cursor:pointer;white-space:nowrap}.doc-btn:hover{background:#eef2f7}.doc-delete{color:#991b1b;border-color:#e5b7b7;background:#fff}.vehicle-document:empty{display:none}.stock-list .item .actions{padding-bottom:0!important;margin-bottom:0!important}
 @media(max-width:700px){
  .color-fin-row .fin-field .vehicle-type-option{min-width:34px!important;padding:7px 8px!important}
  .fin-details-row{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important}
@@ -833,15 +833,12 @@ function renderStock(){
         <b>${esc(x.title)}</b>
         <span class="status-badge status-stock">✓ Em estoque</span>
        </div>
-     <div class="muted">${esc(String(x.year))} • FIPE: ${esc(x.price||"")}${x.financiado==="S"&&financingTotalInstallments(x)>0?` • ${financingRemaining(x)}x de ${money(x.finValor||0)} • Total devido: ${money(financingTotal(x))}`:""}</div>
+     <div class="muted">${esc(String(x.year))} • FIPE: ${esc(x.price||"")}${x.financiado==="S"&&financingTotalInstallments(x)>0?` • ${financingRemaining(x)}x de ${money(x.finValor||0)} • Total devido: ${money(financingTotal(x))}`:""}<span class="vehicle-document" data-document-vehicle="${esc(x.id||"")}">${x.documentPath
+         ? `<button type="button" class="doc-btn" onclick="downloadVehicleDocument('${esc(x.id||"")}')">⬇ Download</button><button type="button" class="doc-btn doc-delete" onclick="deleteVehicleDocument('${esc(x.id||"")}')">Excluir</button>`
+         : `<button type="button" class="doc-btn" onclick="document.getElementById('docInput-${esc(x.id||"")}').click()">📎 Incluir documento</button><input id="docInput-${esc(x.id||"")}" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none" onchange="uploadVehicleDocument('${esc(x.id||"")}',this.files[0])">`}</span></div>
      ${(x.vehicleSubtype||x.bodyType||km)?`<div class="vehicle-header-spec"><b>${x.vehicleSubtype==="VAN"?"Van":x.vehicleSubtype==="3/4"?"3/4":x.vehicleSubtype==="TOCO"?(x.vehicleType==="CV"?"Cavalo 4x2":"Toco"):x.vehicleSubtype==="TRUCK"?"Truck":x.vehicleSubtype==="6X2"?"6x2":x.vehicleSubtype==="6X4"?"6x4":x.vehicleSubtype==="BAU"?"Baú":x.vehicleSubtype==="SIDER"?"Sider":""}</b>${x.bodyType&&x.vehicleSubtype!=="BAU"&&x.vehicleSubtype!=="SIDER"?` • ${x.bodyType==="BAU"?"Baú":"Sider"}`:""}${km?` • <span class="stock-km">KM: ${esc(km)}</span>`:""}${((x.bodyType==="BAU"||x.bodyType==="SIDER")||(x.vehicleType==="CR"&&(x.vehicleSubtype==="BAU"||x.vehicleSubtype==="SIDER")))?` • ${Number(x.pallets)||0} paletes • ${calcCubage(x)} m³`:""}</div>`:""}
      <div class="muted">${x.plate?"Placa: "+esc(x.plate)+" • ":""}${x.color?"Cor: "+esc(x.color):""}</div>
        </div>
-      </div>
-      <div class="vehicle-document" data-document-vehicle="${esc(x.id||"")}">
-       ${x.documentPath
-         ? `<button type="button" class="doc-btn" onclick="downloadVehicleDocument('${esc(x.id||"")}')">⬇ Download</button><button type="button" class="doc-btn doc-delete" onclick="deleteVehicleDocument('${esc(x.id||"")}')">Excluir</button>`
-         : `<button type="button" class="doc-btn" onclick="document.getElementById('docInput-${esc(x.id||"")}').click()">📎 Incluir documento</button><input id="docInput-${esc(x.id||"")}" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none" onchange="uploadVehicleDocument('${esc(x.id||"")}',this.files[0])">`}
       </div>
      </div>
     <div class="stock-details-extra" style="display:${(stockDetailsExpanded||itemOpen)?"block":"none"};margin-top:8px">
