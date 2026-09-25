@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="92" fill="#000"/><circle cx="256" cy="256" r="190" fill="#e50914"/><path d="M96 335 C165 382 235 390 300 370 C365 350 405 300 430 235" fill="none" stroke="#777" stroke-width="52" stroke-linecap="round"/><path d="M96 335 C165 382 235 390 300 370 C365 350 405 300 430 235" fill="none" stroke="#fff" stroke-width="6" stroke-dasharray="36 24" stroke-linecap="round"/><path d="M170 160 L195 135 L225 150 L245 125 L270 145 L300 128 L318 155 L350 150 L360 180 L390 195 L375 225 L395 250 L370 275 L375 305 L340 315 L325 345 L295 330 L270 355 L245 330 L215 345 L205 315 L175 305 L180 275 L150 255 L165 225 L145 200 L175 185 Z" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 423 474">
+<defs><radialGradient id="r" cx="56%" cy="43%" r="68%"><stop offset="0" stop-color="#f20b17"/><stop offset=".68" stop-color="#e30613"/><stop offset="1" stop-color="#b6000b"/></radialGradient></defs>
+<rect width="423" height="474" fill="#000"/>
+<circle cx="211.5" cy="237" r="193" fill="url(#r)"/>
+<!-- Brazil outline -->
+<path d="M148 139 L160 123 L176 127 L183 111 L201 116 L213 98 L226 111 L244 101 L250 124 L270 130 L274 150 L295 156 L290 177 L309 190 L298 209 L312 226 L294 243 L280 236 L263 253 L248 238 L231 249 L217 232 L200 242 L188 225 L171 230 L162 211 L146 214 L149 195 L133 185 L140 168 L129 156 Z" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/>
+<!-- road -->
+<path d="M18 308 C93 350 166 356 239 316 C298 284 332 242 354 170" fill="none" stroke="#fff" stroke-width="72"/>
+<path d="M18 308 C93 350 166 356 239 316 C298 284 332 242 354 170" fill="none" stroke="#6b6b6b" stroke-width="61"/>
+<path d="M22 307 C95 344 165 348 235 310 C292 280 325 238 347 177" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="30 23"/>
+<!-- lower map edge visible around road -->
+<path d="M252 299 L267 312 L286 304 L303 287 L321 292 L332 275 L350 269 L364 250 L381 247" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/>
+</svg>
