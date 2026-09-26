@@ -145,8 +145,16 @@ window.nikkeiEditDriver=async(id)=>{
  const x=(window.__nikkeiDrivers||[]).find(v=>v.id===id);if(!x)return;
  currentDriver={...x};
  document.getElementById('driverName').value=x.name||'';
+ document.getElementById('driverSurname').value=x.surname||'';
  document.getElementById('driverAddress').value=x.address||'';
+ document.getElementById('driverAddressNumber').value=x.addressNumber||'';
+ document.getElementById('driverNeighborhood').value=x.neighborhood||'';
  document.getElementById('driverPhone').value=x.phone||'';
+ document.getElementById('driverPhone2').value=x.phone2||'';
+ document.getElementById('driverPhoneAlt').value=x.phoneAlt||'';
+ document.getElementById('driverCpf').value=x.cpf||'';
+ document.getElementById('driverRg').value=x.rg||'';
+ loadDriverCities(x.state||'',x.city||'');
  document.getElementById('driverCnhStatus').textContent=x.cnhPath?(x.cnhName||'CNH cadastrada'):'Nenhuma CNH';
  renderDriverTypeMenu();
 };
