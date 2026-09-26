@@ -125,13 +125,13 @@ async function loadDrivers(){
  if(!sb)return [];
  const {data,error}=await sb.from('drivers').select('*').order('created_at',{ascending:false});
  if(error){console.warn('Supabase drivers:',error.message);return [];}
- const list=(data||[]).map(r=>({id:r.id,name:r.name||'',address:r.address||'',phone:r.phone||'',phoneAlt:r.phone_alt||'',plate:r.plate||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',cnhPath:r.cnh_path||'',cnhName:r.cnh_name||'',cnhMime:r.cnh_mime||''}));
+ const list=(data||[]).map(r=>({id:r.id,name:r.name||'',surname:r.surname||'',address:r.address||'',addressNumber:r.address_number||'',neighborhood:r.neighborhood||'',state:r.state||'',city:r.city||'',phone:r.phone||'',phone2:r.phone2||'',phoneAlt:r.phone_alt||'',cpf:r.cpf||'',rg:r.rg||'',plate:r.plate||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',vehicleConfiguration:r.vehicle_configuration||'',plateCavalo:r.plate_cavalo||'',plateCarreta:r.plate_carreta||'',plateCarreta2:r.plate_carreta2||'',cnhPath:r.cnh_path||'',cnhName:r.cnh_name||'',cnhMime:r.cnh_mime||''}));
  window.__nikkeiDrivers=list;
  if(typeof renderDrivers==='function')renderDrivers(list);
  return list;
 }
 function driverPayload(x){
- return {id:x.id||crypto.randomUUID(),name:x.name||'',address:x.address||null,phone:x.phone||null,phone_alt:x.phoneAlt||null,plate:x.plate||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,cnh_path:x.cnhPath||null,cnh_name:x.cnhName||null,cnh_mime:x.cnhMime||null,updated_at:new Date().toISOString()};
+ return {id:x.id||crypto.randomUUID(),name:x.name||'',surname:x.surname||null,address:x.address||null,address_number:x.addressNumber||null,neighborhood:x.neighborhood||null,state:x.state||null,city:x.city||null,phone:x.phone||null,phone2:x.phone2||null,phone_alt:x.phoneAlt||null,cpf:x.cpf||null,rg:x.rg||null,plate:x.plate||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,vehicle_configuration:x.vehicleConfiguration||null,plate_cavalo:x.plateCavalo||null,plate_carreta:x.plateCarreta||null,plate_carreta2:x.plateCarreta2||null,cnh_path:x.cnhPath||null,cnh_name:x.cnhName||null,cnh_mime:x.cnhMime||null,updated_at:new Date().toISOString()};
 }
 window.nikkeiLoadDrivers=loadDrivers;
 window.nikkeiSaveDriver=async(x)=>{
