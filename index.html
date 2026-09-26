@@ -121,7 +121,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  .fin-details-row input{font-size:11px!important;padding:7px 4px!important}
  .fin-details-row label{font-size:8px!important}
 }
-.driver-page{display:none}.driver-list{margin-top:14px}.driver-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.driver-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.driver-name{font-weight:900;font-size:17px}.driver-meta{color:#6b7280;font-size:13px;margin-top:4px}.driver-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:6px}.driver-type-menu button{height:30px;padding:0 3px;font-size:11px;font-weight:800;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#475569}.driver-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.driver-form .row{margin-top:0}.driver-cnh{display:flex;gap:6px;align-items:center;margin-top:8px}.driver-cnh button{width:auto;height:36px;font-size:12px;padding:0 10px}.driver-actions{display:flex;gap:8px;margin-top:12px}.driver-actions button{height:40px;font-size:13px}@media(max-width:520px){.driver-type-menu{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.driver-type-menu button{font-size:10px;height:30px}.driver-actions button{font-size:12px}}</style></head>
+.driver-page{display:none}.driver-plate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.driver-plate-grid label{font-size:9px}.driver-plate-grid input{min-width:0}.driver-form select{width:100%}@media(max-width:520px){.driver-plate-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}}.driver-list{margin-top:14px}.driver-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.driver-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.driver-name{font-weight:900;font-size:17px}.driver-meta{color:#6b7280;font-size:13px;margin-top:4px}.driver-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:6px}.driver-type-menu button{height:30px;padding:0 3px;font-size:11px;font-weight:800;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#475569}.driver-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.driver-form .row{margin-top:0}.driver-cnh{display:flex;gap:6px;align-items:center;margin-top:8px}.driver-cnh button{width:auto;height:36px;font-size:12px;padding:0 10px}.driver-actions{display:flex;gap:8px;margin-top:12px}.driver-actions button{height:40px;font-size:13px}@media(max-width:520px){.driver-type-menu{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.driver-type-menu button{font-size:10px;height:30px}.driver-actions button{font-size:12px}}</style></head>
 <body><div id="moduleGate">
   <div class="module-gate-box">
     <h1>Nikkei Brasil</h1>
@@ -149,11 +149,27 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   <button class="secondary small-btn" onclick="closeDriversPage()">← Voltar</button>
  </div>
  <div class="driver-form">
-  <label>Nome</label><input id="driverName" type="text" placeholder="Nome completo">
+  <div class="row">
+   <div><label>Nome</label><input id="driverName" type="text" placeholder="Nome"></div>
+   <div><label>Sobrenome</label><input id="driverSurname" type="text" placeholder="Sobrenome"></div>
+  </div>
   <label>Endereço</label><input id="driverAddress" type="text" placeholder="Endereço">
   <div class="row">
-   <div><label>Celular WhatsApp</label><input id="driverPhone" type="tel" placeholder="Celular WhatsApp"></div>
-   <div><label>Tel. recado</label><input id="driverPhoneAlt" type="tel" placeholder="Telefone para recado"></div>
+   <div><label>Nº</label><input id="driverAddressNumber" type="text" placeholder="Nº"></div>
+   <div><label>Bairro</label><input id="driverNeighborhood" type="text" placeholder="Bairro"></div>
+  </div>
+  <div class="row">
+   <div><label>Estado</label><select id="driverState"><option value="">Selecione o estado</option></select></div>
+   <div><label>Cidade</label><select id="driverCity" disabled><option value="">Selecione o estado primeiro</option></select></div>
+  </div>
+  <div class="row">
+   <div><label>Celular WhatsApp</label><input id="driverPhone" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div>
+   <div><label>Celular 2</label><input id="driverPhone2" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div>
+  </div>
+  <label>Tel. recado</label><input id="driverPhoneAlt" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999">
+  <div class="row">
+   <div><label>CPF</label><input id="driverCpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"></div>
+   <div><label>RG</label><input id="driverRg" type="text" placeholder="RG"></div>
   </div>
   <label>Tipo de veículo</label>
   <div class="driver-type-menu" id="driverTypeMenu">
@@ -161,9 +177,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   </div>
   <div class="driver-type-menu" id="driverSubtypeMenu" style="display:none"></div>
   <div class="driver-type-menu" id="driverBodyMenu" style="display:none"></div>
-  <div id="driverPlateWrap" style="display:none;margin-top:8px">
-   <label>Placa</label><input id="driverPlate" type="text" placeholder="Placa do veículo" maxlength="8">
-  </div>
+  <div class="driver-plate-grid" id="driverPlateGrid" style="display:none"></div>
   <div class="driver-cnh">
    <input id="driverCnhFile" type="file" accept=".pdf,image/*" style="display:none">
    <button type="button" class="secondary" onclick="document.getElementById('driverCnhFile').click()">📎 Incluir CNH</button>
@@ -1364,56 +1378,80 @@ if('serviceWorker' in navigator){
 }
 </script>
 <script>
-let currentDriver={id:null,name:'',address:'',phone:'',phoneAlt:'',plate:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
+let currentDriver={id:null,name:'',surname:'',address:'',addressNumber:'',neighborhood:'',state:'',city:'',phone:'',phone2:'',phoneAlt:'',cpf:'',rg:'',vehicleType:'',vehicleSubtype:'',bodyType:'',vehicleConfiguration:'',plateCavalo:'',plateCarreta:'',plateCarreta2:'',cnhPath:'',cnhName:'',cnhMime:''};
+const driverStates=[['AC','Acre'],['AL','Alagoas'],['AP','Amapá'],['AM','Amazonas'],['BA','Bahia'],['CE','Ceará'],['DF','Distrito Federal'],['ES','Espírito Santo'],['GO','Goiás'],['MA','Maranhão'],['MT','Mato Grosso'],['MS','Mato Grosso do Sul'],['MG','Minas Gerais'],['PA','Pará'],['PB','Paraíba'],['PR','Paraná'],['PE','Pernambuco'],['PI','Piauí'],['RJ','Rio de Janeiro'],['RN','Rio Grande do Norte'],['RS','Rio Grande do Sul'],['RO','Rondônia'],['RR','Roraima'],['SC','Santa Catarina'],['SP','São Paulo'],['SE','Sergipe'],['TO','Tocantins']];
+function initDriverStates(){
+ const s=document.getElementById('driverState'); if(!s||s.options.length>1)return;
+ s.innerHTML='<option value="">Selecione o estado</option>'+driverStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');
+ s.onchange=async()=>{const st=s.value,city=document.getElementById('driverCity');city.innerHTML='<option value="">Carregando cidades...</option>';city.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();city.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');city.disabled=false}catch(e){city.innerHTML='<option value="">Não foi possível carregar</option>';}}; 
+}
+function maskDriverPhone(el){let d=el.value.replace(/\D/g,'').slice(0,11);if(d.length>7)el.value='('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);else if(d.length>2)el.value='('+d.slice(0,2)+') '+d.slice(2);else el.value=d?('('+d):'';}
+function validDriverPhone(v){return /^\(\d{2}\) \d{5}-\d{4}$/.test(v)}
+function maskCpf(el){let d=el.value.replace(/\D/g,'').slice(0,11);el.value=d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');}
+function driverPlateMask(v){return v.replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,7)}
 function driverType(t){
- if(currentDriver.vehicleType===t){currentDriver.vehicleType='';currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
- else {currentDriver.vehicleType=t;currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
+ if(currentDriver.vehicleType===t){currentDriver.vehicleType='';currentDriver.vehicleSubtype='';currentDriver.vehicleConfiguration='';currentDriver.plateCavalo='';currentDriver.plateCarreta='';currentDriver.plateCarreta2='';}
+ else {currentDriver.vehicleType=t;currentDriver.vehicleSubtype='';currentDriver.bodyType='';currentDriver.vehicleConfiguration='';}
  renderDriverTypeMenu();
 }
 function driverSubtype(t){
- if(currentDriver.vehicleSubtype===t){currentDriver.vehicleSubtype='';currentDriver.bodyType='';}
- else {currentDriver.vehicleSubtype=t;currentDriver.bodyType='';}
+ if(currentDriver.vehicleSubtype===t){currentDriver.vehicleSubtype='';currentDriver.vehicleConfiguration='';}
+ else {currentDriver.vehicleSubtype=t;currentDriver.vehicleConfiguration='';}
  renderDriverTypeMenu();
 }
-function driverBody(t){
- currentDriver.bodyType=currentDriver.bodyType===t?'':t;
- renderDriverTypeMenu();
-}
+function driverBody(t){currentDriver.bodyType=currentDriver.bodyType===t?'':t;renderDriverTypeMenu();}
+function driverConfiguration(t){currentDriver.vehicleConfiguration=currentDriver.vehicleConfiguration===t?'':t;renderDriverTypeMenu();}
 function renderDriverTypeMenu(){
- const sub=document.getElementById('driverSubtypeMenu'),body=document.getElementById('driverBodyMenu');
- const plateWrap=document.getElementById('driverPlateWrap');
- const plate=document.getElementById('driverPlate');
+ const sub=document.getElementById('driverSubtypeMenu'),body=document.getElementById('driverBodyMenu'),plates=document.getElementById('driverPlateGrid');
  const labels={VAN:'Van','3/4':'3/4',TOCO:'Toco',TRUCK:'Truck',BITRUCK:'Bitruck'};
  sub.style.display=currentDriver.vehicleType==='CM'?'grid':'none';
- sub.innerHTML=currentDriver.vehicleType==='CM' && !currentDriver.vehicleSubtype
-  ? Object.entries(labels).map(([k,v])=>'<button type="button" onclick="driverSubtype(&quot;'+k+'&quot;)">'+v+'</button>').join('')
-  : currentDriver.vehicleType==='CM' ? '<button type="button" class="active">'+labels[currentDriver.vehicleSubtype]+'</button>' : '';
+ if(currentDriver.vehicleType==='CM'&&!currentDriver.vehicleSubtype)sub.innerHTML='<button type="button" onclick="driverSubtype(&quot;VAN&quot;)">Van</button><button type="button" onclick="driverSubtype(&quot;3/4&quot;)">3/4</button><button type="button" onclick="driverSubtype(&quot;TOCO&quot;)">Toco</button><button type="button" onclick="driverSubtype(&quot;TRUCK&quot;)">Truck</button><button type="button" onclick="driverSubtype(&quot;BITRUCK&quot;)">Bitruck</button>';
+ else if(currentDriver.vehicleSubtype)sub.innerHTML='<button type="button" class="active">'+labels[currentDriver.vehicleSubtype]+'</button>';
+ else sub.innerHTML='';
  body.style.display=currentDriver.vehicleType==='CM'&&currentDriver.vehicleSubtype?'grid':'none';
  body.innerHTML=currentDriver.vehicleType==='CM'&&currentDriver.vehicleSubtype
-  ? (currentDriver.bodyType==='BAU'
-    ? '<button type="button" class="active">Baú</button>'
-    : currentDriver.bodyType==='SIDER'
-      ? '<button type="button" class="active">Sider</button>'
-      : '<button type="button" onclick="driverBody(&quot;BAU&quot;)">Baú</button><button type="button" onclick="driverBody(&quot;SIDER&quot;)">Sider</button>')
+  ? (currentDriver.bodyType==='BAU'?'<button type="button" class="active">Baú</button>':currentDriver.bodyType==='SIDER'?'<button type="button" class="active">Sider</button>':'<button type="button" onclick="driverBody(&quot;BAU&quot;)">Baú</button><button type="button" onclick="driverBody(&quot;SIDER&quot;)">Sider</button>')
   : '';
+ if(currentDriver.vehicleType==='CM'&&!currentDriver.vehicleSubtype){
+   const old=body.innerHTML; body.innerHTML='<button type="button" onclick="driverSubtype(&quot;CAVALO&quot;)">Cavalo</button>'; body.style.display='grid';
+ }
+ // For the Cavalo path, the "subtype" becomes Cavalo and configuration follows.
+ if(currentDriver.vehicleSubtype==='CAVALO'){
+   body.style.display='grid';
+   body.innerHTML=currentDriver.vehicleConfiguration
+    ? '<button type="button" class="active">'+currentDriver.vehicleConfiguration+'</button>'
+    : '<button type="button" onclick="driverConfiguration(&quot;4x2&quot;)">4x2</button><button type="button" onclick="driverConfiguration(&quot;6x2&quot;)">6x2</button><button type="button" onclick="driverConfiguration(&quot;6x4&quot;)">6x4</button>';
+ }
  document.querySelectorAll('#driverTypeMenu button').forEach(b=>b.classList.toggle('active',currentDriver.vehicleType==='CM'));
- const needsPlate=currentDriver.vehicleType==='CM' && ['VAN','3/4','TOCO','TRUCK'].includes(currentDriver.vehicleSubtype);
- plateWrap.style.display=needsPlate?'block':'none';
- if(!needsPlate) plate.value='';
- else plate.value=currentDriver.plate||'';
+ const needPlates=['4x2','6x2','6x4'].includes(currentDriver.vehicleConfiguration);
+ plates.style.display=needPlates?'grid':'none';
+ if(needPlates){
+   const defs=currentDriver.vehicleConfiguration==='6x4'?[['plateCavalo','Placa cavalo'],['plateCarreta','Carreta 1'],['plateCarreta2','Carreta 2']]:[['plateCavalo','Placa cavalo'],['plateCarreta','Placa carreta']];
+   plates.innerHTML=defs.map(([k,l])=>'<div><label>'+l+'</label><input id="'+k+'" maxlength="7" value="'+esc(currentDriver[k]||'')+'" oninput="currentDriver.'+k+'=driverPlateMask(this.value);this.value=currentDriver.'+k+'"></div>').join('');
+ }
 }
 function resetDriverForm(){
- currentDriver={id:null,name:'',address:'',phone:'',phoneAlt:'',plate:'',vehicleType:'',vehicleSubtype:'',bodyType:'',cnhPath:'',cnhName:'',cnhMime:''};
- document.getElementById('driverName').value='';document.getElementById('driverAddress').value='';document.getElementById('driverPhone').value='';document.getElementById('driverPhoneAlt').value='';document.getElementById('driverPlate').value='';
- document.getElementById('driverCnhFile').value='';document.getElementById('driverCnhStatus').textContent='Nenhuma CNH';renderDriverTypeMenu();
+ currentDriver={id:null,name:'',surname:'',address:'',addressNumber:'',neighborhood:'',state:'',city:'',phone:'',phone2:'',phoneAlt:'',cpf:'',rg:'',vehicleType:'',vehicleSubtype:'',bodyType:'',vehicleConfiguration:'',plateCavalo:'',plateCarreta:'',plateCarreta2:'',cnhPath:'',cnhName:'',cnhMime:''};
+ ['driverName','driverSurname','driverAddress','driverAddressNumber','driverNeighborhood','driverPhone','driverPhone2','driverPhoneAlt','driverCpf','driverRg'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+ document.getElementById('driverState').value='';document.getElementById('driverCity').innerHTML='<option value="">Selecione o estado primeiro</option>';document.getElementById('driverCity').disabled=true;document.getElementById('driverCnhFile').value='';document.getElementById('driverCnhStatus').textContent='Nenhuma CNH';renderDriverTypeMenu();
 }
+function loadDriverCities(state,selected){const s=document.getElementById('driverState');s.value=state;s.dispatchEvent(new Event('change'));setTimeout(()=>{const c=document.getElementById('driverCity');if([...c.options].some(o=>o.value===selected))c.value=selected;},500);}
 function editDriver(id){window.nikkeiEditDriver&&window.nikkeiEditDriver(id)}
 async function saveDriver(){
  currentDriver.name=document.getElementById('driverName').value.trim();
+ currentDriver.surname=document.getElementById('driverSurname').value.trim();
  currentDriver.address=document.getElementById('driverAddress').value.trim();
+ currentDriver.addressNumber=document.getElementById('driverAddressNumber').value.trim();
+ currentDriver.neighborhood=document.getElementById('driverNeighborhood').value.trim();
+ currentDriver.state=document.getElementById('driverState').value;
+ currentDriver.city=document.getElementById('driverCity').value;
  currentDriver.phone=document.getElementById('driverPhone').value.trim();
+ currentDriver.phone2=document.getElementById('driverPhone2').value.trim();
  currentDriver.phoneAlt=document.getElementById('driverPhoneAlt').value.trim();
- currentDriver.plate=document.getElementById('driverPlate').value.trim().toUpperCase();
+ currentDriver.cpf=document.getElementById('driverCpf').value.trim();
+ currentDriver.rg=document.getElementById('driverRg').value.trim();
+ if(!validDriverPhone(currentDriver.phone)||!validDriverPhone(currentDriver.phone2)||!validDriverPhone(currentDriver.phoneAlt)){alert('Informe os 3 telefones no formato (11) 99999-9999.');return;}
+ ['plateCavalo','plateCarreta','plateCarreta2'].forEach(k=>{const e=document.getElementById(k);if(e)currentDriver[k]=driverPlateMask(e.value);});
  if(!currentDriver.name){alert('Informe o nome do motorista.');return}
  const file=document.getElementById('driverCnhFile').files[0];
  try{
@@ -1434,6 +1472,9 @@ function openDriversPage(){
  document.querySelector('main').style.display='none';
  document.getElementById('driverPage').style.display='block';
  resetDriverForm();
+ initDriverStates();
+ ['driverPhone','driverPhone2','driverPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});
+ document.getElementById('driverCpf').oninput=function(){maskCpf(this)};
  window.nikkeiLoadDrivers&&window.nikkeiLoadDrivers();
 }
 function closeDriversPage(){
