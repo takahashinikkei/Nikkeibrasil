@@ -1,5 +1,5 @@
-const CACHE='nikkeibrasil-v54';
-const APP_SHELL=['./','./index.html','./manifest.json','./icon-nikkeibrasil.svg','./nikkei-logo.svg','./nikkei-logo.png','./nikkei-logo-wide.jpg'];
+const CACHE='nikkeibrasil-v55';
+const APP_SHELL=['./','./index.html','./manifest.json','./icon-nikkeibrasil.svg','./nikkei-logo.svg','./nikkei-logo.png','./nikkei-logo-wide.jpg','./Nikkei-logo.png.PNG'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));
 });
