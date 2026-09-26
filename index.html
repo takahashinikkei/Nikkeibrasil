@@ -121,7 +121,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  .fin-details-row input{font-size:11px!important;padding:7px 4px!important}
  .fin-details-row label{font-size:8px!important}
 }
-.driver-page{display:none}.driver-plate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.driver-plate-grid label{font-size:9px}.driver-plate-grid input{min-width:0}.driver-form select{width:100%}@media(max-width:520px){.driver-plate-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}}.driver-list{margin-top:14px}.driver-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.driver-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.driver-name{font-weight:900;font-size:17px}.driver-meta{color:#6b7280;font-size:13px;margin-top:4px}.driver-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:6px}.driver-type-menu button{height:30px;padding:0 3px;font-size:11px;font-weight:800;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#475569}.driver-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.driver-form .row{margin-top:0}.driver-cnh{display:flex;gap:6px;align-items:center;margin-top:8px}.driver-cnh button{width:auto;height:36px;font-size:12px;padding:0 10px}.driver-actions{display:flex;gap:8px;margin-top:12px}.driver-actions button{height:40px;font-size:13px}@media(max-width:520px){.driver-type-menu{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.driver-type-menu button{font-size:10px;height:30px}.driver-actions button{font-size:12px}}</style></head>
+.driver-page{display:none}.driver-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.driver-nav button{height:42px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#475569;font-weight:800}.driver-nav button.active{background:#047857;color:#fff;border-color:#047857}.driver-plate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.driver-plate-grid label{font-size:9px}.driver-plate-grid input{min-width:0}.driver-form select{width:100%}@media(max-width:520px){.driver-plate-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}}.driver-list{margin-top:14px}.driver-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.driver-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.driver-name{font-weight:900;font-size:17px}.driver-meta{color:#6b7280;font-size:13px;margin-top:4px}.driver-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:6px}.driver-type-menu button{height:30px;padding:0 3px;font-size:11px;font-weight:800;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#475569}.driver-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.driver-form .row{margin-top:0}.driver-cnh{display:flex;gap:6px;align-items:center;margin-top:8px}.driver-cnh button{width:auto;height:36px;font-size:12px;padding:0 10px}.driver-actions{display:flex;gap:8px;margin-top:12px}.driver-actions button{height:40px;font-size:13px}@media(max-width:520px){.driver-type-menu{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.driver-type-menu button{font-size:10px;height:30px}.driver-actions button{font-size:12px}}</style></head>
 <body><div id="moduleGate">
   <div class="module-gate-box">
     <h1>Nikkei Brasil</h1>
@@ -148,7 +148,11 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   <h2 style="margin:0">👨‍✈️ Motoristas</h2>
   <button class="secondary small-btn" onclick="closeDriversPage()">← Voltar</button>
  </div>
- <div class="driver-form">
+ <div class="driver-nav">
+  <button type="button" id="driverCadastroBtn" class="active" onclick="showDriverSection('cadastro')">Cadastro</button>
+  <button type="button" id="driverConsultaBtn" onclick="showDriverSection('consulta')">Consulta</button>
+ </div>
+ <div id="driverCadastroSection"><div class="driver-form">
   <div class="row">
    <div><label>Nome</label><input id="driverName" type="text" placeholder="Nome"></div>
    <div><label>Sobrenome</label><input id="driverSurname" type="text" placeholder="Sobrenome"></div>
@@ -185,7 +189,10 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   </div>
   <button class="primary" type="button" onclick="saveDriver()">Salvar motorista</button>
  </div>
- <div id="driverList" class="driver-list"><span class="muted">Carregando motoristas...</span></div>
+ </div>
+ <div id="driverConsultaSection" style="display:none">
+  <div id="driverList" class="driver-list"><span class="muted">Carregando motoristas...</span></div>
+ </div>
 </div>
 
 <main>
@@ -1436,7 +1443,7 @@ function resetDriverForm(){
  document.getElementById('driverState').value='';document.getElementById('driverCity').innerHTML='<option value="">Selecione o estado primeiro</option>';document.getElementById('driverCity').disabled=true;document.getElementById('driverCnhFile').value='';document.getElementById('driverCnhStatus').textContent='Nenhuma CNH';renderDriverTypeMenu();
 }
 function loadDriverCities(state,selected){const s=document.getElementById('driverState');s.value=state;s.dispatchEvent(new Event('change'));setTimeout(()=>{const c=document.getElementById('driverCity');if([...c.options].some(o=>o.value===selected))c.value=selected;},500);}
-function editDriver(id){window.nikkeiEditDriver&&window.nikkeiEditDriver(id)}
+function editDriver(id){showDriverSection('cadastro');window.nikkeiEditDriver&&window.nikkeiEditDriver(id)}
 async function saveDriver(){
  currentDriver.name=document.getElementById('driverName').value.trim();
  currentDriver.surname=document.getElementById('driverSurname').value.trim();
@@ -1466,6 +1473,14 @@ function renderDrivers(list){
  document.getElementById('driverList').innerHTML=list.length?list.map(x=>'<div class="driver-item"><div class="driver-head"><span class="driver-name">'+esc(x.name)+'</span><span class="badge">'+esc(driverVehicleLabel(x))+'</span></div><div class="driver-meta">'+esc([x.address,x.addressNumber].filter(Boolean).join(', ')||'Sem endereço')+' • '+esc([x.neighborhood,x.city,x.state].filter(Boolean).join(' - '))+' • WhatsApp: '+esc(x.phone||'Sem celular')+(x.phone2?' • Celular 2: '+esc(x.phone2):'')+(x.phoneAlt?' • Recado: '+esc(x.phoneAlt):'')+'</div><div class="driver-cnh">'+(x.cnhPath?'<button class="secondary" onclick="nikkeiDownloadDriverCnh(&quot;'+x.id+'&quot;)">⬇️ Baixar CNH</button>':'<span class="muted">CNH não cadastrada</span>')+'<button class="secondary" onclick="editDriver(&quot;'+x.id+'&quot;)">Editar</button><button class="secondary" onclick="nikkeiDeleteDriver(&quot;'+x.id+'&quot;)">Excluir</button></div></div>').join(''):'<span class="muted">Nenhum motorista cadastrado.</span>';
 }
 function driverVehicleLabel(x){return [x.vehicleType==='CM'?'Caminhão':'',x.vehicleSubtype==='CAVALO'?'Cavalo':x.vehicleSubtype||'',x.vehicleConfiguration||'',x.bodyType==='BAU'?'Baú':x.bodyType==='SIDER'?'Sider':''].filter(Boolean).join(' • ')||'Sem veículo'}
+function showDriverSection(section){
+ const cadastro=section==='cadastro';
+ document.getElementById('driverCadastroSection').style.display=cadastro?'block':'none';
+ document.getElementById('driverConsultaSection').style.display=cadastro?'none':'block';
+ document.getElementById('driverCadastroBtn').classList.toggle('active',cadastro);
+ document.getElementById('driverConsultaBtn').classList.toggle('active',!cadastro);
+ if(!cadastro) window.nikkeiLoadDrivers&&window.nikkeiLoadDrivers();
+}
 function openDriversPage(){
  document.getElementById('moduleGate').style.display='none';
  document.querySelector('header.app-header').style.display='none';
@@ -1473,6 +1488,7 @@ function openDriversPage(){
  document.getElementById('driverPage').style.display='block';
  resetDriverForm();
  initDriverStates();
+ showDriverSection('cadastro');
  ['driverPhone','driverPhone2','driverPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});
  document.getElementById('driverCpf').oninput=function(){maskCpf(this)};
  window.nikkeiLoadDrivers&&window.nikkeiLoadDrivers();
