@@ -1572,11 +1572,12 @@ async function lookupAccessCep(){
 function initAccessForm(){const cep=document.getElementById('reqCep');if(cep){cep.oninput=function(){maskCep(this)};cep.onblur=lookupAccessCep;}const s=document.getElementById('reqState');if(!s||s.options.length>1)return;s.innerHTML='<option value="">Selecione o estado</option>'+reqStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');s.onchange=async()=>{const st=s.value,c=document.getElementById('reqCity');c.innerHTML='<option>Carregando cidades...</option>';c.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();c.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');c.disabled=false}catch(e){c.innerHTML='<option>Erro ao carregar</option>'}};['reqPhone','reqPhone2','reqPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});document.getElementById('reqCpf').oninput=function(){maskCpf(this)};document.getElementById('loginUsername').oninput=function(){maskCpf(this)};document.getElementById('reqCnhFile').onchange=async function(){reqData.cnhFile=this.files[0]||null;const f=reqData.cnhFile;document.getElementById('reqCnhStatus').textContent=f?'Lendo CNH...':'Nenhuma CNH';if(f)await ocrCnhAndFill(f);};renderReqType()}
 async function ocrCnhAndFill(file){
  const st=document.getElementById('reqCnhStatus');
+ let worker=null;
  if(!file)return;
  try{
   if(!window.Tesseract){st.textContent=file.name+' — OCR indisponível';return;}
   st.textContent='Lendo CNH...';
-  const worker=await Tesseract.createWorker('por',1,{logger:m=>{
+  worker=await Tesseract.createWorker('por',1,{
     if(m.status&&m.progress!=null)st.textContent='Lendo CNH... '+Math.round(m.progress*100)+'%';
   }});
   let allText='';
