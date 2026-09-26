@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <style id="authStartupStyle">html.auth-pending body > *:not(#sbAuth){visibility:hidden!important}html.auth-pending #sbAuth{visibility:visible!important}.vehicle-body-fixed{grid-template-columns:1fr!important}.vehicle-body-fixed .vehicle-subtype-option{cursor:default!important}
-<style>.access-box{width:min(720px,94vw)} .access-two{grid-template-columns:1fr 1fr!important}.access-location{grid-template-columns:1fr 1.4fr .7fr!important}.access-neighborhood{grid-template-columns:1fr 1fr!important}.access-phones{grid-template-columns:1fr 1fr!important}.access-address{grid-template-columns:1fr .22fr!important}.access-number input{width:100%}#accessForm{display:grid;gap:7px}.accessFormCompact{}.accessFormCompact .row{gap:7px}.access-box label{margin-bottom:3px}.access-box input,.access-box select{height:40px;padding:7px 10px}.access-actions{gap:7px}.access-note{margin:5px 0 10px}</style></style>
+<style>.access-box{width:min(720px,94vw)} .access-two{grid-template-columns:1fr 1fr!important}.access-location{grid-template-columns:1fr 1.4fr .7fr!important}.access-neighborhood{grid-template-columns:1fr 1fr!important}.access-phones{grid-template-columns:1fr 1fr!important}.access-emergency{grid-template-columns:1fr 1fr!important}.access-address{grid-template-columns:1fr .22fr!important}.access-number input{width:100%}#accessForm{display:grid;gap:7px}.accessFormCompact{}.accessFormCompact .row{gap:7px}.access-box label{margin-bottom:3px}.access-box input,.access-box select{height:40px;padding:7px 10px}.access-actions{gap:7px}.access-note{margin:5px 0 10px}</style></style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>document.documentElement.classList.add("auth-pending");</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -130,7 +130,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 <body>
 <div id="loginPage" class="access-page">
  <div class="access-box">
-  <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei-logo-wide.jpg" alt="Nikkei Brasil"></div><p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
+  <div class="brand-logo-wrap"><img class="brand-logo" src="https://cdn.fbsbx.com/v/t65.102178-21/825122462_1386909573602071_3842335615882713767_n.jpg/nikkei_brasil_slogin_800x244_300-800KB.png?_nc_ht=cdn.fbsbx.com&_nc_ohc=DjnSsRBMMuUQ7kNvwG7BWBt&sdl=0&ccb=14-4&oh=00_AQK0J0SylJWPVibd69qOHCxrFcOukOpuyq4_hrB4-B_HwQ&oe=6AB91465&_nc_sid=4ee932" alt="Nikkei Brasil"></div><p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
   <div class="login-fields"><label>Email</label><input id="loginUsername" type="email" placeholder="seuemail@exemplo.com" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
   <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="showRegistration()">Cadastrar</button></div>
   <div id="loginStatus" class="access-status"></div>
@@ -148,7 +148,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
    <div class="row access-address"><div><label>Endereço</label><input id="reqAddress" type="text" readonly></div><div class="access-number"><label>Nº</label><input id="reqAddressNumber" type="text" disabled></div></div>
    <div class="row access-two access-neighborhood"><div><label>Bairro</label><input id="reqNeighborhood" type="text" readonly></div><div><label>Complemento</label><input id="reqComplement" type="text" placeholder="Apartamento, bloco, sala..."></div></div>
    <div class="row access-phones"><div><label>Celular WhatsApp <span style="color:#c00">*</span></label><input id="reqPhone" required type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Celular 2</label><input id="reqPhone2" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
-   <div class="row"><div><label>Tel. recado</label><input id="reqPhoneAlt" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
+   <div class="row access-two access-emergency"><div><label>Nome</label><input id="reqEmergencyName" type="text" placeholder="Nome do contato"></div><div><label>Contato de emergência</label><input id="reqPhoneAlt" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
    
    <label>Tipo de veículo</label><div class="access-type-menu" id="reqTypeMenu"><button type="button" onclick="reqType('CM')">Caminhão</button></div><div class="access-type-menu" id="reqSubtypeMenu" style="display:none"></div><div class="access-type-menu" id="reqBodyMenu" style="display:none"></div><div class="access-plate-grid" id="reqPlateGrid" style="display:none"></div>
    <div class="access-actions"><button class="primary" type="button" onclick="submitAccessRequest()">Solicitar acesso</button><button class="secondary" type="button" onclick="showAccessStatus()">Consultar autorização</button></div>
