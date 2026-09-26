@@ -1371,10 +1371,10 @@ document.addEventListener('DOMContentLoaded', function(){
 <script src="./k5.js?v=2"></script>
 <script src="./k6.js?v=2"></script>
 <script src="./k7.js?v=2"></script>
-<script src="./supabase-sync.js?v=9"></script>
+<script src="./supabase-sync.js?v=10"></script>
 <script>
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=21').catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=22').catch(()=>{}));
 }
 </script>
 <script>
@@ -1450,7 +1450,7 @@ async function saveDriver(){
  currentDriver.phoneAlt=document.getElementById('driverPhoneAlt').value.trim();
  currentDriver.cpf=document.getElementById('driverCpf').value.trim();
  currentDriver.rg=document.getElementById('driverRg').value.trim();
- if(!validDriverPhone(currentDriver.phone)||!validDriverPhone(currentDriver.phone2)||!validDriverPhone(currentDriver.phoneAlt)){alert('Informe os 3 telefones no formato (11) 99999-9999.');return;}
+ if([currentDriver.phone,currentDriver.phone2,currentDriver.phoneAlt].some(v=>v && !validDriverPhone(v))){alert('Os telefones preenchidos devem estar no formato (11) 99999-9999.');return;}
  ['plateCavalo','plateCarreta','plateCarreta2'].forEach(k=>{const e=document.getElementById(k);if(e)currentDriver[k]=driverPlateMask(e.value);});
  if(!currentDriver.name){alert('Informe o nome do motorista.');return}
  const file=document.getElementById('driverCnhFile').files[0];
@@ -1463,9 +1463,9 @@ async function saveDriver(){
  }catch(e){alert('Não foi possível salvar: '+(e.message||e))}
 }
 function renderDrivers(list){
- document.getElementById('driverList').innerHTML=list.length?list.map(x=>'<div class="driver-item"><div class="driver-head"><span class="driver-name">'+esc(x.name)+'</span><span class="badge">'+esc(driverVehicleLabel(x))+'</span></div><div class="driver-meta">'+esc(x.address||'Sem endereço')+' • WhatsApp: '+esc(x.phone||'Sem celular')+(x.phoneAlt?' • Recado: '+esc(x.phoneAlt):'')+(x.plate?' • Placa: '+esc(x.plate):'')+'</div><div class="driver-cnh">'+(x.cnhPath?'<button class="secondary" onclick="nikkeiDownloadDriverCnh(&quot;'+x.id+'&quot;)">⬇️ Baixar CNH</button>':'<span class="muted">CNH não cadastrada</span>')+'<button class="secondary" onclick="editDriver(&quot;'+x.id+'&quot;)">Editar</button><button class="secondary" onclick="nikkeiDeleteDriver(&quot;'+x.id+'&quot;)">Excluir</button></div></div>').join(''):'<span class="muted">Nenhum motorista cadastrado.</span>';
+ document.getElementById('driverList').innerHTML=list.length?list.map(x=>'<div class="driver-item"><div class="driver-head"><span class="driver-name">'+esc(x.name)+'</span><span class="badge">'+esc(driverVehicleLabel(x))+'</span></div><div class="driver-meta">'+esc([x.address,x.addressNumber].filter(Boolean).join(', ')||'Sem endereço')+' • '+esc([x.neighborhood,x.city,x.state].filter(Boolean).join(' - '))+' • WhatsApp: '+esc(x.phone||'Sem celular')+(x.phone2?' • Celular 2: '+esc(x.phone2):'')+(x.phoneAlt?' • Recado: '+esc(x.phoneAlt):'')+'</div><div class="driver-cnh">'+(x.cnhPath?'<button class="secondary" onclick="nikkeiDownloadDriverCnh(&quot;'+x.id+'&quot;)">⬇️ Baixar CNH</button>':'<span class="muted">CNH não cadastrada</span>')+'<button class="secondary" onclick="editDriver(&quot;'+x.id+'&quot;)">Editar</button><button class="secondary" onclick="nikkeiDeleteDriver(&quot;'+x.id+'&quot;)">Excluir</button></div></div>').join(''):'<span class="muted">Nenhum motorista cadastrado.</span>';
 }
-function driverVehicleLabel(x){return [x.vehicleType==='CM'?'Caminhão':'',x.vehicleSubtype||'',x.bodyType==='BAU'?'Baú':x.bodyType==='SIDER'?'Sider':''].filter(Boolean).join(' • ')||'Sem veículo'}
+function driverVehicleLabel(x){return [x.vehicleType==='CM'?'Caminhão':'',x.vehicleSubtype==='CAVALO'?'Cavalo':x.vehicleSubtype||'',x.vehicleConfiguration||'',x.bodyType==='BAU'?'Baú':x.bodyType==='SIDER'?'Sider':''].filter(Boolean).join(' • ')||'Sem veículo'}
 function openDriversPage(){
  document.getElementById('moduleGate').style.display='none';
  document.querySelector('header.app-header').style.display='none';
