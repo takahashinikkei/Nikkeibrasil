@@ -184,6 +184,18 @@ window.nikkeiDownloadDriverCnh=async(id)=>{
  if(error)throw error;
  const url=URL.createObjectURL(data),a=document.createElement('a');a.href=url;a.download=x.cnhName||'CNH';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
+function accessRequestFromRow(r){return {id:r.id,name:r.name||'',surname:r.surname||'',address:r.address||'',addressNumber:r.address_number||'',neighborhood:r.neighborhood||'',state:r.state||'',city:r.city||'',phone:r.phone||'',phone2:r.phone2||'',phoneAlt:r.phone_alt||'',cpf:r.cpf||'',rg:r.rg||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',vehicleConfiguration:r.vehicle_configuration||'',plateCavalo:r.plate_cavalo||'',plateCarreta:r.plate_carreta||'',plateCarreta2:r.plate_carreta2||'',cnhPath:r.cnh_path||'',cnhName:r.cnh_name||'',cnhMime:r.cnh_mime||'',status:r.status,accessCode:r.access_code,createdAt:r.created_at,approvedAt:r.approved_at};}
+async function createAccessRequest(x,file){
+ if(!sb)throw new Error('Banco de dados indisponível.');
+ const row={name:x.name,surname:x.surname,address:x.address,address_number:x.addressNumber,neighborhood:x.neighborhood,state:x.state,city:x.city,phone:x.phone,phone2:x.phone2,phone_alt:x.phoneAlt,cpf:x.cpf,rg:x.rg,vehicle_type:x.vehicleType,vehicle_subtype:x.vehicleSubtype,body_type:x.bodyType,vehicle_configuration:x.vehicleConfiguration,plate_cavalo:x.plateCavalo,plate_carreta:x.plateCarreta,plate_carreta2:x.plateCarreta2,status:'pending'};
+ const {data,error}=await sb.from('access_requests').insert(row).select().single();if(error)throw error;
+ if(file){const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'')||'bin';const path='access-requests/'+data.id+'/cnh-'+Date.now()+'.'+ext;const up=await sb.storage.from('driver-documents').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});if(up.error)throw up.error;const u=await sb.from('access_requests').update({cnh_path:up.data.path,cnh_name:file.name,cnh_mime:file.type||'application/octet-stream'}).eq('id',data.id);if(u.error)throw u.error;}
+ return {id:data.id};
+}
+async function getAccessRequest(id){if(!sb)throw new Error('Banco de dados indisponível.');const {data,error}=await sb.from('access_requests').select('*').eq('id',id).maybeSingle();if(error)throw error;return data?accessRequestFromRow(data):null;}
+async function loadAccessRequests(){if(!sb)return[];const {data,error}=await sb.from('access_requests').select('*').order('created_at',{ascending:false});if(error){console.warn(error.message);return[];}const list=(data||[]).map(accessRequestFromRow);window.__nikkeiAccessRequests=list;renderAccessRequests&&renderAccessRequests(list);return list;}
+async function updateAccessRequest(id,status){if(!sb)throw new Error('Banco de dados indisponível.');const patch={status,approved_at:status==='approved'?new Date().toISOString():null};if(status==='approved')patch.access_code=String(Math.floor(100000+Math.random()*900000));const {data,error}=await sb.from('access_requests').update(patch).eq('id',id).select().single();if(error)throw error;await loadAccessRequests();return accessRequestFromRow(data);}
+window.nikkeiCreateAccessRequest=createAccessRequest;window.nikkeiGetAccessRequest=getAccessRequest;window.nikkeiLoadAccessRequests=loadAccessRequests;window.nikkeiUpdateAccessRequest=updateAccessRequest;
 function patchStorage(){
  localStorage.setItem=function(k,v){
   const prev=localStorage.getItem(k);originalSet(k,v);
