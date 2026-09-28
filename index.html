@@ -1601,7 +1601,7 @@ async function ocrCnhAndFill(file){
  const isPdf=type==='application/pdf'||/\.pdf$/i.test(name);
  const isImage=type.startsWith('image/')||/\.(jpe?g|png|webp|heic|heif)$/i.test(name);
  if(!isPdf&&!isImage){st.textContent=name+' — formato não suportado. Use PDF ou foto JPG/PNG/WEBP.';return;}
- const countFilled=()=>['reqName','reqSurname','reqCpf','reqRg','reqBirthDate'].filter(id=>document.getElementById(id)?.value).length;
+ const countFilled=()=>[document.getElementById('reqName')?.value||document.getElementById('reqSurname')?.value,document.getElementById('reqCpf')?.value,document.getElementById('reqRg')?.value,document.getElementById('reqBirthDate')?.value].filter(Boolean).length;
  const status=msg=>{st.textContent=msg;};
  try{
   let allText='';
@@ -1736,70 +1736,24 @@ function fillAccessFromCnhText(raw){
  const compact=lines.join(' ');
  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v&&!String(el.value||'').trim())el.value=v;};
  const digits=v=>String(v||'').replace(/\D/g,'');
- const cleanName=v=>String(v||'').replace(/[^A-Z ]/g,' ').replace(/\s+/g,' ').trim();
- const field=(labels,stop)=>{
-   const lab=labels.join('|');
-   const re=new RegExp('(?:'+lab+')\\s*[:.-]?\\s*([^\\n]{1,180})','i');
-   const m=compact.match(re);
-   if(!m)return '';
-   let v=m[1];
-   if(stop){
-     const s=v.search(new RegExp('\\s+(?:'+stop+')\\b','i'));
-     if(s>=0)v=v.slice(0,s);
-   }
-   return v.replace(/^[:.\-\\s]+/,'').trim();
- };
-
- // CPF: suporta PDF nativo da CNH Digital e OCR, inclusive dígitos separados.
- let cpfMatch=compact.match(/(?:CPF|C\s*P\s*F)\s*[:.-]?\s*((?:\d[ .-]*){11})(?!\d)/i);
+ const clean=v=>String(v||'').replace(/[^A-Z ]/g,' ').replace(/\s+/g,' ').trim();
+ const forbidden=/^(?:VALIDACAO|ASSINATURA|DOCUMENTO|REGISTRO|CATEGORIA|PERMISSAO|NACIONALIDADE|FILIACAO|OBSERVACOES|CONDUTOR|MOTORISTA)$/i;
+ const badName=/\b(?:VALIDACAO|ASSINATURA|DOCUMENTO|IDENTIDADE|REGISTRO|CATEGORIA|PERMISSAO|NACIONALIDADE|FILIACAO|OBSERVACOES|CONDUTOR|MOTORISTA|DATA|NASCIMENTO|CPF|RG)\b/i;
+ const validName=v=>{const s=clean(v).toUpperCase();if(s.length<5||s.length>80||forbidden.test(s)||badName.test(s))return '';const words=s.split(' ').filter(Boolean);if(words.length<2)return '';if(words.some(w=>w.length<2||/\d/.test(w)))return '';return s;};
+ const afterLabel=(labels,max=90)=>{const label=labels.join('|');const re=new RegExp('(?:'+label+')\\s*(?:[:.-])?\\s*([A-Z][A-Z ]{2,'+max+'})','i');const m=t.match(re);return m?m[1].trim():'';};
+ const dateFrom=s=>{let m=String(s||'').match(/\b(\d{2})[\/.-](\d{2})[\/.-](\d{4})\b/);if(m)return m[3]+'-'+m[2]+'-'+m[1];m=String(s||'').match(/\b(\d{4})[\/.-](\d{2})[\/.-](\d{2})\b/);if(m)return m[1]+'-'+m[2]+'-'+m[3];return '';};
+ let cpfMatch=t.match(/(?:CPF|C\s*P\s*F)\s*[:.-]?\s*((?:\d[ .-]*){11})(?!\d)/i);
  if(!cpfMatch)cpfMatch=compact.match(/\b((?:\d[ .-]*){11})\b/);
- if(cpfMatch){
-   const cpf=digits(cpfMatch[1]);
-   if(cpf.length===11){
-     const el=document.getElementById('reqCpf');
-     if(el&&!el.value){el.value=cpf;maskCpf(el);}
-   }
- }
-
- // Nome e sobrenome. A CNH Digital costuma separar o rótulo e o valor em objetos PDF.
- let name=field(['NOME E SOBRENOME','NOME COMPLETO','NOME'],
-   'DATA DE NASCIMENTO|DATA NASCIMENTO|NASCIMENTO|CPF|DOC|IDENTIDADE|REGISTRO|CATEGORIA|VALIDADE|FILIA|NACIONALIDADE|NOME DA MAE|NOME DO PAI');
- if(!name){
-   const nm=compact.match(/\b([A-Z]{2,}(?:\s+[A-Z]{2,}){1,10})\s+(?=DATA(?:\s+DE)?\s+NASCIMENTO|CPF|DOC(?:UMENTO)?|IDENTIDADE|REGISTRO)\b/);
-   if(nm)name=nm[1];
- }
- name=cleanName(name);
- name=name.replace(/\b(?:DATA|NASCIMENTO|CPF|DOC|IDENTIDADE|REGISTRO|CATEGORIA|VALIDADE|FILIA|NACIONALIDADE)\b.*$/,'').trim();
- if(name&&name.length>=5){
-   const parts=name.split(' ').filter(Boolean);
-   if(parts.length>=2){set('reqName',parts.shift());set('reqSurname',parts.join(' '));}
-   else set('reqName',name);
- }
-
- // Data de nascimento: DD/MM/AAAA, AAAA-MM-DD ou "19 DE OUT DE 2001".
- const birthLabel=field(['DATA DE NASCIMENTO','DATA NASCIMENTO','NASCIMENTO','DT NASC','NASC','DATE OF BIRTH'],
-   'CPF|DOC|IDENTIDADE|REGISTRO|CATEGORIA|VALIDADE|FILIA|NOME DA MAE|NOME DO PAI');
- if(birthLabel)setReqBirthDate(birthLabel);
- if(!document.getElementById('reqBirthDate')?.value){
-   const dateCandidates=[...compact.matchAll(/\b(\d{2}\s*[\/.-]\s*\d{2}\s*[\/.-]\s*\d{4})\b/g)].map(x=>x[1]);
-   for(const v of dateCandidates){
-     const m=v.match(/(\d{2})\D(\d{2})\D(\d{4})/);
-     if(m&&+m[3]>=1900&&+m[3]<=new Date().getFullYear()&&+m[2]>=1&&+m[2]<=12&&+m[1]>=1&&+m[1]<=31){setReqBirthDate(v);break;}
-   }
- }
- if(!document.getElementById('reqBirthDate')?.value){
-   const textual=compact.match(/\b(\d{1,2}\s+DE?\s+[A-Z]{3,9}\s+DE?\s+\d{4})\b/);
-   if(textual)setReqBirthDate(textual[1]);
- }
-
- // RG: somente quando estiver associado a um rótulo de identidade/RG.
- const rgValue=field(['DOCUMENTO DE IDENTIDADE','DOC IDENTIDADE','IDENTIDADE','REGISTRO GERAL','RG'],
-   'CPF|DATA|NASCIMENTO|CATEGORIA|VALIDADE|FILIA|NOME DA MAE|NOME DO PAI');
- if(rgValue){
-   const m=rgValue.match(/\d[\d .-]{4,20}/);
-   const n=digits(m?m[0]:rgValue);
-   if(n.length>=5&&n.length<=12)set('reqRg',n);
- }
+ if(cpfMatch){const cpf=digits(cpfMatch[1]);if(cpf.length===11){const el=document.getElementById('reqCpf');if(el&&!el.value){el.value=cpf;maskCpf(el);}}}
+ let name=validName(afterLabel(['NOME E SOBRENOME','NOME COMPLETO','NOME DO CONDUTOR','NOME']));
+ if(!name){for(let i=0;i<lines.length;i++){if(/^NOME(?: E SOBRENOME| COMPLETO| DO CONDUTOR)?$/.test(lines[i])){for(let j=i+1;j<Math.min(i+4,lines.length);j++){const cand=validName(lines[j]);if(cand){name=cand;break;}}}if(name)break;}}
+ if(name){const parts=name.split(' ').filter(Boolean);set('reqName',parts.shift());set('reqSurname',parts.join(' '));}
+ let birth=dateFrom(afterLabel(['DATA DE NASCIMENTO','DATA NASCIMENTO','DT NASC','NASCIMENTO','NASC','DATE OF BIRTH'],40));
+ if(!birth){const candidates=[...t.matchAll(/\b(\d{2}[\/.-]\d{2}[\/.-]\d{4})\b/g)].map(m=>m[1]);for(const v of candidates){const d=dateFrom(v);const y=Number(d.slice(0,4));if(y>=1900&&y<=new Date().getFullYear()){birth=d;break;}}}
+ if(birth){const e=document.getElementById('reqBirthDate');if(e&&!e.value){e.value=birth;updateReqAge();}}
+ const rgRaw=afterLabel(['DOCUMENTO DE IDENTIDADE','DOC IDENTIDADE','REGISTRO GERAL','IDENTIDADE','RG'],30);
+ const rgMatch=rgRaw.match(/\d[\d .-]{4,20}/);
+ if(rgMatch){const n=digits(rgMatch[0]);if(n.length>=5&&n.length<=12)set('reqRg',n);}
  updateReqAge();
 }
 function reqFunction(t){const fm=document.getElementById('reqFunctionMenu');if(t==='OPERACIONAL'&&reqData.functionRole==='OPERACIONAL'){reqData.functionRole='';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';reqData.plateVehicle='';reqData.plateCavalo='';reqData.plateCarreta='';reqData.plateCarreta2='';fm.innerHTML='<button type="button" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>';renderReqType();return}if(t==='MOTORISTA'&&reqData.functionRole==='MOTORISTA'){reqData.functionRole='';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';reqData.plateVehicle='';reqData.plateCavalo='';reqData.plateCarreta='';reqData.plateCarreta2='';fm.innerHTML='<button type="button" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>';renderReqType();return}if(t==='EXPEDICAO'&&reqData.functionRole.startsWith('EXPEDICAO')){reqData.functionRole='';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';fm.innerHTML='<button type="button" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>';renderReqType();return}if(t==='MOTORISTA'){reqData.functionRole='MOTORISTA';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';fm.innerHTML='<button type="button" class="active" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqVehicleChoice(\'VAN\')">Van</button><button type="button" onclick="reqVehicleChoice(\'3/4\')">3/4</button><button type="button" onclick="reqVehicleChoice(\'TOCO\')">Toco</button><button type="button" onclick="reqVehicleChoice(\'TRUCK\')">Truck</button><button type="button" onclick="reqVehicleChoice(\'BITRUCK\')">Bitruck</button><button type="button" onclick="reqVehicleChoice(\'CAV4X2\')">Cav. 4x2</button><button type="button" onclick="reqVehicleChoice(\'CAV6X2\')">Cav. 6x2</button><button type="button" onclick="reqVehicleChoice(\'CAV6X4\')">Cav. 6x4</button>';}else if(t==='EXPEDICAO'){reqData.functionRole='EXPEDICAO';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';fm.innerHTML='<button type="button" class="active" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqExpChoice(\'AJUDANTE\')">Ajudante</button><button type="button" onclick="reqExpChoice(\'CONFERENTE\')">Conferente</button>';}else{reqData.functionRole=t;reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';reqData.plateVehicle='';reqData.plateCavalo='';reqData.plateCarreta='';reqData.plateCarreta2='';fm.innerHTML='<button type="button" class="active" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>'; }renderReqType()}
