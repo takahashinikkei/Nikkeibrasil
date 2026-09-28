@@ -1899,7 +1899,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',h={'apikey':KEY,'Authorization':'Bearer '+KEY};
   const r=await fetch(URL+'/rest/v1/access_requests?select=*&order=created_at.desc',{headers:h}); if(!r.ok)throw new Error(await r.text());
-  const list=await r.json(); window.__nikkeiAccessRequests=list.map(accessRequestFromRow); renderAccessRequests(window.__nikkeiAccessRequests);
+  const list=await r.json(); window.__nikkeiAccessRequests=list; renderAccessRequests(window.__nikkeiAccessRequests);
  }catch(e){if(el)el.textContent='Erro ao carregar solicitações: '+(e.message||e)}
 });
   document.querySelector('#masterButtons [data-action="backGate"]').addEventListener('click',()=>{masterButtons.style.display='none';sectorButtons.style.display='grid';gateText.textContent='Selecione o setor para entrar';document.getElementById('accessRequestsPanel').style.display='none';document.getElementById('employeesPanel').style.display='none'});
