@@ -1812,6 +1812,51 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
   bootAccessGate();
 });
+</script><script id="loginFallback">
+(function(){
+  function wire(){
+    var login=document.getElementById('loginPage'), gate=document.getElementById('moduleGate');
+    var btn=document.querySelector('#loginPage .access-actions button.primary');
+    var u=document.getElementById('loginUsername'), p=document.getElementById('loginPassword');
+    if(btn && !btn.dataset.fallbackBound){
+      btn.dataset.fallbackBound='1';
+      btn.onclick=async function(){
+        var user=(u.value||'').trim().toLowerCase(), pass=p.value||'';
+        var status=document.getElementById('loginStatus');
+        if(user==='master' && pass==='master'){
+          document.documentElement.classList.remove('auth-pending');
+          if(login) login.style.display='none';
+          if(gate) gate.style.display='flex';
+          return;
+        }
+        if(status){status.style.display='block';status.textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';}
+      };
+    }
+    document.querySelectorAll('#sectorButtons button').forEach(function(b){
+      if(b.dataset.fallbackBound)return;
+      b.dataset.fallbackBound='1';
+      b.onclick=function(){
+        var mod=b.dataset.module;
+        if(mod==='Master'){
+          document.getElementById('sectorButtons').style.display='none';
+          document.getElementById('masterButtons').style.display='grid';
+          document.getElementById('moduleGateText').textContent='Master';
+        }else if(mod==='Motoristas' && typeof window.openDriversPage==='function'){
+          window.openDriversPage();
+        }else alert('Este setor será configurado posteriormente.');
+      };
+    });
+    var back=document.querySelector('#masterButtons [data-action="backGate"]');
+    if(back && !back.dataset.fallbackBound){back.dataset.fallbackBound='1';back.onclick=function(){
+      document.getElementById('masterButtons').style.display='none';
+      document.getElementById('sectorButtons').style.display='grid';
+      document.getElementById('moduleGateText').textContent='Selecione o setor para entrar';
+    };}
+    var veh=document.querySelector('#masterButtons [data-action="vehicles"]');
+    if(veh && !veh.dataset.fallbackBound){veh.dataset.fallbackBound='1';veh.onclick=function(){gate.style.display='none';};}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire); else wire();
+})();
 </script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
