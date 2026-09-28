@@ -1962,28 +1962,29 @@ document.addEventListener('DOMContentLoaded',()=>{
   const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
   const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
   const val=id=>{const e=document.getElementById(id);return e&&typeof e.value==='string'?e.value.trim():''};
-  window.submitAccessRequest=async function(){
+  async function doAccessSubmit(){
+
     const btn=document.querySelector('#accessPage .access-actions .primary');
     if(btn){btn.disabled=true;btn.textContent='Enviando...'}
     try{
       const email=val('reqEmail').toLowerCase(), password=val('reqPassword'), cpf=val('reqCpf').replace(/\D/g,'');
-      const role=(window.reqData&&window.reqData.functionRole)||'OPERACIONAL';
+      const rd=(typeof reqData!=='undefined'?reqData:(window.reqData||{})); const role=rd.functionRole||'OPERACIONAL';
       if(!/^\S+@\S+\.\S+$/.test(email)||!password||!val('reqName')||!val('reqSurname')||!val('reqBirthDate')||cpf.length!==11||!val('reqRg')||!val('reqPhone')){
         throw new Error('Preencha email, senha, nome, sobrenome, data de nascimento, RG, CPF e WhatsApp.');
       }
       const row={
-        username:email,password_hash:await sha256Text(password),name:val('reqName'),surname:val('reqSurname'),
+        username:email,password_hash:await (async()=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(password));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')})(),name:val('reqName'),surname:val('reqSurname'),
         birth_date:val('reqBirthDate')||null,address:val('reqAddress')||null,address_number:val('reqAddressNumber')||null,
         neighborhood:val('reqNeighborhood')||null,state:val('reqState')||null,city:val('reqCity')||null,
         phone:val('reqPhone')||null,phone2:val('reqPhone2')||null,phone_alt:val('reqPhoneAlt')||null,
         emergency_contact_name:val('reqEmergencyName')||null,cpf:val('reqCpf')||null,rg:val('reqRg')||null,
-        function_role:role,vehicle_type:(window.reqData&&window.reqData.vehicleType)||null,
-        vehicle_subtype:(window.reqData&&window.reqData.vehicleSubtype)||null,
-        vehicle_configuration:(window.reqData&&window.reqData.vehicleConfiguration)||null,
-        plate:(window.reqData&&window.reqData.plateVehicle)||null,
-        plate_cavalo:(window.reqData&&window.reqData.plateCavalo)||null,
-        plate_carreta:(window.reqData&&window.reqData.plateCarreta)||null,
-        plate_carreta2:(window.reqData&&window.reqData.plateCarreta2)||null,status:'pending'
+        function_role:role,vehicle_type:rd.vehicleType||null,
+        vehicle_subtype:rd.vehicleSubtype||null,
+        vehicle_configuration:rd.vehicleConfiguration||null,
+        plate:rd.plateVehicle||null,
+        plate_cavalo:rd.plateCavalo||null,
+        plate_carreta:rd.plateCarreta||null,
+        plate_carreta2:rd.plateCarreta2||null,status:'pending'
       };
       const q=await fetch(URL+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(email)+'&select=id,status',{headers:H});
       if(!q.ok)throw new Error('Não foi possível consultar o banco.');
@@ -1998,7 +1999,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(!r.ok)throw new Error('Não foi possível criar a solicitação: '+await r.text());
         data=(await r.json())[0];
       }
-      const file=window.reqData&&window.reqData.cnhFile;
+      const file=rd.cnhFile;
       if(file&&data&&data.id){
         const ext=(file.name.split('.').pop()||'bin').replace(/[^a-z0-9]/gi,'')||'bin';
         const path='access-requests/'+data.id+'/document-'+Date.now()+'.'+ext;
@@ -2015,6 +2016,12 @@ document.addEventListener('DOMContentLoaded',()=>{
       if(btn){btn.disabled=false;btn.textContent='Solicitar acesso'}
     }
   };
+  window.submitAccessRequest=doAccessSubmit;
+  function bindAccessSubmit(){
+    const b=document.querySelector('#accessPage .access-actions .primary');
+    if(b&&!b.dataset.directBound){b.dataset.directBound='1';b.onclick=null;b.addEventListener('click',function(ev){ev.preventDefault();doAccessSubmit();});}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindAccessSubmit);else bindAccessSubmit();
 })();
 </script></body>
 </html>
