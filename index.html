@@ -1575,41 +1575,43 @@ async function ocrCnhAndFill(file){
  const st=document.getElementById('reqCnhStatus');
  let worker=null;
  if(!file)return;
- const isPdf=file.type==='application/pdf'||/\\.pdf$/i.test(file.name);
- const isImage=file.type.startsWith('image/')||/\\.(jpe?g|png|webp|heic|heif)$/i.test(file.name);
- if(!isPdf&&!isImage){st.textContent=file.name+' — formato não suportado. Use PDF, JPG, PNG ou foto.';return;}
+ const name=String(file.name||'');
+ const type=String(file.type||'').toLowerCase();
+ const isPdf=type==='application/pdf'||/\.pdf$/i.test(name);
+ const isImage=type.startsWith('image/')||/\.(jpe?g|png|webp|heic|heif)$/i.test(name);
+ if(!isPdf&&!isImage){st.textContent=name+' — formato não suportado. Use PDF ou foto JPG/PNG/WEBP.';return;}
  const countFilled=()=>['reqName','reqSurname','reqCpf','reqRg','reqBirthDate'].filter(id=>document.getElementById(id)?.value).length;
  const status=msg=>{st.textContent=msg;};
  try{
   let allText='';
   let pdf=null;
 
-  // PDF: primeiro tenta extrair o texto nativo. Depois renderiza cada página e faz OCR,
-  // inclusive quando o PDF é apenas uma foto/scan.
   if(isPdf){
    if(!window.pdfjsLib)throw new Error('Leitor de PDF indisponível');
    status('Abrindo PDF...');
    const buf=await file.arrayBuffer();
-   pdf=await pdfjsLib.getDocument({data:buf,disableAutoFetch:false,disableStream:false}).promise;
+   pdf=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
    const pages=Math.min(pdf.numPages,10);
+
+   // Primeiro tenta o texto nativo do PDF.
    for(let pageNo=1;pageNo<=pages;pageNo++){
     status('Lendo texto do PDF... página '+pageNo+'/'+pages);
     const page=await pdf.getPage(pageNo);
     try{
      const tc=await page.getTextContent();
-     allText+='\\n'+(tc.items||[]).map(x=>x.str||'').join(' ');
+     allText+='\n'+(tc.items||[]).map(x=>x.str||'').join(' ');
     }catch(_){}
    }
    fillAccessFromCnhText(allText);
    if(countFilled()>=3){
-    status(file.name+' — PDF lido e dados identificados. Confira os dados.');
+    status(name+' — PDF lido e dados identificados. Confira os dados.');
     return;
    }
   }
 
   if(!window.Tesseract)throw new Error('OCR indisponível');
   status(isPdf?'Preparando OCR do PDF...':'Preparando OCR da foto...');
-  worker=await Tesseract.createWorker('por',1,{
+  worker=await Tesseract.createWorker('por+eng',1,{
    logger:m=>{
     if(m.status&&m.progress!=null){
      const p=Math.round(m.progress*100);
@@ -1619,8 +1621,7 @@ async function ocrCnhAndFill(file){
   });
 
   const recognizeCanvas=async canvas=>{
-   // Mantém o documento grande o suficiente para a CNH, mas evita canvas gigantes.
-   const maxW=3000;
+   const maxW=3200;
    if(canvas.width<maxW){
     const scale=maxW/canvas.width;
     const tmp=document.createElement('canvas');
@@ -1632,24 +1633,26 @@ async function ocrCnhAndFill(file){
     tc.drawImage(canvas,0,0,tmp.width,tmp.height);
     canvas=tmp;
    }
+
    const ctx=canvas.getContext('2d',{willReadFrequently:true});
-   const original=ctx.getImageData(0,0,canvas.width,canvas.height);
-   const gray=new Uint8ClampedArray(original.data);
+   const src=ctx.getImageData(0,0,canvas.width,canvas.height);
+   const gray=new Uint8ClampedArray(src.data);
    for(let i=0;i<gray.length;i+=4){
     const y=.299*gray[i]+.587*gray[i+1]+.114*gray[i+2];
-    const v=Math.max(0,Math.min(255,(y-128)*1.35+128));
+    const v=Math.max(0,Math.min(255,(y-128)*1.55+128));
     gray[i]=gray[i+1]=gray[i+2]=v;
    }
    ctx.putImageData(new ImageData(gray,canvas.width,canvas.height),0,0);
-   const results=[];
-   for(const psm of ['6','11','12']){
+
+   const texts=[];
+   for(const psm of [6,11,12]){
     try{
      const r=await worker.recognize(canvas,{tessedit_pageseg_mode:psm});
-     results.push(r.data.text||'');
+     texts.push(r.data?.text||'');
     }catch(_){}
     if(countFilled()>=4)break;
    }
-   return results.join('\\n');
+   return texts.join('\n');
   };
 
   if(isPdf){
@@ -1657,15 +1660,15 @@ async function ocrCnhAndFill(file){
    for(let pageNo=1;pageNo<=pages;pageNo++){
     status('Lendo PDF com OCR... página '+pageNo+'/'+pages);
     const page=await pdf.getPage(pageNo);
-    const viewport=page.getViewport({scale:2.8});
+    const viewport=page.getViewport({scale:3.2});
     const canvas=document.createElement('canvas');
     canvas.width=Math.ceil(viewport.width);
     canvas.height=Math.ceil(viewport.height);
     const ctx=canvas.getContext('2d',{willReadFrequently:true});
     await page.render({canvasContext:ctx,viewport,background:'white'}).promise;
-    allText+='\\n'+await recognizeCanvas(canvas);
-    canvas.width=1;canvas.height=1;
+    allText+='\n'+await recognizeCanvas(canvas);
     fillAccessFromCnhText(allText);
+    canvas.width=1;canvas.height=1;
     if(countFilled()>=4)break;
    }
   }else{
@@ -1679,14 +1682,15 @@ async function ocrCnhAndFill(file){
      im.onerror=reject;im.src=u;
     });
    }
-   const scale=Math.min(1,3000/(img.width||1));
+   const maxW=3200;
+   const scale=Math.min(1,maxW/(img.width||1));
    const canvas=document.createElement('canvas');
    canvas.width=Math.max(1,Math.round((img.width||1)*scale));
    canvas.height=Math.max(1,Math.round((img.height||1)*scale));
    const ctx=canvas.getContext('2d',{willReadFrequently:true});
    ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
    ctx.drawImage(img,0,0,canvas.width,canvas.height);
-   allText+='\\n'+await recognizeCanvas(canvas);
+   allText+='\n'+await recognizeCanvas(canvas);
    if(img.close)img.close();
   }
 
@@ -1694,12 +1698,12 @@ async function ocrCnhAndFill(file){
   fillAccessFromCnhText(allText);
   const filled=countFilled();
   status(filled>=2
-   ? file.name+' — '+filled+' dado(s) identificado(s). Confira os dados.'
-   : file.name+' — leitura concluída, mas os dados não foram reconhecidos. Para PDF, use um arquivo nítido; para foto, envie frente e verso em boa resolução.');
+   ? name+' — '+filled+' dado(s) identificado(s). Confira os dados.'
+   : name+' — PDF/foto lido, mas os dados não foram reconhecidos. Tente uma imagem nítida da frente e do verso.');
  }catch(e){
   try{if(worker)await worker.terminate();}catch(_){}
   console.error('Leitura CNH/RG:',e);
-  status(file.name+' — não foi possível ler. O sistema aceita PDF e fotos JPG/PNG de CNH ou RG.');
+  status(name+' — não foi possível ler o documento. O sistema aceita PDF e fotos de CNH ou RG.');
  }
 }
 function updateReqAge(){const b=document.getElementById('reqBirthDate'),a=document.getElementById('reqAge');if(!b||!a)return;if(!b.value){a.value='';return}const d=new Date(b.value+'T00:00:00'),n=new Date();let y=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))y--;a.value=(y>=0&&y<=130)?y:'';}
