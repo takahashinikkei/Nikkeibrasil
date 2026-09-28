@@ -128,75 +128,32 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 .brand-logo-wrap{display:block;width:100%;max-width:100%;margin:0 auto 16px;overflow:hidden;background:#fff}
 .brand-logo-wrap .brand-logo{display:block;width:100%;height:auto;max-width:none;object-fit:contain;margin:0;border-radius:0;box-shadow:none}
 @media(max-width:520px){.brand-logo-wrap{width:100%;max-width:100%;margin-bottom:12px}}
-</style><style id="accessPlateThreeCol">.access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.access-plate-grid select{min-width:0;padding-left:7px;padding-right:7px;font-size:13px}@media(max-width:520px){.access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px}.access-plate-grid label{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}</style><style id="accessBirthAlignment">
-.access-birth-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:7px!important;width:100%!important}
+</style><style id="nikkei-access-fixes">
+.access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.access-plate-grid select{min-width:0;padding-left:7px;padding-right:7px;font-size:13px}
+.access-birth-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;width:100%!important}
 .access-birth-row>div{min-width:0!important;width:100%!important}
-.access-birth-row input{display:block!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important}
-.access-birthdate{width:100%!important;min-width:0!important;max-width:100%!important}
-#reqAge{width:100%!important;min-width:0!important;max-width:100%!important}
-@media(max-width:520px){.access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}.access-birth-row input{font-size:14px!important;padding-left:7px!important;padding-right:7px!important}}
-<style id="accessBirthSameSize">
-.access-birth-row input[type="date"],
-.access-birth-row #reqAge{
- height:38px!important;
- min-height:38px!important;
- max-height:38px!important;
- line-height:38px!important;
- font-size:14px!important;
- padding:0 9px!important;
- border-radius:12px!important;
- box-sizing:border-box!important;
- -webkit-appearance:none!important;
- appearance:none!important;
-}
-.access-birth-row input[type="date"]::-webkit-date-and-time-value{height:38px;line-height:38px}
-.access-birth-row{align-items:start!important}
-<style id="equalAccessFields">
-.access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important}
-.access-birth-row>div{min-width:0!important;width:100%!important}
-.access-birth-row input,
-.access-birth-row input[type="date"],
-.access-birth-row #reqAge{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+.access-birth-row input,.access-birth-row input[type=date],.access-birth-row #reqAge{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;height:38px!important;min-height:38px!important;max-height:38px!important}
+.access-birth-row input[type=date]{font-size:13px!important;padding-left:7px!important;padding-right:7px!important}
+.access-birth-row #reqAge{font-size:14px!important;padding-left:9px!important;padding-right:9px!important}
+.brand-logo-wrap{display:block;width:100%;max-width:100%;margin:0 auto 16px;overflow:hidden;background:#fff}
+.brand-logo-wrap .brand-logo{display:block;width:100%;height:auto;max-width:100%;object-fit:contain;margin:0;border-radius:0;box-shadow:none}
 @media(max-width:520px){
-  .access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}
-  .access-birth-row>div{min-width:0!important;width:100%!important}
-  .access-birth-row input,
-  .access-birth-row input[type="date"],
-  .access-birth-row #reqAge{width:100%!important;min-width:0!important;max-width:100%!important}
-}
-</style><style id="birthVisualMatch">
-.access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;min-width:0!important}
-.access-birth-row>div{min-width:0!important;width:100%!important}
-.access-birth-row input,
-.access-birth-row input[type="date"],
-.access-birth-row #reqAge{
-  display:block!important;
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  height:48px!important;
-  min-height:48px!important;
-  max-height:48px!important;
-  box-sizing:border-box!important;
-  padding:0 13px!important;
-  border:1px solid #d1d5db!important;
-  border-radius:12px!important;
-  font-size:16px!important;
-  line-height:normal!important;
-}
-.access-birth-row input[type="date"]{-webkit-appearance:none!important;appearance:none!important}
-.access-birth-row input[type="date"]::-webkit-date-and-time-value{height:auto!important;line-height:normal!important}
-@media(max-width:520px){
+ .access-box{padding:16px}
+ .access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px}
+ .access-plate-grid label{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
  .access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}
- .access-birth-row input,
- .access-birth-row input[type="date"],
- .access-birth-row #reqAge{width:100%!important;min-width:0!important;max-width:100%!important;height:48px!important;min-height:48px!important;max-height:48px!important;font-size:16px!important;padding:0 13px!important}
+ .access-birth-row input,.access-birth-row input[type=date],.access-birth-row #reqAge{width:100%!important;min-width:0!important;max-width:100%!important}
+ .access-birth-row #reqAge{font-size:14px!important}
+ .access-location{grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr) minmax(0,.7fr)!important}
+ .access-box input,.access-box select{height:38px;font-size:14px}
 }
-</style></style></style></head>
+</style></head>
 <body>
 <div id="loginPage" class="access-page">
  <div class="access-box">
-  <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div></div><p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
+  <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
+  <p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
   <div class="login-fields"><label>Email</label><input id="loginUsername" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
   <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="showRegistration()">Cadastrar</button></div>
   <div id="loginStatus" class="access-status"></div>
