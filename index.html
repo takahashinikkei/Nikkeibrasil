@@ -1866,6 +1866,8 @@ async function approveAccess(id){
   const r=rows[0];
   const er=await fetch(URL+'/rest/v1/employees?on_conflict=username',{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({access_request_id:r.id,username:r.username,password_hash:r.password_hash,name:r.name,surname:r.surname,birth_date:r.birth_date,address:r.address,address_number:r.address_number,neighborhood:r.neighborhood,state:r.state,city:r.city,phone:r.phone,phone2:r.phone2,phone_alt:r.phone_alt,emergency_contact_name:r.emergency_contact_name,cpf:r.cpf,rg:r.rg,function_role:r.function_role,vehicle_type:r.vehicle_type,vehicle_subtype:r.vehicle_subtype,body_type:r.body_type,vehicle_configuration:r.vehicle_configuration,plate:r.plate,plate_cavalo:r.plate_cavalo,plate_carreta:r.plate_carreta,plate_carreta2:r.plate_carreta2,cnh_path:r.cnh_path,cnh_name:r.cnh_name,cnh_mime:r.cnh_mime,status:'active',approved_at:new Date().toISOString()})});
   if(!er.ok)throw new Error('Não foi possível criar o funcionário: '+await er.text());
+  const mail=await fetch('https://qincxigrvlvudsqcukxt.supabase.co/functions/v1/send-access-approved-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:r.username,name:r.name})});
+  if(!mail.ok){const mt=await mail.text();throw new Error('Funcionário criado, mas o e-mail não foi enviado: '+mt);}
   const dr=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:H}); if(!dr.ok)throw new Error('Funcionário criado, mas não foi possível remover a solicitação: '+await dr.text());
   alert('Acesso liberado. O funcionário foi transferido para Funcionários.');
   document.querySelector('#masterButtons [data-action="requests"]')?.click();
