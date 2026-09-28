@@ -1851,8 +1851,28 @@ async function openEmployeesPanel(){document.getElementById('accessRequestsPanel
 function closeEmployeesPanel(){document.getElementById('employeesPanel').style.display='none';document.getElementById('masterButtons').style.display='grid';document.getElementById('moduleGateText').textContent='Master'}
 function openEmployeeAccessRequest(){document.getElementById('moduleGate').style.display='none';document.getElementById('employeesPanel').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function renderAccessRequests(list){const el=document.getElementById('accessRequestsList');if(!el)return;el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc(x.name+' '+x.surname)+'</b><div class="muted">'+esc(x.phone)+' • CPF: '+esc(x.cpf)+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+' • '+esc([x.vehicleSubtype,x.vehicleConfiguration].filter(Boolean).join(' • '))+'</div><div class="muted">Status: <b>'+esc(x.status)+'</b></div>'+(x.status==='pending'?'<div class="actions"><button class="primary" onclick="approveAccess(&quot;'+x.id+'&quot;)">Liberar acesso</button><button class="secondary" onclick="rejectAccess(&quot;'+x.id+'&quot;)">Recusar</button></div>':'')+'</div>').join(''):'Nenhuma solicitação.'}
-async function approveAccess(id){try{await window.nikkeiUpdateAccessRequest(id,'approved');alert('Acesso liberado.')}catch(e){alert('Erro: '+e.message)}}
-async function rejectAccess(id){try{await window.nikkeiUpdateAccessRequest(id,'rejected');alert('Solicitação recusada.')}catch(e){alert('Erro: '+e.message)}}
+async function approveAccess(id){
+ try{
+  const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  const q=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id)+'&select=*',{headers:H}); if(!q.ok)throw new Error(await q.text());
+  const rows=await q.json(); if(!rows.length)throw new Error('Solicitação não encontrada.');
+  const r=rows[0];
+  const er=await fetch(URL+'/rest/v1/employees?on_conflict=username',{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({access_request_id:r.id,username:r.username,password_hash:r.password_hash,name:r.name,surname:r.surname,birth_date:r.birth_date,address:r.address,address_number:r.address_number,neighborhood:r.neighborhood,state:r.state,city:r.city,phone:r.phone,phone2:r.phone2,phone_alt:r.phone_alt,emergency_contact_name:r.emergency_contact_name,cpf:r.cpf,rg:r.rg,function_role:r.function_role,vehicle_type:r.vehicle_type,vehicle_subtype:r.vehicle_subtype,body_type:r.body_type,vehicle_configuration:r.vehicle_configuration,plate:r.plate,plate_cavalo:r.plate_cavalo,plate_carreta:r.plate_carreta,plate_carreta2:r.plate_carreta2,cnh_path:r.cnh_path,cnh_name:r.cnh_name,cnh_mime:r.cnh_mime,status:'active',approved_at:new Date().toISOString()})});
+  if(!er.ok)throw new Error('Não foi possível criar o funcionário: '+await er.text());
+  const dr=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:H}); if(!dr.ok)throw new Error('Funcionário criado, mas não foi possível remover a solicitação: '+await dr.text());
+  alert('Acesso liberado. O funcionário foi transferido para Funcionários.');
+  document.querySelector('#masterButtons [data-action="requests"]')?.click();
+ }catch(e){alert('Erro: '+(e.message||e))}
+}
+async function rejectAccess(id){
+ try{
+  const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY};
+  const r=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:H});
+  if(!r.ok)throw new Error(await r.text());
+  alert('Solicitação excluída.');
+  document.querySelector('#masterButtons [data-action="requests"]')?.click();
+ }catch(e){alert('Erro ao excluir: '+(e.message||e))}
+}
 async function sha256Text(v){const b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 function showRegistration(){document.getElementById('loginPage').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function showLogin(){document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex'}
