@@ -154,7 +154,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
   <p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
-  <div class="login-fields"><label>Email</label><input id="loginUsername" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
+  <div class="login-fields"><label>Email</label><input id="loginUsername" type="text" inputmode="email" placeholder="seuemail@exemplo.com ou master" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
   <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="showRegistration()">Cadastrar</button></div>
   <div id="loginStatus" class="access-status"></div>
  </div>
@@ -1448,7 +1448,7 @@ document.addEventListener('DOMContentLoaded', function(){
 <script src="./k5.js?v=2"></script>
 <script src="./k6.js?v=2"></script>
 <script src="./k7.js?v=2"></script>
-<script src="./supabase-sync.js?v=12"></script>
+<script src="./supabase-sync.js?v=13"></script>
 <script>
 if('serviceWorker' in navigator){
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=60').catch(()=>{}));
@@ -1773,7 +1773,13 @@ async function rejectAccess(id){try{await window.nikkeiUpdateAccessRequest(id,'r
 async function sha256Text(v){const b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 function showRegistration(){document.getElementById('loginPage').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function showLogin(){document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex'}
-async function doLogin(){const u=document.getElementById('loginUsername').value.trim().toLowerCase(),p=document.getElementById('loginPassword').value;if(!/^\S+@\S+\.\S+$/.test(u)||!p){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe email e senha.';return}try{const x=await window.nikkeiLogin(u,await sha256Text(p));if(!x){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';return}localStorage.setItem('nikkeiAccessGranted','1');localStorage.setItem('nikkeiAccessRequestId',x.id);document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex'}catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora.'}}
+async function doLogin(){const u=document.getElementById('loginUsername').value.trim().toLowerCase(),p=document.getElementById('loginPassword').value;
+if(!p){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe a senha.';return}
+if(u==='master' && await sha256Text(p)==='fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9'){
+ enterMasterAccess();return;
+}
+if(!/^\S+@\S+\.\S+$/.test(u)){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe um email válido ou o usuário master.';return}
+try{const x=await window.nikkeiLogin(u,await sha256Text(p));if(!x){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';return}localStorage.setItem('nikkeiAccessGranted','1');localStorage.setItem('nikkeiAccessRequestId',x.id);document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex'}catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora.'}}
 function bootAccessGate(){const granted=localStorage.getItem('nikkeiAccessGranted')==='1';document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex';document.getElementById('moduleGate').style.display='none';document.documentElement.classList.remove('auth-pending');if(granted){localStorage.removeItem('nikkeiAccessGranted');document.getElementById('loginStatus').style.display='none';}}
 document.addEventListener('DOMContentLoaded',()=>{
   const gate=document.getElementById('moduleGate');
