@@ -1956,6 +1956,66 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire); else wire();
 })();
+</script><script id="accessRequestFinalFix">
+(function(){
+  const URL='https://qincxigrvlvudsqcukxt.supabase.co';
+  const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+  const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  const val=id=>{const e=document.getElementById(id);return e&&typeof e.value==='string'?e.value.trim():''};
+  window.submitAccessRequest=async function(){
+    const btn=document.querySelector('#accessPage .access-actions .primary');
+    if(btn){btn.disabled=true;btn.textContent='Enviando...'}
+    try{
+      const email=val('reqEmail').toLowerCase(), password=val('reqPassword'), cpf=val('reqCpf').replace(/\D/g,'');
+      const role=(window.reqData&&window.reqData.functionRole)||'OPERACIONAL';
+      if(!/^\S+@\S+\.\S+$/.test(email)||!password||!val('reqName')||!val('reqSurname')||!val('reqBirthDate')||cpf.length!==11||!val('reqRg')||!val('reqPhone')){
+        throw new Error('Preencha email, senha, nome, sobrenome, data de nascimento, RG, CPF e WhatsApp.');
+      }
+      const row={
+        username:email,password_hash:await sha256Text(password),name:val('reqName'),surname:val('reqSurname'),
+        birth_date:val('reqBirthDate')||null,address:val('reqAddress')||null,address_number:val('reqAddressNumber')||null,
+        neighborhood:val('reqNeighborhood')||null,state:val('reqState')||null,city:val('reqCity')||null,
+        phone:val('reqPhone')||null,phone2:val('reqPhone2')||null,phone_alt:val('reqPhoneAlt')||null,
+        emergency_contact_name:val('reqEmergencyName')||null,cpf:val('reqCpf')||null,rg:val('reqRg')||null,
+        function_role:role,vehicle_type:(window.reqData&&window.reqData.vehicleType)||null,
+        vehicle_subtype:(window.reqData&&window.reqData.vehicleSubtype)||null,
+        vehicle_configuration:(window.reqData&&window.reqData.vehicleConfiguration)||null,
+        plate:(window.reqData&&window.reqData.plateVehicle)||null,
+        plate_cavalo:(window.reqData&&window.reqData.plateCavalo)||null,
+        plate_carreta:(window.reqData&&window.reqData.plateCarreta)||null,
+        plate_carreta2:(window.reqData&&window.reqData.plateCarreta2)||null,status:'pending'
+      };
+      const q=await fetch(URL+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(email)+'&select=id,status',{headers:H});
+      if(!q.ok)throw new Error('Não foi possível consultar o banco.');
+      const found=await q.json();let data;
+      if(found.length){
+        if(found[0].status==='approved')throw new Error('Este email já possui acesso autorizado.');
+        const r=await fetch(URL+'/rest/v1/access_requests?id=eq.'+found[0].id,{method:'PATCH',headers:H,body:JSON.stringify(row)});
+        if(!r.ok)throw new Error('Não foi possível atualizar a solicitação.');
+        data=(await r.json())[0]||found[0];
+      }else{
+        const r=await fetch(URL+'/rest/v1/access_requests',{method:'POST',headers:H,body:JSON.stringify(row)});
+        if(!r.ok)throw new Error('Não foi possível criar a solicitação: '+await r.text());
+        data=(await r.json())[0];
+      }
+      const file=window.reqData&&window.reqData.cnhFile;
+      if(file&&data&&data.id){
+        const ext=(file.name.split('.').pop()||'bin').replace(/[^a-z0-9]/gi,'')||'bin';
+        const path='access-requests/'+data.id+'/document-'+Date.now()+'.'+ext;
+        const up=await fetch(URL+'/storage/v1/object/driver-documents/'+path,{method:'POST',headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file});
+        if(up.ok)await fetch(URL+'/rest/v1/access_requests?id=eq.'+data.id,{method:'PATCH',headers:H,body:JSON.stringify({cnh_path:path,cnh_name:file.name,cnh_mime:file.type||'application/octet-stream'})});
+      }
+      localStorage.setItem('nikkeiAccessRequestId',data.id);
+      const box=document.getElementById('accessStatus');
+      if(box){box.style.display='block';box.textContent='Solicitação enviada. Aguardando autorização do Master.'}
+      alert('Solicitação enviada com sucesso. Aguarde a autorização do Master.');
+    }catch(e){
+      alert('Não foi possível enviar: '+(e&&e.message?e.message:e));
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent='Solicitar acesso'}
+    }
+  };
+})();
 </script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
