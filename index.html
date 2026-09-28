@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nikkei Brasil">
-<link rel="icon" type="image/svg+xml" sizes="512x512" href="nikkei-logo-wide.jpg?v=1"><link rel="apple-touch-icon" sizes="114x128" href="nikkei-logo-wide.jpg?v=1">
+<link rel="icon" type="image/svg+xml" sizes="512x512" href="nikkei-logo.png?v=1"><link rel="apple-touch-icon" sizes="114x128" href="nikkei-logo.png?v=1">
 <title>Nikkei Brasil</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#000;color:#111827}
@@ -151,11 +151,24 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 }
 .access-birth-row input[type="date"]::-webkit-date-and-time-value{height:38px;line-height:38px}
 .access-birth-row{align-items:start!important}
-</style></style></head>
+<style id="equalAccessFields">
+.access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important}
+.access-birth-row>div{min-width:0!important;width:100%!important}
+.access-birth-row input,
+.access-birth-row input[type="date"],
+.access-birth-row #reqAge{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+@media(max-width:520px){
+  .access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}
+  .access-birth-row>div{min-width:0!important;width:100%!important}
+  .access-birth-row input,
+  .access-birth-row input[type="date"],
+  .access-birth-row #reqAge{width:100%!important;min-width:0!important;max-width:100%!important}
+}
+</style></style></style></head>
 <body>
 <div id="loginPage" class="access-page">
  <div class="access-box">
-  <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei-logo-wide.jpg" alt="Nikkei Brasil"></div><p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
+  <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei-logo.png" alt="Nikkei Brasil"></div><p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
   <div class="login-fields"><label>Email</label><input id="loginUsername" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
   <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="showRegistration()">Cadastrar</button></div>
   <div id="loginStatus" class="access-status"></div>
