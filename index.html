@@ -148,13 +148,14 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  .access-location{grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr) minmax(0,.7fr)!important}
  .access-box input,.access-box select{height:38px;font-size:14px}
 }
-</style></head>
+.remember-login{display:flex;align-items:center;gap:8px;margin:10px 0 2px;font-size:14px;font-weight:700;color:#56616f;cursor:pointer}.remember-login input{width:18px;height:18px;accent-color:#1976d2;cursor:pointer}</style></head>
 <body>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
   <p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
   <div class="login-fields"><label>Email</label><input id="loginUsername" type="text" inputmode="email" placeholder="seuemail@exemplo.com ou master" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
+  <label class="remember-login"><input id="rememberLoginEmail" type="checkbox"> <span>Salvar email</span></label>
   <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="showRegistration()">Cadastrar</button></div>
   <div id="loginStatus" class="access-status"></div>
  </div>
@@ -1773,7 +1774,8 @@ async function rejectAccess(id){try{await window.nikkeiUpdateAccessRequest(id,'r
 async function sha256Text(v){const b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 function showRegistration(){document.getElementById('loginPage').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function showLogin(){document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex'}
-async function doLogin(){const u=document.getElementById('loginUsername').value.trim().toLowerCase(),p=document.getElementById('loginPassword').value;
+async function doLogin(){const input=document.getElementById('loginUsername'),remember=document.getElementById('rememberLoginEmail'),u=input.value.trim().toLowerCase(),p=document.getElementById('loginPassword').value;
+if(remember&&remember.checked)localStorage.setItem('nikkeiSavedLoginEmail',u);else localStorage.removeItem('nikkeiSavedLoginEmail');
 if(!p){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe a senha.';return}
 if(u==='master' && await sha256Text(p)==='fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9'){
  enterMasterAccess();return;
@@ -1782,6 +1784,12 @@ if(!/^\S+@\S+\.\S+$/.test(u)){document.getElementById('loginStatus').style.displ
 try{const x=await window.nikkeiLogin(u,await sha256Text(p));if(!x){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';return}localStorage.setItem('nikkeiAccessGranted','1');localStorage.setItem('nikkeiAccessRequestId',x.id);document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex'}catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora.'}}
 function bootAccessGate(){const granted=localStorage.getItem('nikkeiAccessGranted')==='1';document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex';document.getElementById('moduleGate').style.display='none';document.documentElement.classList.remove('auth-pending');if(granted){localStorage.removeItem('nikkeiAccessGranted');document.getElementById('loginStatus').style.display='none';}}
 document.addEventListener('DOMContentLoaded',()=>{
+  const savedLoginEmail=localStorage.getItem('nikkeiSavedLoginEmail');
+  if(savedLoginEmail){
+    const input=document.getElementById('loginUsername'),remember=document.getElementById('rememberLoginEmail');
+    if(input) input.value=savedLoginEmail;
+    if(remember) remember.checked=true;
+  }
   const gate=document.getElementById('moduleGate');
   const sectorButtons=document.getElementById('sectorButtons');
   const masterButtons=document.getElementById('masterButtons');
