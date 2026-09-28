@@ -1773,7 +1773,7 @@ async function rejectAccess(id){try{await window.nikkeiUpdateAccessRequest(id,'r
 async function sha256Text(v){const b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 function showRegistration(){document.getElementById('loginPage').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function showLogin(){document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex'}
-async function doLogin(){const u=document.getElementById('loginUsername').value.trim().toLowerCase(),p=document.getElementById('loginPassword').value;
+async async function doLogin(){const u=document.getElementById('loginUsername').value.trim().toLowerCase(),p=document.getElementById('loginPassword').value;
 if(!p){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe a senha.';return}
 if(u==='master' && await sha256Text(p)==='fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9'){
  enterMasterAccess();return;
