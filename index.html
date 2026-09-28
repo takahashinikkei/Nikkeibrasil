@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nikkei Brasil">
-<link rel="icon" type="image/svg+xml" sizes="512x512" href="nikkei-logo.png?v=1"><link rel="apple-touch-icon" sizes="114x128" href="nikkei-logo.png?v=1">
+<link rel="icon" type="image/svg+xml" sizes="512x512" href="Nikkei-logo.png.png?v=1"><link rel="apple-touch-icon" sizes="114x128" href="Nikkei-logo.png.png?v=1">
 <title>Nikkei Brasil</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#000;color:#111827}
@@ -128,11 +128,18 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 .brand-logo-wrap{display:block;width:100%;max-width:100%;margin:0 auto 16px;overflow:hidden;background:#fff}
 .brand-logo-wrap .brand-logo{display:block;width:100%;height:auto;max-width:none;object-fit:contain;margin:0;border-radius:0;box-shadow:none}
 @media(max-width:520px){.brand-logo-wrap{width:100%;max-width:100%;margin-bottom:12px}}
-</style><style id="accessPlateThreeCol">.access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.access-plate-grid select{min-width:0;padding-left:7px;padding-right:7px;font-size:13px}@media(max-width:520px){.access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px}.access-plate-grid label{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}</style></head>
+</style><style id="accessPlateThreeCol">.access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.access-plate-grid select{min-width:0;padding-left:7px;padding-right:7px;font-size:13px}@media(max-width:520px){.access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px}.access-plate-grid label{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}</style><style id="accessBirthAlignment">
+.access-birth-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:7px!important;width:100%!important}
+.access-birth-row>div{min-width:0!important;width:100%!important}
+.access-birth-row input{display:block!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important}
+.access-birthdate{width:100%!important;min-width:0!important;max-width:100%!important}
+#reqAge{width:100%!important;min-width:0!important;max-width:100%!important}
+@media(max-width:520px){.access-birth-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}.access-birth-row input{font-size:14px!important;padding-left:7px!important;padding-right:7px!important}}
+</style></head>
 <body>
 <div id="loginPage" class="access-page">
  <div class="access-box">
-  <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei-logo.png" alt="Nikkei Brasil"></div><p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
+  <div class="brand-logo-wrap"><img class="brand-logo" src="Nikkei-logo.png.png" alt="Nikkei Brasil"></div><p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
   <div class="login-fields"><label>Email</label><input id="loginUsername" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
   <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="showRegistration()">Cadastrar</button></div>
   <div id="loginStatus" class="access-status"></div>
@@ -142,7 +149,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  <div class="access-box">
   <h1>Solicitar acesso</h1><p class="access-note">Preencha seus dados para solicitar autorização.</p>
   <div id="accessForm">
-   <div class="driver-cnh"><input id="reqCnhFile" type="file" accept=".pdf,image/*" style="display:none"><button type="button" class="secondary" onclick="document.getElementById('reqCnhFile').click()">📎 Incluir CNH / RG</button><span id="reqCnhStatus" class="muted">Nenhum documento</span></div>
+   <div class="driver-cnh"><input id="reqCnhFile" type="file" accept="application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none"><button type="button" class="secondary" onclick="document.getElementById('reqCnhFile').click()">📎 Incluir CNH / RG</button><span id="reqCnhStatus" class="muted">Nenhum documento</span></div>
    <div class="row access-two"><div><label>Email</label><input id="reqEmail" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="email"></div><div><label>Senha</label><input id="reqPassword" type="password" autocomplete="new-password"></div></div>
    <div class="row access-two"><div><label>Nome</label><input id="reqName" type="text"></div><div><label>Sobrenome</label><input id="reqSurname" type="text"></div></div>
    <div class="row access-two access-birth-row"><div><label>Data Nasc.</label><input id="reqBirthDate" class="access-birthdate" type="date"></div><div><label>Idade</label><input id="reqAge" type="text" readonly placeholder="Calculada automaticamente"></div></div>
@@ -169,7 +176,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 </div>
 <div id="moduleGate">
   <div class="module-gate-box">
-    <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei-logo.png" alt="Nikkei Brasil"></div>
+    <div class="brand-logo-wrap"><img class="brand-logo" src="Nikkei-logo.png.png" alt="Nikkei Brasil"></div>
     <p id="moduleGateText">Selecione o setor para entrar</p>
     <div class="module-buttons" id="sectorButtons">
       <button data-module="Master">Master</button>
@@ -1707,75 +1714,52 @@ async function ocrCnhAndFill(file){
  }
 }
 function updateReqAge(){const b=document.getElementById('reqBirthDate'),a=document.getElementById('reqAge');if(!b||!a)return;if(!b.value){a.value='';return}const d=new Date(b.value+'T00:00:00'),n=new Date();let y=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))y--;a.value=(y>=0&&y<=130)?y:'';}
-function setReqBirthDate(v){const e=document.getElementById('reqBirthDate');if(!e||e.value)return;const m=String(v||'').match(/(\d{2})[\/.-](\d{2})[\/.-](\d{4})/);if(m){e.value=m[3]+'-'+m[2]+'-'+m[1];updateReqAge();}}
+function setReqBirthDate(v){const e=document.getElementById('reqBirthDate');if(!e||e.value)return;const s=String(v||'').trim();let m=s.match(/(\\d{4})[\\/.-](\\d{2})[\\/.-](\\d{2})/);if(m){e.value=m[1]+'-'+m[2]+'-'+m[3];updateReqAge();return;}m=s.match(/(\\d{2})[\\/.-](\\d{2})[\\/.-](\\d{4})/);if(m){e.value=m[3]+'-'+m[2]+'-'+m[1];updateReqAge();return;}const months={JAN:'01',FEV:'02',MAR:'03',ABR:'04',MAI:'05',JUN:'06',JUL:'07',AGO:'08',SET:'09',OUT:'10',NOV:'11',DEZ:'12'};m=s.toUpperCase().normalize('NFD').replace(/[\\u0300-\\u036F]/g,'').match(/(\\d{1,2})\\s+DE?\\s+([A-Z]{3,9})\\s+DE?\\s+(\\d{4})/);if(m&&months[m[2].slice(0,3)]){e.value=m[3]+'-'+months[m[2].slice(0,3)]+'-'+String(m[1]).padStart(2,'0');updateReqAge();}}
 function fillAccessFromCnhText(raw){
  const rawText=String(raw||'');
- const t=rawText.toUpperCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');
- const compact=t.replace(/[|]/g,'I').replace(/[\\r\\n\\t]+/g,' ');
- const lines=t.split(/\\n+/).map(x=>x.replace(/[^A-Z0-9 .:/-]/g,' ').replace(/\\s+/g,' ').trim()).filter(Boolean);
- const set=(id,v)=>{const el=document.getElementById(id);if(el&&v&&!el.value)el.value=v;};
+ const t=rawText.toUpperCase().normalize('NFD').replace(/[\\u0300-\\u036F]/g,'');
+ const lines=t.split(/\\r?\\n+/).map(x=>x.replace(/[^A-Z0-9 .:/-]/g,' ').replace(/\\s+/g,' ').trim()).filter(Boolean);
+ const compact=lines.join(' ');
+ const set=(id,v)=>{const el=document.getElementById(id);if(el&&v&&!String(el.value||'').trim())el.value=v;};
  const digits=v=>String(v||'').replace(/\\D/g,'');
+ const cleanName=v=>String(v||'').replace(/[^A-Z ]/g,' ').replace(/\\s+/g,' ').trim();
 
- // CPF: tolera espaços/pontos/hífens inseridos pelo OCR.
- let m=compact.match(/CPF\\s*[:.-]?\\s*((?:\\d\\s*){11})/);
- if(!m){
-   const n=compact.match(/(?:^|\\s)((?:\\d[ .-]*){11})(?:\\s|$)/);
-   if(n)m=n;
+ let cpfMatch=compact.match(/(?:CPF|C P F)\\s*[:.-]?\\s*((?:\\d[ .-]*){11})/);
+ if(!cpfMatch){
+   for(const line of lines){const m=line.match(/(?:^|\\s)((?:\\d[ .-]*){11})(?:\\s|$)/);if(m){cpfMatch=m;break;}}
  }
- if(m){
-   const cpf=digits(m[1]);
-   if(cpf.length===11){const el=document.getElementById('reqCpf');if(el&&!el.value){el.value=cpf;maskCpf(el);}}
- }
+ if(cpfMatch){const cpf=digits(cpfMatch[1]);if(cpf.length===11){const el=document.getElementById('reqCpf');if(el&&!el.value){el.value=cpf;maskCpf(el);}}}
 
- // Nome: primeiro tenta a linha imediatamente após o rótulo NOME.
  let name='';
  for(let i=0;i<lines.length;i++){
-   if(/\\bNOME\\b/.test(lines[i])&&!/NOME DA MAE|NOME DO PAI/.test(lines[i])){
-     let same=lines[i].replace(/^.*?\\bNOME\\b\\s*[:.-]?\\s*/,'').trim();
-     if(/^(DA|DE|DO|DOS|DAS|MAE|PAI)\\b/.test(same))same='';
-     if(same.length>=5&&!/CPF|RG|IDENTIDADE|NASC|VALIDADE|CATEGORIA|FILIA/.test(same))name=same;
-     if(!name&&lines[i+1]&&lines[i+1].length>=5&&!/CPF|RG|IDENTIDADE|NASC|VALIDADE|CATEGORIA|FILIA/.test(lines[i+1]))name=lines[i+1];
-     if(name)break;
+   const line=lines[i];
+   if(/\\b(NOME(?:\\s+E\\s+SOBRENOME|\\s+COMPLETO)?|NAME(?:\\s+AND\\s+SURNAME)?)\\b/.test(line)
+      && !/NOME\\s+(DA|DO)\\s+(MAE|PAI)/.test(line)){
+     let same=line.replace(/^.*?\\b(NOME(?:\\s+E\\s+SOBRENOME|\\s+COMPLETO)?|NAME(?:\\s+AND\\s+SURNAME)?)\\b\\s*[:.-]?\\s*/,'').trim();
+     if(same && !/^(DA|DE|DO|DOS|DAS|MAE|PAI)\\b/.test(same) && !/CPF|NASC|IDENTIDADE|REGISTRO|CATEGORIA|VALIDADE|EMISSAO|FILIA|NACIONALIDADE/.test(same) && same.length>=5) name=cleanName(same);
+     if(!name && lines[i+1] && lines[i+1].length>=5 && !/CPF|NASC|IDENTIDADE|REGISTRO|CATEGORIA|VALIDADE|EMISSAO|FILIA|NACIONALIDADE/.test(lines[i+1])) name=cleanName(lines[i+1]);
+     if(name) break;
    }
  }
  if(!name){
-   const nm=compact.match(/\\bNOME\\b\\s*[:.-]?\\s*([A-Z][A-Z ]{4,100}?)(?=\\s+(?:DATA|NASC|CPF|DOC|IDENTIDADE|REGISTRO|CATEGORIA|VALIDADE|FILIA|NATURALIDADE)\\b|$)/);
-   if(nm)name=nm[1].trim();
+   const nm=compact.match(/(?:^|\\s)([A-Z]{2,}(?:\\s+[A-Z]{2,}){1,8})(?=\\s+(?:DATA|NASCIMENTO|CPF|DOC|IDENTIDADE|REGISTRO|CATEGORIA|VALIDADE|FILIA|NACIONALIDADE)\\b)/);
+   if(nm)name=cleanName(nm[1]);
  }
- if(name){
-   name=name.replace(/\\s+/g,' ').trim();
-   const parts=name.split(' ').filter(Boolean);
-   if(parts.length>=2){set('reqName',parts.shift());set('reqSurname',parts.join(' '));}
-   else set('reqName',name);
- }
+ if(name){const parts=name.split(' ').filter(Boolean);if(parts.length>=2){set('reqName',parts.shift());set('reqSurname',parts.join(' '));}else set('reqName',name);}
 
- // Data de nascimento: CNH e RG usam vários rótulos.
  const birthPatterns=[
-   /(?:DATA\\s*DE\\s*NASCIMENTO|DATA\\s*NASCIMENTO|NASCIMENTO|NASC|DT\\.?\\s*NASC)\\D{0,45}(\\d{2}[\\/.-]\\d{2}[\\/.-]\\d{4})/,
-   /(?:NASCIMENTO|NASC)\\s*[:.-]?\\s*(\\d{2}\\s*[\\/.-]\\s*\\d{2}\\s*[\\/.-]\\s*\\d{4})/
+  /(?:DATA\\s*(?:DE\\s*)?NASCIMENTO|DATA\\s+NASC|NASCIMENTO|NASC|DT\\.?\\s*NASC|DATE\\s+OF\\s+BIRTH)\\D{0,50}(\\d{2}\\s*[\\/.-]\\s*\\d{2}\\s*[\\/.-]\\s*\\d{4})/,
+  /(?:DATA\\s*(?:DE\\s*)?NASCIMENTO|NASCIMENTO|NASC)\\D{0,60}(\\d{4}\\s*[\\/.-]\\s*\\d{2}\\s*[\\/.-]\\s*\\d{2})/
  ];
  for(const re of birthPatterns){const b=compact.match(re);if(b){setReqBirthDate(b[1]);break;}}
  if(!document.getElementById('reqBirthDate')?.value){
    const dates=[...compact.matchAll(/\\b(\\d{2}\\s*[\\/.-]\\s*\\d{2}\\s*[\\/.-]\\s*\\d{4})\\b/g)].map(x=>x[1]);
-   // Em documento brasileiro, se houver apenas uma data, normalmente é nascimento.
-   if(dates.length===1)setReqBirthDate(dates[0]);
+   const valid=dates.filter(v=>{const m=v.match(/(\\d{2})\\D(\\d{2})\\D(\\d{4})/);if(!m)return false;const y=+m[3],mo=+m[2],d=+m[1];return y>=1900&&y<=new Date().getFullYear()&&mo>=1&&mo<=12&&d>=1&&d<=31;});
+   if(valid.length===1)setReqBirthDate(valid[0]);
  }
 
- // RG / identidade: aceita RG, REGISTRO GERAL e sequências comuns com dígito final.
- const rgPatterns=[
-   /\\bRG\\b\\s*[:.-]?\\s*([0-9][0-9 .-]{4,18})/,
-   /(?:REGISTRO\\s*GERAL|IDENTIDADE|DOC(?:UMENTO)?\\s*DE?\\s*IDENTIDADE)\\D{0,35}([0-9][0-9 .-]{4,18})/
- ];
- for(const re of rgPatterns){
-   const rg=compact.match(re);
-   if(rg){
-     const n=digits(rg[1]);
-     if(n.length>=5&&n.length<=12){set('reqRg',n);break;}
-   }
- }
-
- // CNH também pode trazer o número do registro, que não é RG. Não usar como RG
- // sem um rótulo de identidade, para evitar preencher dado errado.
+ const rgPatterns=[/(?:DOC\\.?\\s*IDENTIDADE|DOCUMENTO\\s*DE\\s*IDENTIDADE|IDENTIDADE|REGISTRO\\s*GERAL|\\bRG\\b)\\D{0,35}([0-9][0-9 .-]{4,18})/];
+ for(const re of rgPatterns){const rg=compact.match(re);if(rg){const n=digits(rg[1]);if(n.length>=5&&n.length<=12){set('reqRg',n);break;}}}
  updateReqAge();
 }
 function reqFunction(t){const fm=document.getElementById('reqFunctionMenu');if(t==='OPERACIONAL'&&reqData.functionRole==='OPERACIONAL'){reqData.functionRole='';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';reqData.plateVehicle='';reqData.plateCavalo='';reqData.plateCarreta='';reqData.plateCarreta2='';fm.innerHTML='<button type="button" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>';renderReqType();return}if(t==='MOTORISTA'&&reqData.functionRole==='MOTORISTA'){reqData.functionRole='';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';reqData.plateVehicle='';reqData.plateCavalo='';reqData.plateCarreta='';reqData.plateCarreta2='';fm.innerHTML='<button type="button" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>';renderReqType();return}if(t==='EXPEDICAO'&&reqData.functionRole.startsWith('EXPEDICAO')){reqData.functionRole='';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';fm.innerHTML='<button type="button" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>';renderReqType();return}if(t==='MOTORISTA'){reqData.functionRole='MOTORISTA';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';fm.innerHTML='<button type="button" class="active" onclick="reqFunction(\'MOTORISTA\')">Motorista</button><button type="button" onclick="reqVehicleChoice(\'VAN\')">Van</button><button type="button" onclick="reqVehicleChoice(\'3/4\')">3/4</button><button type="button" onclick="reqVehicleChoice(\'TOCO\')">Toco</button><button type="button" onclick="reqVehicleChoice(\'TRUCK\')">Truck</button><button type="button" onclick="reqVehicleChoice(\'BITRUCK\')">Bitruck</button><button type="button" onclick="reqVehicleChoice(\'CAV4X2\')">Cav. 4x2</button><button type="button" onclick="reqVehicleChoice(\'CAV6X2\')">Cav. 6x2</button><button type="button" onclick="reqVehicleChoice(\'CAV6X4\')">Cav. 6x4</button>';}else if(t==='EXPEDICAO'){reqData.functionRole='EXPEDICAO';reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';fm.innerHTML='<button type="button" class="active" onclick="reqFunction(\'EXPEDICAO\')">Expedição</button><button type="button" onclick="reqExpChoice(\'AJUDANTE\')">Ajudante</button><button type="button" onclick="reqExpChoice(\'CONFERENTE\')">Conferente</button>';}else{reqData.functionRole=t;reqData.vehicleType='';reqData.vehicleSubtype='';reqData.vehicleConfiguration='';reqData.plateVehicle='';reqData.plateCavalo='';reqData.plateCarreta='';reqData.plateCarreta2='';fm.innerHTML='<button type="button" class="active" onclick="reqFunction(\'OPERACIONAL\')">Operacional</button>'; }renderReqType()}
