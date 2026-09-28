@@ -1459,9 +1459,31 @@ document.addEventListener('DOMContentLoaded', function(){
 <script src="./k6.js?v=2"></script>
 <script src="./k7.js?v=2"></script>
 <script src="./supabase-sync.js?v=14"></script>
+<script id="accessRequestBridge">
+(function(){
+  const URL='https://qincxigrvlvudsqcukxt.supabase.co';
+  const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+  let client=null;
+  function db(){ if(!client) client=window.supabase.createClient(URL,KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}); return client; }
+  window.nikkeiCreateAccessRequest=window.nikkeiCreateAccessRequest||async function(x,file){
+    const row={username:String(x.username||'').trim().toLowerCase(),password_hash:x.passwordHash,name:x.name,surname:x.surname,birth_date:x.birthDate||null,address:x.address||null,address_number:x.addressNumber||null,neighborhood:x.neighborhood||null,state:x.state||null,city:x.city||null,phone:x.phone||null,phone2:x.phone2||null,phone_alt:x.phoneAlt||null,emergency_contact_name:x.emergencyContactName||null,cpf:x.cpf||null,rg:x.rg||null,function_role:x.functionRole||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,vehicle_configuration:x.vehicleConfiguration||null,plate:x.plateVehicle||null,plate_cavalo:x.plateCavalo||null,plate_carreta:x.plateCarreta||null,plate_carreta2:x.plateCarreta2||null,status:'pending'};
+    const {data,error}=await db().from('access_requests').insert(row).select().single();
+    if(error) throw error;
+    if(file){
+      const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'')||'bin';
+      const path='access-requests/'+data.id+'/cnh-'+Date.now()+'.'+ext;
+      const up=await db().storage.from('driver-documents').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});
+      if(up.error) throw up.error;
+      const u=await db().from('access_requests').update({cnh_path:up.data.path,cnh_name:file.name,cnh_mime:file.type||'application/octet-stream'}).eq('id',data.id);
+      if(u.error) throw u.error;
+    }
+    return {id:data.id};
+  };
+})();
+</script>
 <script>
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=60').catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=70').catch(()=>{}));
 }
 </script>
 <script>
