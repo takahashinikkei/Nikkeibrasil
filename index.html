@@ -2929,6 +2929,22 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
  setTimeout(init,300);setTimeout(init,800);
 })();
+</script><style id="employeesDescriptionFinalHide">
+#employeesPanel > p.muted{display:none!important}
+</style>
+<script id="employeesDescriptionFinalFix">
+(function(){
+  function clean(){
+    var p=document.getElementById('employeesPanel');
+    if(!p)return;
+    Array.prototype.forEach.call(p.querySelectorAll('p'),function(el){
+      var t=(el.textContent||'').trim();
+      if(t.indexOf('Gerencie os funcionários')===0)el.remove();
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',clean);else clean();
+  new MutationObserver(clean).observe(document.body,{childList:true,subtree:true});
+})();
 </script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
