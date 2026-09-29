@@ -2051,6 +2051,65 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindAccessSubmit);else bindAccessSubmit();
 })();
+</script><script id="loginRobustFix">
+(function(){
+  const SUPA_URL='https://qincxigrvlvudsqcukxt.supabase.co';
+  const SUPA_KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+  async function hashText(v){
+    const b=new TextEncoder().encode(v);
+    const h=await crypto.subtle.digest('SHA-256',b);
+    return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');
+  }
+  async function robustLogin(){
+    const status=document.getElementById('loginStatus');
+    const input=document.getElementById('loginUsername');
+    const pass=document.getElementById('loginPassword');
+    const remember=document.getElementById('rememberLoginEmail');
+    const btn=document.querySelector('#loginPage .access-actions .primary');
+    const u=(input?.value||'').trim().toLowerCase();
+    const p=pass?.value||'';
+    if(remember?.checked) localStorage.setItem('nikkeiSavedLoginEmail',u);
+    else localStorage.removeItem('nikkeiSavedLoginEmail');
+    const show=(msg)=>{if(status){status.style.display='block';status.textContent=msg;}};
+    if(!u){show('Informe o email.');return;}
+    if(!p){show('Informe a senha.');return;}
+    if(btn){btn.disabled=true;btn.textContent='Entrando...';}
+    try{
+      const ph=await hashText(p);
+      if(u==='master' && ph==='fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9'){
+        if(typeof enterMasterAccess==='function') enterMasterAccess();
+        else {document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex';}
+        return;
+      }
+      if(!/^\S+@\S+\.\S+$/.test(u)){show('Informe um email válido.');return;}
+      const headers={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
+      const r=await fetch(SUPA_URL+'/rest/v1/employees?username=eq.'+encodeURIComponent(u)+'&status=eq.active&select=*',{headers});
+      if(!r.ok) throw new Error('Falha ao consultar usuário ('+r.status+').');
+      const rows=await r.json();
+      const row=rows&&rows[0];
+      if(!row){show('Usuário não autorizado ou cadastro não encontrado.');return;}
+      if(row.password_hash!==ph){show('Email ou senha inválidos.');return;}
+      localStorage.setItem('nikkeiAccessGranted','1');
+      if(row.access_request_id) localStorage.setItem('nikkeiAccessRequestId',row.access_request_id);
+      document.getElementById('loginPage').style.display='none';
+      document.getElementById('moduleGate').style.display='flex';
+      if(status) status.style.display='none';
+    }catch(e){
+      show('Não foi possível entrar agora: '+(e?.message||'erro de comunicação.'));
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent='Entrar';}
+    }
+  }
+  window.doLogin=robustLogin;
+  function bind(){
+    const b=document.querySelector('#loginPage .access-actions .primary');
+    if(b){
+      b.onclick=null;
+      b.addEventListener('click',function(e){e.preventDefault();robustLogin();});
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind); else bind();
+})();
 </script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
