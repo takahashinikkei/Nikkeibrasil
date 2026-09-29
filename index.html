@@ -2412,6 +2412,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(b&&localStorage.getItem('nikkeiMasterSession')!=='1'){ev.preventDefault();ev.stopImmediatePropagation();alert('Acesso Master restrito ao usuário administrador.');}
  },true);
 })();
+</script>
 <script id="frotaVehiclesDirectFix">
 (function(){
   function openFrotaVehiclesDirect(ev){
@@ -2437,7 +2438,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindFrota);else bindFrota();
 })();
-</script>
 </script>
 </body>
 </html>
