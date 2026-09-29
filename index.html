@@ -2945,6 +2945,49 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',clean);else clean();
   new MutationObserver(clean).observe(document.body,{childList:true,subtree:true});
 })();
+</script><script id="employeeDeleteFinalFix">
+(function(){
+  const SUPA='https://qincxigrvlvudsqcukxt.supabase.co';
+  const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+  const HEAD={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  window.deleteEmployee=async function(id){
+    if(localStorage.getItem('nikkeiMasterSession')!=='1'){
+      alert('Somente o Master pode excluir usuários.');
+      return;
+    }
+    if(!id){alert('Usuário inválido.');return;}
+    if(!window.confirm('Excluir este usuário? O acesso dele ao sistema também será revogado.'))return;
+    try{
+      const er=await fetch(SUPA+'/rest/v1/employees?id=eq.'+encodeURIComponent(id)+'&select=id,username',{headers:{apikey:KEY,Authorization:'Bearer '+KEY}});
+      if(!er.ok)throw new Error('Erro ao localizar usuário: '+await er.text());
+      const rows=await er.json();
+      if(!rows.length)throw new Error('Funcionário não encontrado.');
+      const username=rows[0].username||'';
+      const dr=await fetch(SUPA+'/rest/v1/employees?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:HEAD});
+      if(!dr.ok)throw new Error('Erro ao excluir usuário: '+await dr.text());
+      if(username){
+        const rr=await fetch(SUPA+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(username),{
+          method:'PATCH',headers:HEAD,body:JSON.stringify({status:'revoked'})
+        });
+        if(!rr.ok)console.warn('Usuário excluído, mas a solicitação não foi revogada:',await rr.text());
+      }
+      alert('Usuário excluído com sucesso.');
+      if(typeof window.openEmployeesPanel==='function')window.openEmployeesPanel();
+    }catch(e){
+      console.error(e);
+      alert(e.message||'Não foi possível excluir o usuário.');
+    }
+  };
+  function bind(){
+    document.addEventListener('click',function(e){
+      const b=e.target&&e.target.closest?e.target.closest('[data-employee-delete]'):null;
+      if(!b)return;
+      e.preventDefault();e.stopImmediatePropagation();
+      window.deleteEmployee(b.getAttribute('data-employee-delete'));
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
 </script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
