@@ -2832,6 +2832,60 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,1000);
 })();
 </script>
-</body>
+<style id="employeesCompactFix">
+#employeesPanel{max-width:720px!important;padding:14px!important}
+#employeesPanel .request-list{max-height:68vh!important}
+#employeesPanel .request-item{padding:9px 0!important;line-height:1.25!important}
+#employeesPanel .request-item>b{font-size:16px!important;display:block;margin-bottom:2px}
+#employeesPanel .request-item .muted{font-size:13px!important;margin:2px 0!important}
+#employeesPanel .request-item button[data-employee-edit],
+#employeesPanel .request-item button[data-employee-delete]{
+  width:auto!important;min-width:190px!important;height:38px!important;
+  padding:0 14px!important;margin-top:6px!important;border-radius:9px!important;
+  font-size:13px!important;font-weight:800!important;
+}
+#employeesPanel .request-item button[data-employee-delete]{margin-left:6px!important}
+@media(max-width:520px){
+ #employeesPanel{padding:10px!important}
+ #employeesPanel .request-item button[data-employee-edit],
+ #employeesPanel .request-item button[data-employee-delete]{
+   width:calc(50% - 3px)!important;min-width:0!important;height:36px!important;
+   padding:0 6px!important;font-size:12px!important;
+ }
+ #employeesPanel .request-item button[data-employee-delete]{margin-left:0!important}
+}
+</style>
+<script id="employeeActionsFinalFix">
+(function(){
+ function bind(){
+  if(document.documentElement.dataset.employeeActionsFinalBound)return;
+  document.documentElement.dataset.employeeActionsFinalBound='1';
+  document.addEventListener('click',function(e){
+   var el=e.target&&e.target.closest?e.target.closest('[data-employee-edit],[data-employee-delete]'):null;
+   if(!el)return;
+   var id=el.getAttribute('data-employee-edit')||el.getAttribute('data-employee-delete');
+   if(!id)return;
+   e.preventDefault();
+   e.stopPropagation();
+   e.stopImmediatePropagation();
+   if(el.hasAttribute('data-employee-edit')){
+    if(typeof window.editEmployeePermissions==='function'){
+     window.editEmployeePermissions(id);
+    }else{
+     alert('A função de editar permissões não foi carregada.');
+    }
+   }else{
+    if(typeof window.deleteEmployee==='function'){
+     window.deleteEmployee(id);
+    }else{
+     alert('A função de excluir usuário não foi carregada.');
+    }
+   }
+  },true);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+ setTimeout(bind,300);
+})();
+</script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
