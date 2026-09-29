@@ -300,10 +300,9 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
       <button id="accessRequestsBackBtn" type="button" class="secondary" style="margin-top:12px;height:44px;font-weight:800">← Voltar ao menu Master</button>
     </div>
     <div id="employeesPanel" style="display:none;max-width:720px;margin:12px auto 0;background:#fff;border-radius:18px;padding:16px">
-      
-      <p class="muted" style="margin:0 0 12px">Gerencie os funcionários, permissões de acesso e demais dados cadastrais.</p>
-      <div class="actions" style="margin-top:0">
-        <button class="secondary" type="button" onclick="closeEmployeesPanel()">← Voltar</button>
+      <div class="employees-title-row">
+        <h2>Funcionários</h2>
+        <button id="employeesBackBtn" class="secondary" type="button">← Voltar</button>
       </div>
       <div id="employeesList" class="request-list" style="margin-top:12px">Carregando...</div>
     </div>
@@ -2885,6 +2884,50 @@ document.addEventListener('DOMContentLoaded',()=>{
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
  setTimeout(bind,300);
+})();
+</script><style id="employeesTitleFix">
+#employeesPanel .employees-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px}
+#employeesPanel .employees-title-row h2{margin:0!important;font-size:24px!important;font-weight:900!important;color:#111827!important}
+#employeesPanel #employeesBackBtn{width:auto!important;min-width:92px!important;height:38px!important;padding:0 14px!important;font-size:14px!important;font-weight:800!important}
+</style>
+<script id="employeesHeaderFix">
+(function(){
+ function bind(){
+  var gateText=document.getElementById('moduleGateText');
+  var panel=document.getElementById('employeesPanel');
+  var back=document.getElementById('employeesBackBtn');
+  if(back&&!back.dataset.bound){
+   back.dataset.bound='1';
+   back.onclick=function(e){
+    e.preventDefault();e.stopPropagation();
+    if(typeof window.closeEmployeesPanel==='function')window.closeEmployeesPanel();
+   };
+  }
+  if(panel&&panel.style.display!=='none'&&gateText)gateText.style.display='none';
+ }
+ function patch(){
+  if(typeof window.openEmployeesPanel==='function'&&!window.openEmployeesPanel.__headerPatched){
+   var original=window.openEmployeesPanel;
+   window.openEmployeesPanel=async function(){
+    var gateText=document.getElementById('moduleGateText');
+    if(gateText)gateText.style.display='none';
+    return original.apply(this,arguments);
+   };
+   window.openEmployeesPanel.__headerPatched=true;
+  }
+  if(typeof window.closeEmployeesPanel==='function'&&!window.closeEmployeesPanel.__headerPatched2){
+   var originalClose=window.closeEmployeesPanel;
+   window.closeEmployeesPanel=function(){
+    var gateText=document.getElementById('moduleGateText');
+    if(gateText)gateText.style.display='';
+    return originalClose.apply(this,arguments);
+   };
+   window.closeEmployeesPanel.__headerPatched2=true;
+  }
+ }
+ function init(){patch();bind();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+ setTimeout(init,300);setTimeout(init,800);
 })();
 </script></body>
 </html>
