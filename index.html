@@ -225,7 +225,9 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
     </div>
     <div id="accessRequestsPanel" style="display:none;max-width:620px;margin:12px auto 0;background:#fff;border-radius:18px;padding:16px">
       <h2 style="margin:0 0 8px">Solicitações de acesso</h2>
+      <p class="muted" style="margin:0 0 12px">Gerencie aqui as solicitações. As demais opções do Master ficam ocultas enquanto esta tela estiver aberta.</p>
       <div id="accessRequestsList" class="request-list">Carregando...</div>
+      <button id="accessRequestsBackBtn" type="button" class="secondary" style="margin-top:12px;height:44px;font-weight:800">← Voltar ao menu Master</button>
     </div>
     <div id="employeesPanel" style="display:none;max-width:720px;margin:12px auto 0;background:#fff;border-radius:18px;padding:16px">
       <h2 style="margin:0 0 8px">👥 Funcionários</h2>
@@ -2026,7 +2028,10 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   document.querySelector('#masterButtons [data-action="requests"]').addEventListener('click',async()=>{
  if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso restrito ao usuário administrador.');return;}
+ // Ao entrar em "Solicitações de acesso", ocultar completamente o menu Master.
+ document.getElementById('masterButtons').style.display='none';
  document.getElementById('accessRequestsPanel').style.display='block';
+ document.getElementById('employeesPanel').style.display='none';
  const el=document.getElementById('accessRequestsList'); if(el)el.textContent='Carregando...';
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',h={'apikey':KEY,'Authorization':'Bearer '+KEY};
@@ -2035,6 +2040,11 @@ document.addEventListener('DOMContentLoaded',()=>{
  }catch(e){if(el)el.textContent='Erro ao carregar solicitações: '+(e.message||e)}
 });
   document.querySelector('#masterButtons [data-action="backGate"]').addEventListener('click',()=>{masterButtons.style.display='none';sectorButtons.style.display='grid';gateText.textContent='Selecione o setor para entrar';document.getElementById('accessRequestsPanel').style.display='none';document.getElementById('employeesPanel').style.display='none'});
+  document.getElementById('accessRequestsBackBtn').addEventListener('click',()=>{
+    document.getElementById('accessRequestsPanel').style.display='none';
+    document.getElementById('masterButtons').style.display='grid';
+    document.getElementById('moduleGateText').textContent='Master';
+  });
   document.querySelector('#masterButtons [data-action="vehicles"]').addEventListener('click',()=>{
     gate.style.display='none';
     document.body.dataset.module='Master';
