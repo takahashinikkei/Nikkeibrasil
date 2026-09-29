@@ -1889,7 +1889,7 @@ function enterApprovedAccess(){localStorage.setItem('nikkeiAccessGranted','1');d
 function enterMasterAccess(){localStorage.setItem('nikkeiMasterSession','1');document.getElementById('accessPage').style.display='none';document.documentElement.classList.remove('auth-pending');document.getElementById('moduleGate').style.display='flex'}
 function renderEmployeesPanel(list){const el=document.getElementById('employeesList');if(!el)return;el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc(x.name+' '+x.surname)+'</b><div class="muted">Função: <b>'+esc(x.functionRole||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+' • RG: '+esc(x.rg||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div></div>').join(''):'Nenhum funcionário cadastrado ainda.'}
 async function openEmployeesPanel(){
- if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso restrito ao usuário administrador.');return;}
+ if(localStorage.getItem('nikkeiMasterSession')!=='1' && !(window.nikkeiHasPermission&&window.nikkeiHasPermission('employees'))){alert('Você não tem permissão para acessar Funcionários.');return;}
  document.getElementById('accessRequestsPanel').style.display='none';document.getElementById('employeesPanel').style.display='block';
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY};
@@ -2255,6 +2255,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(localStorage.getItem('nikkeiMasterSession')==='1') return true;
    try{return !!JSON.parse(localStorage.getItem('nikkeiUserPermissions')||'{}')[key]}catch(_){return false}
  }
+ window.nikkeiHasPermission=hasPermission;
  function makePanel(){
    if(document.getElementById('permissionSelectionPanel'))return;
    const p=document.createElement('div');
