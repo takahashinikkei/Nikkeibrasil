@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nikkei Brasil - Redefinir</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#000;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{width:min(520px,100%);background:#fff;border-radius:22px;padding:28px;box-shadow:0 20px 60px #0006}.logo{display:block;width:min(300px,80%);margin:0 auto 22px}
+h1{margin:0 0 8px;text-align:center;color:#111827}p{color:#64748b;text-align:center;line-height:1.45}
+label{display:block;font-size:13px;font-weight:800;color:#4b5563;margin:14px 0 6px}input{width:100%;height:48px;border:1px solid #d1d5db;border-radius:12px;padding:0 13px;font-size:16px}
+button{width:100%;height:50px;border:0;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px}.primary{background:#1478e5;color:#fff}.secondary{background:#f3f4f6;color:#111827;border:1px solid #d1d5db}
+.status{display:none;margin-top:14px;padding:12px;border-radius:12px;line-height:1.4}.ok{background:#f0fdf4;color:#166534}.err{background:#fef2f2;color:#b91c1c}.hidden{display:none!important}
+</style></head>
+<body><div class="box">
+<img class="logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil">
+<section id="loading"><h1>Verificando link</h1><p>Aguarde...</p></section>
+<section id="form" class="hidden"><h1>Redefinir senha</h1><p>Digite sua nova senha para acessar o Nikkei Brasil.</p>
+<label>Nova senha</label><input id="p1" type="password" minlength="8" autocomplete="new-password">
+<label>Confirmar nova senha</label><input id="p2" type="password" minlength="8" autocomplete="new-password">
+<button class="primary" onclick="savePassword()">Salvar nova senha</button><div id="status" class="status"></div></section>
+<section id="invalid" class="hidden"><h1>Link inválido</h1><p>Este link expirou ou já foi utilizado. Solicite um novo link.</p><button class="secondary" onclick="location.href='./index.html'">Voltar ao login</button></section>
+</div>
+<script>
+let sb;
+function showForm(){loading.classList.add('hidden');invalid.classList.add('hidden');form.classList.remove('hidden');p1.focus()}
+function showInvalid(){loading.classList.add('hidden');form.classList.add('hidden');invalid.classList.remove('hidden')}
+function status(msg,err){const e=document.getElementById('status');e.style.display='block';e.className='status '+(err?'err':'ok');e.textContent=msg}
+async function sha256(v){const b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function init(){
+ const src=await fetch('./index.html').then(r=>r.text());
+ const url=(src.match(/const URL='([^']+)'/)||[])[1];
+ const key=(src.match(/const KEY='([^']+)'/)||[])[1];
+ if(!url||!key)throw new Error('Configuração do sistema não encontrada.');
+ sb=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ sb.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'&&session)showForm()});
+ const s=await sb.auth.getSession();if(s.data.session)showForm();else setTimeout(()=>{if(!loading.classList.contains('hidden'))showInvalid()},2500);
+}
+async function savePassword(){
+ const a=p1.value,b=p2.value;if(a.length<8){status('A senha deve ter pelo menos 8 caracteres.',true);return}
+ if(a!==b){status('As senhas não conferem.',true);return}
+ status('Salvando...',false);
+ const x=await sb.auth.updateUser({password:a});if(x.error){status(x.error.message,true);return}
+ const h=await sha256(a);const y=await sb.rpc('update_my_access_password',{new_password_hash:h});
+ if(y.error){status(y.error.message,true);return}
+ await sb.auth.signOut();status('Senha alterada com sucesso. Voltando ao login...',false);
+ setTimeout(()=>location.href='./index.html?password_reset=1',1200);
+}
+const loading=document.getElementById('loading'),form=document.getElementById('form'),invalid=document.getElementById('invalid'),p1=document.getElementById('p1'),p2=document.getElementById('p2');
+init().catch(e=>{console.error(e);showInvalid()});
+</script></body></html>
