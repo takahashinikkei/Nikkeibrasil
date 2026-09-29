@@ -264,9 +264,34 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 #employeeEditPanel .access-actions{margin-top:12px}
 #employeesPanel .employee-action-btn{flex:1 1 0!important;width:0!important;min-width:0!important;height:34px!important;padding:0 4px!important;font-size:10px!important;font-weight:800!important;white-space:nowrap!important}
 @media(max-width:560px){#employeesPanel .employee-action-btn{font-size:9px!important;padding:0 2px!important}}
+</style><style id="employeeEditCompactV3">
+#employeeEditPanel.employee-edit-box{padding:14px 16px!important;width:min(900px,100%)!important;max-width:900px!important;border-radius:18px!important;box-sizing:border-box!important}
+#employeeEditPanel .employee-edit-header{margin-bottom:4px!important}
+#employeeEditPanel .employee-edit-header h2{font-size:22px!important;line-height:1.1!important}
+#employeeEditPanel .access-note{font-size:12px!important;margin-bottom:7px!important}
+#employeeEditPanel .row{gap:6px!important;margin-top:5px!important;margin-bottom:0!important}
+#employeeEditPanel label{font-size:11px!important;margin-bottom:2px!important;display:block!important}
+#employeeEditPanel input,#employeeEditPanel select{height:34px!important;min-height:34px!important;padding:6px 8px!important;font-size:13px!important;box-sizing:border-box!important}
+#employeeEditPanel .access-compact-4{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important}
+#employeeEditPanel .access-location{display:grid!important;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) minmax(0,.65fr)!important;gap:6px!important}
+#employeeEditPanel .access-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;margin-top:8px!important}
+#employeeEditPanel .access-actions button{height:40px!important}
+#employeesPanel .employee-actions-row{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;width:100%!important;margin-top:6px!important}
+#employeesPanel .employee-action-btn{display:block!important;width:100%!important;min-width:0!important;height:34px!important;padding:0 4px!important;font-size:10px!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;box-sizing:border-box!important;margin:0!important}
+#employeesPanel .employee-delete-btn{color:#b42318!important}
+@media(max-width:700px){
+ #employeeEditPanel .access-compact-4{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #employeeEditPanel .access-location{grid-template-columns:1fr 1.4fr!important}
+ #employeeEditPanel .access-location>div:last-child{grid-column:1/-1}
+}
+@media(max-width:430px){
+ #employeeEditPanel .access-location{grid-template-columns:1fr 1fr!important}
+ #employeeEditPanel .access-location>div:last-child{grid-column:auto}
+ #employeesPanel .employee-action-btn{font-size:9px!important;padding:0 2px!important}
+}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 010</div>
+<div id="appVersionBadge">VERSÃO 011</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3190,7 +3215,7 @@ document.addEventListener('DOMContentLoaded',()=>{
      const adm=x.admission_date?formatDate(x.admission_date):'Não informada';
      const tempo=serviceTime(x.admission_date);
      const birth=filter==='ANIVERSARIANTES'&&x.birth_date?'🎂 '+formatDate(x.birth_date):'';
-     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div>'+(birth?'<div class="muted">'+esc2(birth)+'</div>':'')+'<div class="muted">Admissão: '+esc2(adm)+' • Tempo de serviço: '+esc2(tempo)+' • Cidade: '+esc2(x.city||'Não informada')+'</div><div style="display:flex;gap:5px;margin-top:6px"><button type="button" class="secondary employee-action-btn" data-employee-edit="'+esc2(x.id)+'">🔐 Permissões</button><button type="button" class="secondary employee-action-btn" data-employee-edit-cadastro="'+esc2(x.id)+'">✏️ Cadastro</button><button type="button" class="secondary employee-action-btn employee-delete-btn" data-employee-delete="'+esc2(x.id)+'">🗑️ Excluir</button></div></div>'
+     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div>'+(birth?'<div class="muted">'+esc2(birth)+'</div>':'')+'<div class="muted">Admissão: '+esc2(adm)+' • Tempo de serviço: '+esc2(tempo)+' • Cidade: '+esc2(x.city||'Não informada')+'</div><div class="employee-actions-row"><button type="button" class="secondary employee-action-btn" data-employee-edit="'+esc2(x.id)+'">🔐 Permissões</button><button type="button" class="secondary employee-action-btn" data-employee-edit-cadastro="'+esc2(x.id)+'">✏️ Cadastro</button><button type="button" class="secondary employee-action-btn employee-delete-btn" data-employee-delete="'+esc2(x.id)+'">🗑️ Excluir</button></div></div>'
    }).join(''):'Nenhum funcionário nesta categoria.';
  }
  async function load(){
