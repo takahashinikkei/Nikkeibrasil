@@ -1900,16 +1900,25 @@ function renderEmployeesPanel(list){
 }
 async function openEmployeesPanel(){
  if(localStorage.getItem('nikkeiMasterSession')!=='1' && !(window.nikkeiHasPermission&&window.nikkeiHasPermission('employees'))){alert('Você não tem permissão para acessar Funcionários.');return;}
- document.getElementById('masterButtons').style.display='none';
- document.getElementById('accessRequestsPanel').style.display='none';
- document.getElementById('employeePermissionPanel').style.display='none';
- document.getElementById('employeesPanel').style.display='block';
+ var panel=document.getElementById('employeesPanel');
+ var listEl=document.getElementById('employeesList');
+ if(document.getElementById('masterButtons'))document.getElementById('masterButtons').style.display='none';
+ if(document.getElementById('accessRequestsPanel'))document.getElementById('accessRequestsPanel').style.display='none';
+ if(document.getElementById('employeePermissionPanel'))document.getElementById('employeePermissionPanel').style.display='none';
+ if(panel)panel.style.display='block';
+ if(listEl)listEl.textContent='Carregando funcionários...';
  try{
-  const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY};
-  const r=await fetch(URL+'/rest/v1/employees?select=*&order=created_at.desc',{headers:H}); if(!r.ok)throw new Error(await r.text());
+  const URL='https://qincxigrvlvudsqcukxt.supabase.co';
+  const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+  const H={'apikey':KEY,'Authorization':'Bearer '+KEY};
+  const r=await fetch(URL+'/rest/v1/employees?select=id,name,surname,function_role,phone,cpf,rg,city,state,status,permissions',{headers:H});
+  if(!r.ok)throw new Error('Supabase '+r.status+': '+await r.text());
   const rows=await r.json();
-  renderEmployeesPanel(rows.map(x=>({id:x.id,name:x.name,surname:x.surname,functionRole:x.function_role,phone:x.phone,cpf:x.cpf,rg:x.rg,city:x.city,state:x.state,status:x.status,permissions:x.permissions||{}})));
- }catch(e){document.getElementById('employeesList').textContent='Não foi possível carregar os funcionários: '+(e.message||e)}
+  rows.sort(function(a,b){return String(b.name||'').localeCompare(String(a.name||''),'pt-BR');});
+  renderEmployeesPanel(rows.map(function(x){return {id:x.id,name:x.name,surname:x.surname,functionRole:x.function_role,phone:x.phone,cpf:x.cpf,rg:x.rg,city:x.city,state:x.state,status:x.status,permissions:x.permissions||{}};}));
+ }catch(e){
+  if(listEl)listEl.innerHTML='<div style="padding:12px;color:#b42318">Não foi possível carregar os funcionários.<br><small>'+esc(e.message||e)+'</small></div>';
+ }
 }
 function closeEmployeesPanel(){
  document.getElementById('employeesPanel').style.display='none';
