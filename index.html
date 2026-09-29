@@ -258,7 +258,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 #employeesPanel .employee-main-line .employee-status.active{color:#15803d}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 007</div>
+<div id="appVersionBadge">VERSÃO 008</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3118,7 +3118,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    }
  }
  function formatName(v){
-   return String(v||'').trim().toLocaleLowerCase('pt-BR').replace(/(^|[\\s-])([a-zà-ÿ])/g,function(_,sep,ch){return sep+ch.toLocaleUpperCase('pt-BR');});
+   return String(v||'').trim().toLocaleLowerCase('pt-BR').replace(/(^|[\s-])([a-zà-ÿ])/g,function(_,sep,ch){return sep+ch.toLocaleUpperCase('pt-BR');});
  }
  function formatPhone(v){
    const d=String(v||'').replace(/\\D/g,'');
