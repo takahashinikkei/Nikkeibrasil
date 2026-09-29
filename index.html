@@ -1924,7 +1924,7 @@ try{
  const row=rows&&rows[0];
  if(!row||row.password_hash!==passwordHash){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';return}
  localStorage.setItem('nikkeiAccessGranted','1');localStorage.setItem('nikkeiAccessRequestId',row.id);document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex'
-}catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora: '+(e.message||'erro de comunicação.')}}}
+}catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora: '+(e.message||'erro de comunicação.')}}
 function bootAccessGate(){const granted=localStorage.getItem('nikkeiAccessGranted')==='1';localStorage.removeItem('nikkeiMasterSession');document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex';document.getElementById('moduleGate').style.display='none';document.documentElement.classList.remove('auth-pending');if(granted){localStorage.removeItem('nikkeiAccessGranted');document.getElementById('loginStatus').style.display='none';}}
 document.addEventListener('DOMContentLoaded',()=>{
   const savedLoginEmail=localStorage.getItem('nikkeiSavedLoginEmail');
