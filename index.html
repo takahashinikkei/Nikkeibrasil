@@ -2784,6 +2784,54 @@ document.addEventListener('DOMContentLoaded',()=>{
  setTimeout(init,500);
 })();
 </script>
+<script id="controlBackFinalFix">
+(function(){
+  function goBack(){
+    var gate=document.getElementById('moduleGate');
+    var header=document.querySelector('header.app-header');
+    var main=document.querySelector('main');
+    var driver=document.getElementById('driverPage');
+    var req=document.getElementById('accessRequestsPanel');
+    var emp=document.getElementById('employeesPanel');
+    var perm=document.getElementById('employeePermissionPanel');
+    var master=document.getElementById('masterButtons');
+    var sectors=document.getElementById('sectorButtons');
+    if(gate)gate.style.display='flex';
+    if(header)header.style.display='none';
+    if(main)main.style.display='none';
+    if(driver)driver.style.display='none';
+    if(req)req.style.display='none';
+    if(emp)emp.style.display='none';
+    if(perm)perm.style.display='none';
+    if(master)master.style.display='none';
+    if(sectors)sectors.style.display='grid';
+    document.body.dataset.module='';
+    document.body.dataset.access='';
+    window.scrollTo(0,0);
+  }
+  window.backToModuleMenu=goBack;
+  function bind(){
+    var b=document.getElementById('controlBackBtn');
+    if(!b||b.dataset.finalBackBound)return;
+    b.dataset.finalBackBound='1';
+    b.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      goBack();
+    },true);
+    b.onclick=function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      goBack();
+      return false;
+    };
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,300);
+  setTimeout(bind,1000);
+})();
+</script>
 </body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
