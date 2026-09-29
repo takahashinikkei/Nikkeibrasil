@@ -1839,14 +1839,34 @@ async function submitAccessRequest(){
    const up=await fetch(URL+'/storage/v1/object/driver-documents/'+path,{method:'POST',headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file});
    if(up.ok){await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(data.id),{method:'PATCH',headers,body:JSON.stringify({cnh_path:path,cnh_name:file.name,cnh_mime:file.type||'application/octet-stream'})});}
   }
-  localStorage.setItem('nikkeiAccessRequestId',data.id); showAccessStatus();
+  localStorage.setItem('nikkeiAccessRequestId',data.id);
+  try{
+   const notify=await fetch(URL+'/functions/v1/send-access-request-email',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      name:g('reqName')+' '+g('reqSurname'),
+      email:email,
+      role:reqData.functionRole,
+      city:document.getElementById('reqCity').value,
+      state:document.getElementById('reqState').value
+    })
+   });
+   if(!notify.ok){
+    console.warn('Solicitação criada, mas a notificação ao administrador falhou:',await notify.text());
+   }
+  }catch(mailErr){
+   console.warn('Solicitação criada, mas não foi possível enviar a notificação:',mailErr);
+  }
+  showAccessStatus();
  }catch(e){alert('Não foi possível enviar: '+(e.message||e))}
 }
 async function showAccessStatus(){const box=document.getElementById('accessStatus'),id=localStorage.getItem('nikkeiAccessRequestId');box.style.display='block';if(!id){box.textContent='Nenhuma solicitação encontrada neste aparelho.';return}try{const x=await window.nikkeiGetAccessRequest(id);if(!x){box.textContent='Solicitação não encontrada.';return}box.innerHTML=x.status==='approved'?'<b>ACESSO AUTORIZADO</b><br>Código: <b>'+x.accessCode+'</b><br><button class="primary" onclick="enterApprovedAccess()">Entrar no sistema</button>':x.status==='rejected'?'<b>Solicitação recusada.</b>':'<b>Aguardando autorização.</b><br>Seu cadastro foi enviado ao administrador.'}catch(e){box.textContent='Não foi possível consultar agora.'}}
 function enterApprovedAccess(){localStorage.setItem('nikkeiAccessGranted','1');document.getElementById('accessPage').style.display='none';document.documentElement.classList.remove('auth-pending');document.getElementById('moduleGate').style.display='flex'}
-function enterMasterAccess(){document.getElementById('accessPage').style.display='none';document.documentElement.classList.remove('auth-pending');document.getElementById('moduleGate').style.display='flex'}
+function enterMasterAccess(){localStorage.setItem('nikkeiMasterSession','1');document.getElementById('accessPage').style.display='none';document.documentElement.classList.remove('auth-pending');document.getElementById('moduleGate').style.display='flex'}
 function renderEmployeesPanel(list){const el=document.getElementById('employeesList');if(!el)return;el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc(x.name+' '+x.surname)+'</b><div class="muted">Função: <b>'+esc(x.functionRole||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+' • RG: '+esc(x.rg||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div></div>').join(''):'Nenhum funcionário cadastrado ainda.'}
 async function openEmployeesPanel(){
+ if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso restrito ao usuário administrador.');return;}
  document.getElementById('accessRequestsPanel').style.display='none';document.getElementById('employeesPanel').style.display='block';
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY};
@@ -1855,9 +1875,10 @@ async function openEmployeesPanel(){
  }catch(e){document.getElementById('employeesList').textContent='Não foi possível carregar os funcionários: '+(e.message||e)}
 }
 function closeEmployeesPanel(){document.getElementById('employeesPanel').style.display='none';document.getElementById('masterButtons').style.display='grid';document.getElementById('moduleGateText').textContent='Master'}
-function openEmployeeAccessRequest(){document.getElementById('moduleGate').style.display='none';document.getElementById('employeesPanel').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
+function openEmployeeAccessRequest(){if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso restrito ao usuário administrador.');return;}document.getElementById('moduleGate').style.display='none';document.getElementById('employeesPanel').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function renderAccessRequests(list){const el=document.getElementById('accessRequestsList');if(!el)return;el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc(x.name+' '+x.surname)+'</b><div class="muted">'+esc(x.phone)+' • CPF: '+esc(x.cpf)+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+' • '+esc([x.vehicleSubtype,x.vehicleConfiguration].filter(Boolean).join(' • '))+'</div><div class="muted">Status: <b>'+esc(x.status)+'</b></div>'+(x.status==='pending'?'<div class="actions"><button class="primary" onclick="approveAccess(&quot;'+x.id+'&quot;)">Liberar acesso</button><button class="secondary" onclick="rejectAccess(&quot;'+x.id+'&quot;)">Recusar</button></div>':'')+'</div>').join(''):'Nenhuma solicitação.'}
 async function approveAccess(id){
+ if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o usuário Master pode liberar acessos.');return;}
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
   const q=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id)+'&select=*',{headers:H}); if(!q.ok)throw new Error(await q.text());
@@ -1873,6 +1894,7 @@ async function approveAccess(id){
  }catch(e){alert('Erro: '+(e.message||e))}
 }
 async function rejectAccess(id){
+ if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o usuário Master pode recusar acessos.');return;}
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY};
   const r=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:H});
@@ -1890,6 +1912,7 @@ if(!p){document.getElementById('loginStatus').style.display='block';document.get
 if(u==='master' && await sha256Text(p)==='fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9'){
  enterMasterAccess();return;
 }
+localStorage.removeItem('nikkeiMasterSession');
 if(!/^\S+@\S+\.\S+$/.test(u)){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe um email válido ou o usuário master.';return}
 try{
  const passwordHash=await sha256Text(p);
@@ -1902,7 +1925,7 @@ try{
  if(!row||row.password_hash!==passwordHash){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';return}
  localStorage.setItem('nikkeiAccessGranted','1');localStorage.setItem('nikkeiAccessRequestId',row.id);document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex'
 }catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora: '+(e.message||'erro de comunicação.')}}}
-function bootAccessGate(){const granted=localStorage.getItem('nikkeiAccessGranted')==='1';document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex';document.getElementById('moduleGate').style.display='none';document.documentElement.classList.remove('auth-pending');if(granted){localStorage.removeItem('nikkeiAccessGranted');document.getElementById('loginStatus').style.display='none';}}
+function bootAccessGate(){const granted=localStorage.getItem('nikkeiAccessGranted')==='1';localStorage.removeItem('nikkeiMasterSession');document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex';document.getElementById('moduleGate').style.display='none';document.documentElement.classList.remove('auth-pending');if(granted){localStorage.removeItem('nikkeiAccessGranted');document.getElementById('loginStatus').style.display='none';}}
 document.addEventListener('DOMContentLoaded',()=>{
   const savedLoginEmail=localStorage.getItem('nikkeiSavedLoginEmail');
   if(savedLoginEmail){
@@ -1919,6 +1942,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     btn.addEventListener('click',()=>{
       const module=btn.dataset.module;
       if(module==='Master'){
+        if(localStorage.getItem('nikkeiMasterSession')!=='1'){
+          alert('Acesso Master restrito ao usuário administrador.');
+          return;
+        }
         document.body.dataset.module='Master';
         document.body.dataset.access='full';
         sectorButtons.style.display='none';
@@ -1932,6 +1959,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 
   document.querySelector('#masterButtons [data-action="requests"]').addEventListener('click',async()=>{
+ if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso restrito ao usuário administrador.');return;}
  document.getElementById('accessRequestsPanel').style.display='block';
  const el=document.getElementById('accessRequestsList'); if(el)el.textContent='Carregando...';
  try{
@@ -1964,6 +1992,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       b.onclick=function(){
         var mod=b.dataset.module;
         if(mod==='Master'){
+          if(localStorage.getItem('nikkeiMasterSession')!=='1'){
+            alert('Acesso Master restrito ao usuário administrador.');
+            return;
+          }
           document.getElementById('sectorButtons').style.display='none';
           document.getElementById('masterButtons').style.display='grid';
           document.getElementById('moduleGateText').textContent='Master';
