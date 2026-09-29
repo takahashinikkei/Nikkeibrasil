@@ -2618,7 +2618,7 @@ document.addEventListener('DOMContentLoaded',()=>{
      if(!r.ok)throw new Error('Supabase '+r.status+': '+await r.text());
      const rows=await r.json();
      window.__nikkeiAccessRequests=rows;
-     renderAccessRequests(rows);
+     window.renderAccessRequests(rows);
    }catch(e){if(el)el.innerHTML='<div style="padding:12px;color:#b42318">Erro ao carregar solicitações.<br><small>'+esc(e.message||e)+'</small></div>';}
  }
  async function loadEmployees(){
@@ -2651,6 +2651,22 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(backReq){backReq.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();backToMaster();};}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
+</script>
+<script id="globalPanelRenderFix">
+(function(){
+ window.renderEmployeesPanel=window.renderEmployeesPanel||function(list){
+  var el=document.getElementById('employeesList');if(!el)return;
+  el.innerHTML=list.length?list.map(function(x){
+   return '<div class="request-item"><b>'+esc((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">Função: <b>'+esc(x.functionRole||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+' • RG: '+esc(x.rg||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div><button type="button" class="secondary" style="margin-top:10px;width:100%" onclick="editEmployeePermissions(\''+esc(x.id)+'\')">🔐 Editar permissões</button><button type="button" class="secondary employee-delete-btn" style="margin-top:8px;width:100%;color:#b42318" onclick="deleteEmployee(\''+esc(x.id)+'\')">🗑️ Excluir usuário</button></div>';
+  }).join(''):'Nenhum funcionário cadastrado ainda.';
+ };
+ window.renderAccessRequests=window.renderAccessRequests||function(list){
+  var el=document.getElementById('accessRequestsList');if(!el)return;
+  el.innerHTML=list.length?list.map(function(x){
+   return '<div class="request-item"><b>'+esc((x.name||x.full_name||x.username||'') )+'</b><div class="muted">'+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div>'+(x.status==='pending'?'<button type="button" class="primary" style="margin-top:10px;width:100%" onclick="approveAccess(\''+esc(x.id)+'\')">Liberar acesso</button>':'')+'</div>';
+  }).join(''):'Nenhuma solicitação pendente.';
+ };
 })();
 </script>
 </body>
