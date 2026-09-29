@@ -2018,7 +2018,9 @@ document.addEventListener('DOMContentLoaded',()=>{
  const el=document.getElementById('accessRequestsList'); if(el)el.textContent='Carregando...';
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',h={'apikey':KEY,'Authorization':'Bearer '+KEY};
-  const r=await fetch(URL+'/rest/v1/access_requests?select=*&order=created_at.desc',{headers:h}); if(!r.ok)throw new Error(await r.text());
+  // Exibir nesta tela somente solicitações ainda pendentes.
+  // Usuários já aprovados passam a aparecer em "Funcionários".
+  const r=await fetch(URL+'/rest/v1/access_requests?status=eq.pending&select=*&order=created_at.desc',{headers:h}); if(!r.ok)throw new Error(await r.text());
   const list=await r.json(); window.__nikkeiAccessRequests=list; renderAccessRequests(window.__nikkeiAccessRequests);
  }catch(e){if(el)el.textContent='Erro ao carregar solicitações: '+(e.message||e)}
 });
