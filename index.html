@@ -252,7 +252,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 001</div>
+<div id="appVersionBadge">VERSÃO 002</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3064,6 +3064,129 @@ document.addEventListener('DOMContentLoaded',()=>{
     },true);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
+</script><style id="employeesManagementV2">
+#employeesPanel .employee-filter-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}
+#employeesPanel .employee-filter-row button{height:38px;border-radius:9px;font-weight:900;font-size:13px;padding:0 8px}
+#employeesPanel .employee-filter-row button.active{background:#111827!important;color:#fff!important;border-color:#111827!important}
+#employeeEditPanel input,#employeeEditPanel select{width:100%;box-sizing:border-box}
+#employeeEditPanel .edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#employeeEditPanel .edit-grid>div.full{grid-column:1/-1}
+.employee-password-note{font-size:12px;color:#64748b;margin:4px 0 10px}
+@media(max-width:560px){#employeesPanel .employee-filter-row{grid-template-columns:repeat(2,1fr)}#employeeEditPanel .edit-grid{grid-template-columns:1fr}}
+</style>
+<script id="employeesManagementV2">
+(function(){
+ const SUPA='https://qincxigrvlvudsqcukxt.supabase.co';
+ const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+ const H={'apikey':KEY,'Authorization':'Bearer '+KEY};
+ let rows=[];
+ let filter='TODOS';
+ let editingId=null;
+ const esc2=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+ function ensureUI(){
+   const panel=document.getElementById('employeesPanel');
+   if(!panel)return;
+   if(!document.getElementById('employeeFilterRow')){
+     const row=document.createElement('div');row.id='employeeFilterRow';row.className='employee-filter-row';
+     row.innerHTML='<button type="button" data-emp-filter="OPERACIONAL">OPERACIONAL</button><button type="button" data-emp-filter="MOTORISTA">MOTORISTA</button><button type="button" data-emp-filter="FINANCEIRO">FINANCEIRO</button><button type="button" data-emp-filter="TODOS">TODOS</button>';
+     const list=document.getElementById('employeesList');panel.insertBefore(row,list);
+     row.addEventListener('click',function(e){const b=e.target.closest('[data-emp-filter]');if(!b)return;filter=b.dataset.empFilter;render();});
+   }
+   if(!document.getElementById('employeeEditPanel')){
+     const ep=document.createElement('div');ep.id='employeeEditPanel';ep.style.cssText='display:none;max-width:720px;margin:12px auto 0;background:#fff;border-radius:18px;padding:16px';
+     ep.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2 style="margin:0">✏️ Editar cadastro</h2><button type="button" class="secondary" id="employeeEditBack">← Voltar</button></div><div class="edit-grid" style="margin-top:14px"><div><label>Nome</label><input id="eeName"></div><div><label>Sobrenome</label><input id="eeSurname"></div><div><label>Email</label><input id="eeUsername" type="email"></div><div><label>Função</label><select id="eeRole"><option value="MOTORISTA">Motorista</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option><option value="EXPEDICAO">Expedição</option></select></div><div><label>Data de nascimento</label><input id="eeBirthDate" type="date"></div><div><label>WhatsApp</label><input id="eePhone"></div><div><label>Celular 2</label><input id="eePhone2"></div><div><label>Telefone recado</label><input id="eePhoneAlt"></div><div><label>CPF</label><input id="eeCpf"></div><div><label>RG</label><input id="eeRg"></div><div><label>CEP</label><input id="eeCep"></div><div><label>Estado</label><input id="eeState"></div><div><label>Cidade</label><input id="eeCity"></div><div class="full"><label>Endereço</label><input id="eeAddress"></div><div><label>Nº</label><input id="eeAddressNumber"></div><div><label>Bairro</label><input id="eeNeighborhood"></div><div><label>Contato de emergência</label><input id="eeEmergency"></div><div><label>Placa</label><input id="eePlate"></div><div class="full"><label>Nova senha (opcional)</label><input id="eePassword" type="password" autocomplete="new-password"><div class="employee-password-note">A senha atual não é exibida. Por segurança, ela é armazenada como hash. Se necessário, defina uma nova senha neste campo.</div></div></div><button type="button" class="primary" id="saveEmployeeEdit" style="width:100%;margin-top:14px">✓ Salvar cadastro</button>';
+     panel.parentNode.insertBefore(ep,panel.nextSibling);
+     ep.querySelector('#employeeEditBack').onclick=function(){ep.style.display='none';panel.style.display='block';};
+     ep.querySelector('#saveEmployeeEdit').onclick=saveEdit;
+   }
+   if(!document.getElementById('editCadastroBtn')){
+     const p=document.getElementById('employeePermissionPanel');
+     if(p){
+       const actions=p.querySelector('.actions');
+       const b=document.createElement('button');b.type='button';b.id='editCadastroBtn';b.className='secondary';b.textContent='✏️ Editar cadastro';b.onclick=function(){if(editingId)openEdit(editingId);};
+       actions.insertBefore(b,actions.firstChild);
+     }
+   }
+ }
+ function matches(x){
+   const r=String(x.function_role||'').toUpperCase();
+   if(filter==='TODOS')return true;
+   if(filter==='OPERACIONAL')return r==='OPERACIONAL'||r==='EXPEDICAO';
+   return r===filter;
+ }
+ function render(){
+   ensureUI();
+   const list=document.getElementById('employeesList');
+   const fr=document.getElementById('employeeFilterRow');
+   if(fr)fr.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.empFilter===filter));
+   const data=rows.filter(matches);
+   if(!list)return;
+   list.innerHTML=data.length?data.map(x=>'<div class="request-item"><b>'+esc2((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">Função: <b>'+esc2(x.function_role||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc2(x.phone||'')+' • CPF: '+esc2(x.cpf||'')+' • RG: '+esc2(x.rg||'')+'</div><div class="muted">'+esc2([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc2(x.status||'pending')+'</b></div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="secondary" data-employee-edit="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800">🔐 Editar permissões</button><button type="button" class="secondary" data-employee-delete="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800;color:#b42318">🗑️ Excluir</button></div></div>').join(''):'Nenhum funcionário nesta categoria.';
+ }
+ async function load(){
+   ensureUI();
+   const panel=document.getElementById('employeesPanel'),list=document.getElementById('employeesList');
+   const ep=document.getElementById('employeeEditPanel');
+   if(ep)ep.style.display='none';
+   panel.style.display='block';list.textContent='Carregando funcionários...';
+   try{
+     const r=await fetch(SUPA+'/rest/v1/employees?select=*',{headers:H});
+     if(!r.ok)throw new Error(await r.text());
+     rows=await r.json();
+     rows.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));
+     filter='TODOS';render();
+   }catch(e){list.innerHTML='<div style="padding:12px;color:#b42318">Erro ao carregar funcionários.<br><small>'+esc2(e.message||e)+'</small></div>';}
+ }
+ async function openEdit(id){
+   ensureUI();editingId=id;
+   const x=rows.find(a=>String(a.id)===String(id));
+   if(!x){alert('Funcionário não encontrado.');return;}
+   const ep=document.getElementById('employeeEditPanel');document.getElementById('employeesPanel').style.display='none';ep.style.display='block';
+   const map={Name:'name',Surname:'surname',Username:'username',BirthDate:'birth_date',Phone:'phone',Phone2:'phone2',PhoneAlt:'phone_alt',Cpf:'cpf',Rg:'rg',State:'state',City:'city',Address:'address',AddressNumber:'address_number',Neighborhood:'neighborhood',Emergency:'emergency_contact_name',Plate:'plate'};
+   Object.keys(map).forEach(k=>{const el=document.getElementById('ee'+k);if(el)el.value=x[map[k]]||'';});
+   document.getElementById('eeRole').value=x.function_role||'';
+   document.getElementById('eePassword').value='';
+ }
+ async function saveEdit(){
+   if(!editingId)return;
+   const btn=document.getElementById('saveEmployeeEdit');btn.disabled=true;btn.textContent='Salvando...';
+   try{
+     const body={name:document.getElementById('eeName').value.trim(),surname:document.getElementById('eeSurname').value.trim(),username:document.getElementById('eeUsername').value.trim().toLowerCase(),function_role:document.getElementById('eeRole').value,birth_date:document.getElementById('eeBirthDate').value||null,phone:document.getElementById('eePhone').value.trim(),phone2:document.getElementById('eePhone2').value.trim(),phone_alt:document.getElementById('eePhoneAlt').value.trim(),cpf:document.getElementById('eeCpf').value.trim(),rg:document.getElementById('eeRg').value.trim(),state:document.getElementById('eeState').value.trim(),city:document.getElementById('eeCity').value.trim(),address:document.getElementById('eeAddress').value.trim(),address_number:document.getElementById('eeAddressNumber').value.trim(),neighborhood:document.getElementById('eeNeighborhood').value.trim(),emergency_contact_name:document.getElementById('eeEmergency').value.trim(),plate:document.getElementById('eePlate').value.trim()};
+     const password=document.getElementById('eePassword').value;
+     if(password)body.password_hash=await sha256Text(password);
+     const up=await fetch(SUPA+'/rest/v1/employees?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{...H,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(body)});
+     if(!up.ok)throw new Error(await up.text());
+     if(password){
+       const old=rows.find(a=>String(a.id)===String(editingId));
+       if(old&&old.username){
+         const ar=await fetch(SUPA+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(old.username),{method:'PATCH',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({username:body.username,password_hash:body.password_hash})});
+         if(!ar.ok)throw new Error('Cadastro salvo, mas não foi possível atualizar a senha do acesso: '+await ar.text());
+       }
+     }else{
+       const old=rows.find(a=>String(a.id)===String(editingId));
+       if(old&&old.username&&old.username!==body.username)await fetch(SUPA+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(old.username),{method:'PATCH',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({username:body.username})});
+     }
+     alert('Cadastro atualizado com sucesso.');
+     await load();
+   }catch(e){alert('Erro ao salvar cadastro: '+(e.message||e));}
+   finally{btn.disabled=false;btn.textContent='✓ Salvar cadastro';}
+ }
+ function bind(){
+   ensureUI();
+   document.addEventListener('click',function(e){
+     const b=e.target.closest&&e.target.closest('[data-employee-edit]');
+     if(b){e.preventDefault();e.stopImmediatePropagation();editingId=b.dataset.employeeEdit;window.editEmployeePermissions(b.dataset.employeeEdit);}
+   },true);
+ }
+ const oldOpen=window.openEmployeesPanel;
+ window.openEmployeesPanel=load;
+ window.renderEmployeesPanel=function(list){
+   rows=list||[];render();
+ };
+ window.__openEmployeeEdit=openEdit;
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+ setTimeout(ensureUI,300);
 })();
 </script></body>
 </html>
