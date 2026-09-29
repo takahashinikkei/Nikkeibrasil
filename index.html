@@ -1458,7 +1458,7 @@ document.addEventListener('DOMContentLoaded', function(){
 <script src="./k5.js?v=2"></script>
 <script src="./k6.js?v=2"></script>
 <script src="./k7.js?v=2"></script>
-<script src="./supabase-sync.js?v=14"></script>
+<script src="./supabase-sync.js?v=15"></script>
 <script id="accessRequestBridge">
 (function(){
   const URL='https://qincxigrvlvudsqcukxt.supabase.co';
@@ -1892,7 +1892,17 @@ if(u==='master' && await sha256Text(p)==='fc613b4dfd6736a7bd268c8a0e74ed0d1c04a9
  enterMasterAccess();return;
 }
 if(!/^\S+@\S+\.\S+$/.test(u)){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe um email válido ou o usuário master.';return}
-try{const x=await window.nikkeiLogin(u,await sha256Text(p));if(!x){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';return}localStorage.setItem('nikkeiAccessGranted','1');localStorage.setItem('nikkeiAccessRequestId',x.id);document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex'}catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora.'}}
+try{
+ const passwordHash=await sha256Text(p);
+ const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+ const H={'apikey':KEY,'Authorization':'Bearer '+KEY};
+ const r=await fetch(URL+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(u)+'&status=eq.approved&select=*',{headers:H});
+ if(!r.ok)throw new Error('Falha ao consultar autorização ('+r.status+').');
+ const rows=await r.json();
+ const row=rows&&rows[0];
+ if(!row||row.password_hash!==passwordHash){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Login ou senha inválidos, ou acesso ainda não autorizado.';return}
+ localStorage.setItem('nikkeiAccessGranted','1');localStorage.setItem('nikkeiAccessRequestId',row.id);document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex'
+}catch(e){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Não foi possível entrar agora: '+(e.message||'erro de comunicação.')}}}
 function bootAccessGate(){const granted=localStorage.getItem('nikkeiAccessGranted')==='1';document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex';document.getElementById('moduleGate').style.display='none';document.documentElement.classList.remove('auth-pending');if(granted){localStorage.removeItem('nikkeiAccessGranted');document.getElementById('loginStatus').style.display='none';}}
 document.addEventListener('DOMContentLoaded',()=>{
   const savedLoginEmail=localStorage.getItem('nikkeiSavedLoginEmail');
