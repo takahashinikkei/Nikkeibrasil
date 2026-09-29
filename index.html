@@ -258,7 +258,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 #employeesPanel .employee-main-line .employee-status.active{color:#15803d}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 004</div>
+<div id="appVersionBadge">VERSÃO 005</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -2509,7 +2509,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       access_request_id:req.id,username:req.username,password_hash:req.password_hash,name:req.name,surname:req.surname,
       birth_date:req.birth_date,address:req.address,address_number:req.address_number,neighborhood:req.neighborhood,
       state:req.state,city:req.city,phone:req.phone,phone2:req.phone2,phone_alt:req.phone_alt,
-      emergency_contact_name:req.emergency_contact_name,cpf:req.cpf,rg:req.rg,function_role:req.function_role,
+      emergency_contact_name:req.emergency_contact_name,cpf:req.cpf,rg:req.rg,function_role:req.function_role,admission_date:new Date().toISOString().slice(0,10),
       vehicle_type:req.vehicle_type,vehicle_subtype:req.vehicle_subtype,body_type:req.body_type,
       vehicle_configuration:req.vehicle_configuration,plate:req.plate,plate_cavalo:req.plate_cavalo,
       plate_carreta:req.plate_carreta,plate_carreta2:req.plate_carreta2,cnh_path:req.cnh_path,
@@ -3073,7 +3073,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
 </script><style id="employeesManagementV2">
-#employeesPanel .employee-filter-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}
+#employeesPanel .employee-filter-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 12px}
 #employeesPanel .employee-filter-row button{height:38px;border-radius:9px;font-weight:900;font-size:13px;padding:0 8px}
 #employeesPanel .employee-filter-row button.active{background:#111827!important;color:#fff!important;border-color:#111827!important}
 #employeeEditPanel input,#employeeEditPanel select{width:100%;box-sizing:border-box}
@@ -3102,7 +3102,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    }
    if(!document.getElementById('employeeEditPanel')){
      const ep=document.createElement('div');ep.id='employeeEditPanel';ep.style.cssText='display:none;max-width:720px;margin:12px auto 0;background:#fff;border-radius:18px;padding:16px';
-     ep.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2 style="margin:0">✏️ Editar cadastro</h2><button type="button" class="secondary" id="employeeEditBack">← Voltar</button></div><div class="edit-grid" style="margin-top:14px"><div><label>Nome</label><input id="eeName"></div><div><label>Sobrenome</label><input id="eeSurname"></div><div><label>Email</label><input id="eeUsername" type="email"></div><div><label>Função</label><select id="eeRole"><option value="MOTORISTA">Motorista</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option><option value="EXPEDICAO">Expedição</option></select></div><div><label>Data de nascimento</label><input id="eeBirthDate" type="date"></div><div><label>WhatsApp</label><input id="eePhone"></div><div><label>Celular 2</label><input id="eePhone2"></div><div><label>Telefone recado</label><input id="eePhoneAlt"></div><div><label>CPF</label><input id="eeCpf"></div><div><label>RG</label><input id="eeRg"></div><div><label>CEP</label><input id="eeCep"></div><div><label>Estado</label><input id="eeState"></div><div><label>Cidade</label><input id="eeCity"></div><div class="full"><label>Endereço</label><input id="eeAddress"></div><div><label>Nº</label><input id="eeAddressNumber"></div><div><label>Bairro</label><input id="eeNeighborhood"></div><div><label>Contato de emergência</label><input id="eeEmergency"></div><div><label>Placa</label><input id="eePlate"></div><div class="full"><label>Nova senha (opcional)</label><input id="eePassword" type="password" autocomplete="new-password"><div class="employee-password-note">A senha atual não é exibida. Por segurança, ela é armazenada como hash. Se necessário, defina uma nova senha neste campo.</div></div></div><button type="button" class="primary" id="saveEmployeeEdit" style="width:100%;margin-top:14px">✓ Salvar cadastro</button>';
+     ep.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2 style="margin:0">✏️ Editar cadastro</h2><button type="button" class="secondary" id="employeeEditBack">← Voltar</button></div><div class="edit-grid" style="margin-top:14px"><div><label>Nome</label><input id="eeName"></div><div><label>Sobrenome</label><input id="eeSurname"></div><div><label>Email</label><input id="eeUsername" type="email"></div><div><label>Função</label><select id="eeRole"><option value="MOTORISTA">Motorista</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option><option value="EXPEDICAO">Expedição</option></select></div><div><label>Data de nascimento</label><input id="eeBirthDate" type="date"></div><div><label>Data de admissão</label><input id="eeAdmissionDate" type="date"></div><div><label>WhatsApp</label><input id="eePhone"></div><div><label>Celular 2</label><input id="eePhone2"></div><div><label>Telefone recado</label><input id="eePhoneAlt"></div><div><label>CPF</label><input id="eeCpf"></div><div><label>RG</label><input id="eeRg"></div><div><label>CEP</label><input id="eeCep"></div><div><label>Estado</label><input id="eeState"></div><div><label>Cidade</label><input id="eeCity"></div><div class="full"><label>Endereço</label><input id="eeAddress"></div><div><label>Nº</label><input id="eeAddressNumber"></div><div><label>Bairro</label><input id="eeNeighborhood"></div><div><label>Contato de emergência</label><input id="eeEmergency"></div><div><label>Placa</label><input id="eePlate"></div><div class="full"><label>Nova senha (opcional)</label><input id="eePassword" type="password" autocomplete="new-password"><div class="employee-password-note">A senha atual não é exibida. Por segurança, ela é armazenada como hash. Se necessário, defina uma nova senha neste campo.</div></div></div><button type="button" class="primary" id="saveEmployeeEdit" style="width:100%;margin-top:14px">✓ Salvar cadastro</button>';
      panel.parentNode.insertBefore(ep,panel.nextSibling);
      ep.querySelector('#employeeEditBack').onclick=function(){ep.style.display='none';panel.style.display='block';};
      ep.querySelector('#saveEmployeeEdit').onclick=saveEdit;
@@ -3125,9 +3125,21 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(d.length===10)return '('+d.slice(0,2)+') '+d.slice(2,6)+'-'+d.slice(6);
    return String(v||'');
  }
+ function formatDate(v){
+   if(!v)return '';
+   const p=String(v).slice(0,10).split('-');
+   return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:String(v);
+ }
+ function isBirthdayThisMonth(x){
+   if(!x.birth_date)return false;
+   const p=String(x.birth_date).slice(0,10).split('-');
+   if(p.length!==3)return false;
+   return Number(p[1])===new Date().getMonth()+1;
+ }
  function matches(x){
    const r=String(x.function_role||'').toUpperCase();
    if(filter==='TODOS')return true;
+   if(filter==='ANIVERSARIANTES')return isBirthdayThisMonth(x);
    if(filter==='OPERACIONAL')return r==='OPERACIONAL'||r==='EXPEDICAO';
    return r===filter;
  }
@@ -3135,16 +3147,22 @@ document.addEventListener('DOMContentLoaded',()=>{
    ensureUI();
    const list=document.getElementById('employeesList');
    const fr=document.getElementById('employeeFilterRow');
-   if(fr)fr.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.empFilter===filter));
+   if(fr){
+     fr.innerHTML='<button type="button" data-emp-filter="OPERACIONAL">OPERACIONAL</button><button type="button" data-emp-filter="MOTORISTA">MOTORISTA</button><button type="button" data-emp-filter="FINANCEIRO">FINANCEIRO</button><button type="button" data-emp-filter="TODOS">TODOS</button><button type="button" data-emp-filter="ANIVERSARIANTES">🎂 ANIVERSARIANTES DO MÊS</button>';
+     fr.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.empFilter===filter));
+   }
    const data=rows.filter(matches);
    if(!list)return;
+   if(filter==='ANIVERSARIANTES')data.sort((a,b)=>String(a.birth_date||'').slice(8,10).localeCompare(String(b.birth_date||'').slice(8,10)));
    list.innerHTML=data.length?data.map(x=>{
      const nm=formatName((x.name||'')+' '+(x.surname||''));
      const ph=formatPhone(x.phone);
      const role=formatName(x.function_role||'Não informada');
      const st=String(x.status||'pending').toLowerCase();
      const stLabel=st==='active'?'Ativo':(st==='inactive'?'Inativo':formatName(st));
-     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div><div class="muted">CPF: '+esc2(x.cpf||'')+' • RG: '+esc2(x.rg||'')+'</div><div class="muted">'+esc2([x.city,x.state].filter(Boolean).join(' - '))+'</div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="secondary" data-employee-edit="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800">🔐 Editar permissões</button><button type="button" class="secondary" data-employee-delete="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800;color:#b42318">🗑️ Excluir</button></div></div>';
+     const adm=x.admission_date?formatDate(x.admission_date):'Não informada';
+     const birth=filter==='ANIVERSARIANTES'&&x.birth_date?'🎂 '+formatDate(x.birth_date):'';
+     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div>'+(birth?'<div class="muted">'+esc2(birth)+'</div>':'')+'<div class="muted">Admissão: '+esc2(adm)+'</div><div class="muted">'+esc2([x.city,x.state].filter(Boolean).join(' - '))+'</div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="secondary" data-employee-edit="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800">🔐 Editar permissões</button><button type="button" class="secondary" data-employee-delete="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800;color:#b42318">🗑️ Excluir</button></div></div>';
    }).join(''):'Nenhum funcionário nesta categoria.';
  }
  async function load(){
@@ -3166,7 +3184,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    const x=rows.find(a=>String(a.id)===String(id));
    if(!x){alert('Funcionário não encontrado.');return;}
    const ep=document.getElementById('employeeEditPanel');document.getElementById('employeesPanel').style.display='none';ep.style.display='block';
-   const map={Name:'name',Surname:'surname',Username:'username',BirthDate:'birth_date',Phone:'phone',Phone2:'phone2',PhoneAlt:'phone_alt',Cpf:'cpf',Rg:'rg',State:'state',City:'city',Address:'address',AddressNumber:'address_number',Neighborhood:'neighborhood',Emergency:'emergency_contact_name',Plate:'plate'};
+   const map={Name:'name',Surname:'surname',Username:'username',BirthDate:'birth_date',AdmissionDate:'admission_date',Phone:'phone',Phone2:'phone2',PhoneAlt:'phone_alt',Cpf:'cpf',Rg:'rg',State:'state',City:'city',Address:'address',AddressNumber:'address_number',Neighborhood:'neighborhood',Emergency:'emergency_contact_name',Plate:'plate'};
    Object.keys(map).forEach(k=>{const el=document.getElementById('ee'+k);if(el)el.value=x[map[k]]||'';});
    document.getElementById('eeRole').value=x.function_role||'';
    document.getElementById('eePassword').value='';
@@ -3175,7 +3193,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(!editingId)return;
    const btn=document.getElementById('saveEmployeeEdit');btn.disabled=true;btn.textContent='Salvando...';
    try{
-     const body={name:document.getElementById('eeName').value.trim(),surname:document.getElementById('eeSurname').value.trim(),username:document.getElementById('eeUsername').value.trim().toLowerCase(),function_role:document.getElementById('eeRole').value,birth_date:document.getElementById('eeBirthDate').value||null,phone:document.getElementById('eePhone').value.trim(),phone2:document.getElementById('eePhone2').value.trim(),phone_alt:document.getElementById('eePhoneAlt').value.trim(),cpf:document.getElementById('eeCpf').value.trim(),rg:document.getElementById('eeRg').value.trim(),state:document.getElementById('eeState').value.trim(),city:document.getElementById('eeCity').value.trim(),address:document.getElementById('eeAddress').value.trim(),address_number:document.getElementById('eeAddressNumber').value.trim(),neighborhood:document.getElementById('eeNeighborhood').value.trim(),emergency_contact_name:document.getElementById('eeEmergency').value.trim(),plate:document.getElementById('eePlate').value.trim()};
+     const body={name:document.getElementById('eeName').value.trim(),surname:document.getElementById('eeSurname').value.trim(),username:document.getElementById('eeUsername').value.trim().toLowerCase(),function_role:document.getElementById('eeRole').value,birth_date:document.getElementById('eeBirthDate').value||null,admission_date:document.getElementById('eeAdmissionDate').value||null,phone:document.getElementById('eePhone').value.trim(),phone2:document.getElementById('eePhone2').value.trim(),phone_alt:document.getElementById('eePhoneAlt').value.trim(),cpf:document.getElementById('eeCpf').value.trim(),rg:document.getElementById('eeRg').value.trim(),state:document.getElementById('eeState').value.trim(),city:document.getElementById('eeCity').value.trim(),address:document.getElementById('eeAddress').value.trim(),address_number:document.getElementById('eeAddressNumber').value.trim(),neighborhood:document.getElementById('eeNeighborhood').value.trim(),emergency_contact_name:document.getElementById('eeEmergency').value.trim(),plate:document.getElementById('eePlate').value.trim()};
      const password=document.getElementById('eePassword').value;
      if(password)body.password_hash=await sha256Text(password);
      const up=await fetch(SUPA+'/rest/v1/employees?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{...H,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(body)});
