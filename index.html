@@ -1911,7 +1911,8 @@ async function approveAccess(id){
   const rows=await q.json();if(!rows.length)throw new Error('Solicitação não encontrada.');
   const req=rows[0];if(req.status!=='pending'){alert('Esta solicitação já foi processada.');return;}
   window.__nikkeiPendingApproval=req;
-  showPermissionSelection(req);
+  if(typeof window.showPermissionSelection!=='function') throw new Error('Tela de permissões ainda não foi carregada.');
+  window.showPermissionSelection(req);
  }catch(e){alert('Erro ao abrir permissões: '+(e&&e.message?e.message:e))}
 }
 async function rejectAccess(id){
