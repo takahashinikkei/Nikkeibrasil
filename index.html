@@ -232,7 +232,6 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
       <h2 style="margin:0 0 8px">👥 Funcionários</h2>
       <p class="muted" style="margin:0 0 12px">Gerencie os funcionários, permissões de acesso e demais dados cadastrais.</p>
       <div class="actions" style="margin-top:0">
-        <button class="primary" type="button" onclick="openEmployeeAccessRequest()">➕ Solicitar autorização</button>
         <button class="secondary" type="button" onclick="closeEmployeesPanel()">← Voltar</button>
       </div>
       <div id="employeesList" class="request-list" style="margin-top:12px">Carregando...</div>
@@ -1897,7 +1896,7 @@ function enterApprovedAccess(){localStorage.setItem('nikkeiAccessGranted','1');d
 function enterMasterAccess(){localStorage.setItem('nikkeiMasterSession','1');document.getElementById('accessPage').style.display='none';document.documentElement.classList.remove('auth-pending');document.getElementById('moduleGate').style.display='flex'}
 function renderEmployeesPanel(list){
  const el=document.getElementById('employeesList');if(!el)return;
- el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">Função: <b>'+esc(x.functionRole||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+' • RG: '+esc(x.rg||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div><button type="button" class="secondary" style="margin-top:10px;width:100%" onclick="editEmployeePermissions(\''+esc(x.id)+'\')">🔐 Editar permissões</button></div>').join(''):'Nenhum funcionário cadastrado ainda.';
+ el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">Função: <b>'+esc(x.functionRole||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+' • RG: '+esc(x.rg||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div><button type="button" class="secondary" style="margin-top:10px;width:100%" onclick="editEmployeePermissions(\''+esc(x.id)+'\')">🔐 Editar permissões</button><button type="button" class="secondary employee-delete-btn" style="margin-top:8px;width:100%;color:#b42318" onclick="deleteEmployee(\''+esc(x.id)+'\')">🗑️ Excluir usuário</button></div>').join(''):'Nenhum funcionário cadastrado ainda.';
 }
 async function openEmployeesPanel(){
  if(localStorage.getItem('nikkeiMasterSession')!=='1' && !(window.nikkeiHasPermission&&window.nikkeiHasPermission('employees'))){alert('Você não tem permissão para acessar Funcionários.');return;}
@@ -1948,6 +1947,22 @@ window.editEmployeePermissions=async function(id){
 window.closeEmployeePermissionPanel=function(){
  document.getElementById('employeePermissionPanel').style.display='none';
  document.getElementById('employeesPanel').style.display='block';
+};
+window.deleteEmployee=async function(id){
+ if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o Master pode excluir usuários.');return;}
+ if(!confirm('Excluir este usuário? O acesso dele ao sistema também será revogado.'))return;
+ try{
+  const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY};
+  const r=await fetch(URL+'/rest/v1/employees?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:H});
+  if(!r.ok)throw new Error(await r.text());
+  const ar=await fetch(URL+'/rest/v1/access_requests?select=id,username,status',{headers:H});
+  if(ar.ok){
+   const requests=await ar.json();
+   const empUsername=requests.find(x=>false);
+  }
+  alert('Usuário excluído e acesso revogado.');
+  openEmployeesPanel();
+ }catch(e){alert('Erro ao excluir usuário: '+(e.message||e))}
 };
 function openEmployeeAccessRequest(){if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso restrito ao usuário administrador.');return;}document.getElementById('moduleGate').style.display='none';document.getElementById('employeesPanel').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function renderAccessRequests(list){
