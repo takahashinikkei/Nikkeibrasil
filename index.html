@@ -2359,7 +2359,17 @@ document.addEventListener('DOMContentLoaded',()=>{
  function openUserModule(module){
    if(!hasPermission(module))return;
    if(module==='drivers'){openDriversPage();return}
-   if(module==='fleet'){openStockPage();return}
+   if(module==='fleet'){
+     // Frota abre a página principal de veículos, com consulta FIPE e cadastro.
+     document.getElementById('moduleGate').style.display='none';
+     const hdr=document.querySelector('header.app-header'); if(hdr)hdr.style.display='';
+     const main=document.querySelector('main'); if(main)main.style.display='';
+     // Aciona a abertura do módulo de veículos sem alterar a página FIPE existente.
+     const vehicleBtn=document.querySelector('[data-module="Veiculos"],#vehicleModuleBtn,[data-action="vehicles"]');
+     if(vehicleBtn){ vehicleBtn.click(); }
+     else if(typeof window.openVehiclesPage==='function'){ window.openVehiclesPage(); }
+     return;
+   }
    if(module==='vehicles'){
      document.getElementById('moduleGate').style.display='none';
      document.querySelector('header.app-header').style.display='';
