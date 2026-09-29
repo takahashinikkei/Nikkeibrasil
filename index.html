@@ -2396,6 +2396,32 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(b&&localStorage.getItem('nikkeiMasterSession')!=='1'){ev.preventDefault();ev.stopImmediatePropagation();alert('Acesso Master restrito ao usuário administrador.');}
  },true);
 })();
+<script id="frotaVehiclesDirectFix">
+(function(){
+  function openFrotaVehiclesDirect(ev){
+    if(ev){ev.preventDefault();ev.stopImmediatePropagation();}
+    if(localStorage.getItem('nikkeiMasterSession')!=='1' && !window.nikkeiHasPermission?.('fleet')) return;
+    const gate=document.getElementById('moduleGate');
+    const header=document.querySelector('header.app-header');
+    const main=document.querySelector('main');
+    const driver=document.getElementById('driverPage');
+    if(gate)gate.style.display='none';
+    if(header)header.style.display='';
+    if(main)main.style.display='';
+    if(driver)driver.style.display='none';
+    document.body.dataset.module='Frota';
+    document.body.dataset.access='vehicles';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function bindFrota(){
+    const b=document.querySelector('#sectorButtons button[data-module="Frota"]');
+    if(!b)return;
+    b.onclick=openFrotaVehiclesDirect;
+    b.dataset.frotaDirect='1';
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindFrota);else bindFrota();
+})();
+</script>
 </script>
 </body>
 </html>
