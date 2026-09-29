@@ -242,8 +242,17 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  .access-location{grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr) minmax(0,.7fr)!important}
  .access-box input,.access-box select{height:38px;font-size:14px}
 }
-.remember-login{display:flex;align-items:center;gap:8px;margin:10px 0 2px;font-size:14px;font-weight:700;color:#56616f;cursor:pointer}.remember-login input{width:18px;height:18px;accent-color:#1976d2;cursor:pointer}</style></head>
+.remember-login{display:flex;align-items:center;gap:8px;margin:10px 0 2px;font-size:14px;font-weight:700;color:#56616f;cursor:pointer}.remember-login input{width:18px;height:18px;accent-color:#1976d2;cursor:pointer}</style><style id="appVersionBadge">
+#appVersionBadge{
+ position:fixed;top:12px;right:14px;z-index:999999;
+ padding:6px 10px;border-radius:8px;
+ background:#111827;color:#fff;
+ font-size:11px;font-weight:900;letter-spacing:.5px;
+ box-shadow:0 4px 12px #0003;
+}
+</style></head>
 <body>
+<div id="appVersionBadge">VERSÃO 001</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
