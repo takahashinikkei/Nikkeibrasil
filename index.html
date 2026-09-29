@@ -1905,42 +1905,15 @@ function renderAccessRequests(list){
 }
 async function approveAccess(id){
  if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o usuário Master pode liberar acessos.');return;}
- const buttons=document.querySelectorAll('[data-id="'+CSS.escape(String(id))+'"]');buttons.forEach(b=>b.disabled=true);
  try{
   const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
   const q=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id)+'&select=*',{headers:H});
   if(!q.ok)throw new Error('Falha ao consultar solicitação: '+await q.text());
   const rows=await q.json();if(!rows.length)throw new Error('Solicitação não encontrada.');
-  const r=rows[0];if(r.status!=='pending'){alert('Esta solicitação já foi processada.');return;}
-  const employee={
-   access_request_id:r.id,username:r.username,password_hash:r.password_hash,name:r.name,surname:r.surname,
-   birth_date:r.birth_date,address:r.address,address_number:r.address_number,neighborhood:r.neighborhood,
-   state:r.state,city:r.city,phone:r.phone,phone2:r.phone2,phone_alt:r.phone_alt,
-   emergency_contact_name:r.emergency_contact_name,cpf:r.cpf,rg:r.rg,function_role:r.function_role,
-   vehicle_type:r.vehicle_type,vehicle_subtype:r.vehicle_subtype,body_type:r.body_type,
-   vehicle_configuration:r.vehicle_configuration,plate:r.plate,plate_cavalo:r.plate_cavalo,
-   plate_carreta:r.plate_carreta,plate_carreta2:r.plate_carreta2,cnh_path:r.cnh_path,
-   cnh_name:r.cnh_name,cnh_mime:r.cnh_mime,status:'active',approved_at:new Date().toISOString()
-  };
-  const er=await fetch(URL+'/rest/v1/employees?on_conflict=username',{
-   method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(employee)
-  });
-  if(!er.ok)throw new Error('Não foi possível criar/ativar o funcionário: '+await er.text());
-  const ar=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(id),{
-   method:'PATCH',headers:H,body:JSON.stringify({status:'approved',approved_at:new Date().toISOString()})
-  });
-  if(!ar.ok)throw new Error('Funcionário criado, mas não foi possível registrar a aprovação: '+await ar.text());
-  let emailWarning='';
-  try{
-   const mail=await fetch(URL+'/functions/v1/send-access-approved-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:r.username,name:r.name})});
-   if(!mail.ok)emailWarning=' O acesso foi liberado, mas o e-mail de confirmação não foi enviado.';
-  }catch(_){emailWarning=' O acesso foi liberado, mas o e-mail de confirmação não foi enviado.'}
-  alert('Acesso liberado com sucesso para '+r.username+'.'+emailWarning);
-  const reqBtn=document.querySelector('#masterButtons [data-action="requests"]');
-  if(reqBtn)reqBtn.click();
- }catch(e){
-  alert('Erro ao liberar acesso: '+(e&&e.message?e.message:e));
- }finally{buttons.forEach(b=>b.disabled=false);}
+  const req=rows[0];if(req.status!=='pending'){alert('Esta solicitação já foi processada.');return;}
+  window.__nikkeiPendingApproval=req;
+  showPermissionSelection(req);
+ }catch(e){alert('Erro ao abrir permissões: '+(e&&e.message?e.message:e))}
 }
 async function rejectAccess(id){
  if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o usuário Master pode recusar acessos.');return;}
@@ -2238,6 +2211,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       if(!row){showLoginMessage('Usuário não autorizado ou cadastro não encontrado.');return;}
       if(row.password_hash!==ph){showLoginMessage('Email ou senha inválidos.');return;}
       localStorage.setItem('nikkeiAccessGranted','1');
+      localStorage.setItem('nikkeiUserPermissions',JSON.stringify(row.permissions||{}));
       if(row.access_request_id) localStorage.setItem('nikkeiAccessRequestId',row.access_request_id);
       document.getElementById('loginPage').style.display='none';
       document.getElementById('moduleGate').style.display='flex';
@@ -2262,6 +2236,156 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
-</script></body>
+</script>
+<script id="permissionsAccessControl">
+(function(){
+ const URL='https://qincxigrvlvudsqcukxt.supabase.co';
+ const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+ const H=()=>({'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'});
+ const MODULES=[
+  ['vehicles','🚗 Veículos'],
+  ['employees','👥 Funcionários'],
+  ['drivers','👨‍✈️ Motoristas'],
+  ['fleet','🚚 Frota'],
+  ['operational','⚙️ Operacional'],
+  ['finance','💰 Financeiro']
+ ];
+ const escLocal=s=>String(s??'').replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+ function hasPermission(key){
+   if(localStorage.getItem('nikkeiMasterSession')==='1') return true;
+   try{return !!JSON.parse(localStorage.getItem('nikkeiUserPermissions')||'{}')[key]}catch(_){return false}
+ }
+ function makePanel(){
+   if(document.getElementById('permissionSelectionPanel'))return;
+   const p=document.createElement('div');
+   p.id='permissionSelectionPanel';
+   p.style.cssText='display:none;position:fixed;inset:0;z-index:100005;background:#000;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px';
+   p.innerHTML='<div style="width:min(620px,100%);background:#fff;border-radius:22px;padding:20px;box-shadow:0 20px 60px #0005">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2 style="margin:0">🔐 Permissões de acesso</h2><button type="button" id="permissionBackBtn" class="secondary small-btn">← Voltar</button></div>'+
+    '<p id="permissionUserInfo" class="muted" style="margin:8px 0 14px"></p>'+
+    '<div id="permissionOptions" style="display:grid;gap:9px"></div>'+
+    '<div style="margin-top:14px;padding:10px 12px;background:#f8fafc;border-radius:12px;color:#64748b;font-size:12px">O acesso <b>Master</b> e a gestão de autorizações permanecem exclusivos do administrador.</div>'+
+    '<button type="button" id="confirmPermissionBtn" class="primary" style="margin-top:14px">✓ Confirmar e liberar acesso</button>'+
+   '</div>';
+   document.body.appendChild(p);
+   document.getElementById('permissionBackBtn').onclick=()=>{
+     p.style.display='none';
+     document.getElementById('moduleGate').style.display='flex';
+     document.getElementById('accessRequestsPanel').style.display='block';
+     document.getElementById('masterButtons').style.display='none';
+   };
+   document.getElementById('confirmPermissionBtn').onclick=confirmPermissionSelection;
+ }
+ window.showPermissionSelection=function(req){
+   makePanel();
+   window.__nikkeiPendingApproval=req;
+   window.__nikkeiSelectedPermissions={};
+   const box=document.getElementById('permissionOptions');
+   box.innerHTML=MODULES.map(([k,label])=>'<label style="display:flex;align-items:center;gap:10px;padding:13px 12px;border:1px solid #d1d5db;border-radius:12px;background:#fff;font-weight:800;cursor:pointer"><input type="checkbox" data-perm="'+k+'" style="width:20px;height:20px;accent-color:#1478e5"><span>'+label+'</span></label>').join('');
+   document.getElementById('permissionUserInfo').innerHTML='<b>'+escLocal((req.name||'')+' '+(req.surname||''))+'</b><br>'+escLocal(req.username||'');
+   document.getElementById('moduleGate').style.display='none';
+   document.getElementById('accessRequestsPanel').style.display='none';
+   document.getElementById('masterButtons').style.display='none';
+   document.getElementById('permissionSelectionPanel').style.display='flex';
+ };
+ window.confirmPermissionSelection=async function(){
+   if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o usuário Master pode confirmar permissões.');return}
+   const req=window.__nikkeiPendingApproval;if(!req)return;
+   const btn=document.getElementById('confirmPermissionBtn');
+   const selected={};
+   document.querySelectorAll('#permissionOptions input[data-perm]').forEach(x=>{selected[x.dataset.perm]=!!x.checked});
+   if(!Object.values(selected).some(Boolean)){if(!confirm('Nenhuma permissão foi selecionada. Liberar o usuário sem acesso aos módulos?'))return}
+   btn.disabled=true;btn.textContent='Liberando...';
+   try{
+     const employee={
+      access_request_id:req.id,username:req.username,password_hash:req.password_hash,name:req.name,surname:req.surname,
+      birth_date:req.birth_date,address:req.address,address_number:req.address_number,neighborhood:req.neighborhood,
+      state:req.state,city:req.city,phone:req.phone,phone2:req.phone2,phone_alt:req.phone_alt,
+      emergency_contact_name:req.emergency_contact_name,cpf:req.cpf,rg:req.rg,function_role:req.function_role,
+      vehicle_type:req.vehicle_type,vehicle_subtype:req.vehicle_subtype,body_type:req.body_type,
+      vehicle_configuration:req.vehicle_configuration,plate:req.plate,plate_cavalo:req.plate_cavalo,
+      plate_carreta:req.plate_carreta,plate_carreta2:req.plate_carreta2,cnh_path:req.cnh_path,
+      cnh_name:req.cnh_name,cnh_mime:req.cnh_mime,permissions:selected,status:'active',approved_at:new Date().toISOString()
+     };
+     const er=await fetch(URL+'/rest/v1/employees?on_conflict=username',{method:'POST',headers:{...H(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(employee)});
+     if(!er.ok)throw new Error('Não foi possível criar/ativar o funcionário: '+await er.text());
+     const ar=await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(req.id),{method:'PATCH',headers:H(),body:JSON.stringify({status:'approved',approved_at:new Date().toISOString()})});
+     if(!ar.ok)throw new Error('Funcionário criado, mas não foi possível registrar a aprovação: '+await ar.text());
+     let emailWarning='';
+     try{
+       const mail=await fetch(URL+'/functions/v1/send-access-approved-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:req.username,name:req.name})});
+       if(!mail.ok)emailWarning=' O acesso foi liberado, mas o e-mail de confirmação não foi enviado.';
+     }catch(_){emailWarning=' O acesso foi liberado, mas o e-mail de confirmação não foi enviado.'}
+     window.__nikkeiSelectedPermissions=selected;
+     document.getElementById('permissionSelectionPanel').style.display='none';
+     document.getElementById('moduleGate').style.display='flex';
+     document.getElementById('masterButtons').style.display='none';
+     document.getElementById('sectorButtons').style.display='none';
+     document.getElementById('accessRequestsPanel').style.display='block';
+     const reqBtn=document.querySelector('#masterButtons [data-action="requests"]');
+     if(reqBtn)reqBtn.click();
+     alert('Acesso liberado com sucesso para '+req.username+'.'+emailWarning);
+     window.__nikkeiPendingApproval=null;
+   }catch(e){alert('Erro ao liberar acesso: '+(e&&e.message?e.message:e))}
+   finally{btn.disabled=false;btn.textContent='✓ Confirmar e liberar acesso'}
+ };
+ window.applyUserPermissions=function(perms){
+   if(localStorage.getItem('nikkeiMasterSession')==='1')return;
+   perms=perms||{};
+   const sectors=document.getElementById('sectorButtons');
+   if(!sectors)return;
+   sectors.querySelectorAll('button').forEach(b=>{
+     const m=b.dataset.module;
+     const key={Motoristas:'drivers',Frota:'fleet',Operacional:'operational',Financeiro:'finance'}[m];
+     if(m==='Master')b.style.display='none';
+     else if(key)b.style.display=perms[key]?'':'none';
+   });
+   let emp=document.getElementById('employeeUserModuleBtn');
+   if(perms.employees){
+     if(!emp){
+       emp=document.createElement('button');emp.id='employeeUserModuleBtn';emp.dataset.module='Funcionarios';emp.textContent='👥 Funcionários';sectors.appendChild(emp);
+     }
+     emp.style.display='';
+   }else if(emp)emp.style.display='none';
+   let veh=sectors.querySelector('[data-module="Veiculos"]');
+   if(perms.vehicles){
+     if(!veh){veh=document.createElement('button');veh.dataset.module='Veiculos';veh.textContent='🚗 Veículos';sectors.insertBefore(veh,sectors.firstChild);}
+     veh.style.display='';
+   }else if(veh)veh.style.display='none';
+   const visible=[...sectors.querySelectorAll('button')].some(b=>getComputedStyle(b).display!=='none');
+   document.getElementById('moduleGateText').textContent=visible?'Selecione o módulo para entrar':'Nenhum módulo foi liberado para este usuário.';
+ };
+ function openUserModule(module){
+   if(!hasPermission(module))return;
+   if(module==='drivers'){openDriversPage();return}
+   if(module==='fleet'){openStockPage();return}
+   if(module==='vehicles'){
+     document.getElementById('moduleGate').style.display='none';
+     document.querySelector('header.app-header').style.display='';
+     document.querySelector('main').style.display='';
+     return;
+   }
+   if(module==='employees'){
+     openEmployeesPanel();
+     return;
+   }
+   alert('Módulo '+module+' está reservado para configuração.');
+ }
+ document.addEventListener('click',function(ev){
+   const b=ev.target.closest&&ev.target.closest('#sectorButtons button');
+   if(!b||localStorage.getItem('nikkeiMasterSession')==='1')return;
+   const m=b.dataset.module;
+   const map={Motoristas:'drivers',Frota:'fleet',Operacional:'operational',Financeiro:'finance',Veiculos:'vehicles',Funcionarios:'employees'};
+   if(!map[m])return;
+   ev.preventDefault();ev.stopImmediatePropagation();openUserModule(map[m]);
+ },true);
+ // Prevent non-master users from opening the Master menu via stale handlers.
+ document.addEventListener('click',function(ev){
+   const b=ev.target.closest&&ev.target.closest('#sectorButtons button[data-module="Master"]');
+   if(b&&localStorage.getItem('nikkeiMasterSession')!=='1'){ev.preventDefault();ev.stopImmediatePropagation();alert('Acesso Master restrito ao usuário administrador.');}
+ },true);
+})();
+</script>
+</body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
