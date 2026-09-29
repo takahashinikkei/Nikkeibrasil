@@ -250,9 +250,15 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  font-size:11px;font-weight:900;letter-spacing:.5px;
  box-shadow:0 4px 12px #0003;
 }
+</style><style id="employeeMainLineFix">
+#employeesPanel .employee-main-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap;line-height:1.2;margin-bottom:4px}
+#employeesPanel .employee-main-line>b{font-size:16px;white-space:nowrap}
+#employeesPanel .employee-main-line span{font-size:13px;color:#475569;white-space:nowrap}
+#employeesPanel .employee-main-line .employee-status{font-weight:800;color:#b42318}
+#employeesPanel .employee-main-line .employee-status.active{color:#15803d}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 003</div>
+<div id="appVersionBadge">VERSÃO 004</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3110,6 +3116,15 @@ document.addEventListener('DOMContentLoaded',()=>{
      }
    }
  }
+ function formatName(v){
+   return String(v||'').trim().toLocaleLowerCase('pt-BR').replace(/(^|[\\s-])([a-zà-ÿ])/g,function(_,sep,ch){return sep+ch.toLocaleUpperCase('pt-BR');});
+ }
+ function formatPhone(v){
+   const d=String(v||'').replace(/\\D/g,'');
+   if(d.length===11)return '('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);
+   if(d.length===10)return '('+d.slice(0,2)+') '+d.slice(2,6)+'-'+d.slice(6);
+   return String(v||'');
+ }
  function matches(x){
    const r=String(x.function_role||'').toUpperCase();
    if(filter==='TODOS')return true;
@@ -3123,7 +3138,14 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(fr)fr.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.empFilter===filter));
    const data=rows.filter(matches);
    if(!list)return;
-   list.innerHTML=data.length?data.map(x=>'<div class="request-item"><b>'+esc2((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">Função: <b>'+esc2(x.function_role||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc2(x.phone||'')+' • CPF: '+esc2(x.cpf||'')+' • RG: '+esc2(x.rg||'')+'</div><div class="muted">'+esc2([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc2(x.status||'pending')+'</b></div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="secondary" data-employee-edit="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800">🔐 Editar permissões</button><button type="button" class="secondary" data-employee-delete="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800;color:#b42318">🗑️ Excluir</button></div></div>').join(''):'Nenhum funcionário nesta categoria.';
+   list.innerHTML=data.length?data.map(x=>{
+     const nm=formatName((x.name||'')+' '+(x.surname||''));
+     const ph=formatPhone(x.phone);
+     const role=formatName(x.function_role||'Não informada');
+     const st=String(x.status||'pending').toLowerCase();
+     const stLabel=st==='active'?'Ativo':(st==='inactive'?'Inativo':formatName(st));
+     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div><div class="muted">CPF: '+esc2(x.cpf||'')+' • RG: '+esc2(x.rg||'')+'</div><div class="muted">'+esc2([x.city,x.state].filter(Boolean).join(' - '))+'</div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="secondary" data-employee-edit="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800">🔐 Editar permissões</button><button type="button" class="secondary" data-employee-delete="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800;color:#b42318">🗑️ Excluir</button></div></div>';
+   }).join(''):'Nenhum funcionário nesta categoria.';
  }
  async function load(){
    ensureUI();
