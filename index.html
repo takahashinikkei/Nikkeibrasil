@@ -229,7 +229,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
       <button id="accessRequestsBackBtn" type="button" class="secondary" style="margin-top:12px;height:44px;font-weight:800">← Voltar ao menu Master</button>
     </div>
     <div id="employeesPanel" style="display:none;max-width:720px;margin:12px auto 0;background:#fff;border-radius:18px;padding:16px">
-      <h2 style="margin:0 0 8px">👥 Funcionários</h2>
+      
       <p class="muted" style="margin:0 0 12px">Gerencie os funcionários, permissões de acesso e demais dados cadastrais.</p>
       <div class="actions" style="margin-top:0">
         <button class="secondary" type="button" onclick="closeEmployeesPanel()">← Voltar</button>
@@ -2674,6 +2674,43 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(b){b.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();if(typeof window.backToModuleMenu==='function')window.backToModuleMenu();};}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
+</script>
+<script id="employeeActionsDirectFix">
+(function(){
+ function bind(){
+  var p=document.getElementById('employeesPanel');
+  if(!p||p.dataset.actionsBound)return;
+  p.dataset.actionsBound='1';
+  p.addEventListener('click',function(e){
+   var edit=e.target.closest&&e.target.closest('[data-employee-edit]');
+   var del=e.target.closest&&e.target.closest('[data-employee-delete]');
+   if(edit){
+    e.preventDefault();e.stopPropagation();
+    if(typeof window.editEmployeePermissions==='function')window.editEmployeePermissions(edit.getAttribute('data-employee-edit'));
+    return;
+   }
+   if(del){
+    e.preventDefault();e.stopPropagation();
+    if(typeof window.deleteEmployee==='function')window.deleteEmployee(del.getAttribute('data-employee-delete'));
+   }
+  });
+ }
+ function patchRender(){
+  if(typeof window.renderEmployeesPanel!=='function')return;
+  var original=window.renderEmployeesPanel;
+  if(original.__directPatched)return;
+  window.renderEmployeesPanel=function(list){
+    var el=document.getElementById('employeesList');if(!el)return;
+    el.innerHTML=list.length?list.map(function(x){
+      return '<div class="request-item"><b>'+esc((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">Função: <b>'+esc(x.functionRole||'Não informada')+'</b></div><div class="muted">WhatsApp: '+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+' • RG: '+esc(x.rg||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div><button type="button" class="secondary" data-employee-edit="'+esc(x.id)+'" style="margin-top:10px;width:100%">🔐 Editar permissões</button><button type="button" class="secondary" data-employee-delete="'+esc(x.id)+'" style="margin-top:8px;width:100%;color:#b42318">🗑️ Excluir usuário</button></div>';
+    }).join(''):'Nenhum funcionário cadastrado ainda.';
+  };
+  window.renderEmployeesPanel.__directPatched=true;
+ }
+ function init(){bind();patchRender();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+ setTimeout(init,500);
 })();
 </script>
 </body>
