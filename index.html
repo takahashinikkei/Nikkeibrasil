@@ -7,6 +7,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}</script>
 
+<script id="pageBootWatchdog">
+(function(){
+  setTimeout(function(){
+    var login=document.getElementById('loginPage');
+    var gate=document.getElementById('moduleGate');
+    var access=document.getElementById('accessPage');
+    if(!login||!gate)return;
+    var visible=[login,gate,access].some(function(x){return x&&getComputedStyle(x).display!=='none'&&x.getBoundingClientRect().width>0&&x.getBoundingClientRect().height>0;});
+    if(!visible && !localStorage.getItem('nikkeiMasterSession') && !localStorage.getItem('nikkeiAccessGranted')){
+      login.style.display='flex';
+    }
+  },1200);
+})();
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
 <link rel="manifest" href="manifest.json">
@@ -328,7 +342,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 </style>
 </head>
 <body>
-<div id="appVersionBadge">VERSÃO 015</div>
+<div id="appVersionBadge">VERSÃO 016</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -1682,7 +1696,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=70').catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=71').catch(()=>{}));
 }
 </script>
 <script>
