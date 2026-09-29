@@ -1994,6 +1994,16 @@ document.addEventListener('DOMContentLoaded',()=>{
         return;
       }
       if(module==='Motoristas'){openDriversPage();return;}
+      if(module==='Frota'){
+        document.getElementById('moduleGate').style.display='none';
+        document.querySelector('header.app-header').style.display='';
+        document.querySelector('main').style.display='';
+        document.querySelectorAll('main > .card').forEach(el=>el.style.display='');
+        document.body.dataset.module='Frota';
+        document.body.dataset.access='vehicles';
+        window.scrollTo({top:0,behavior:'smooth'});
+        return;
+      }
       alert('Este setor será configurado posteriormente.');
     });
   });
@@ -2049,6 +2059,14 @@ document.addEventListener('DOMContentLoaded',()=>{
           document.getElementById('moduleGateText').textContent='Master';
         }else if(mod==='Motoristas' && typeof window.openDriversPage==='function'){
           window.openDriversPage();
+        }else if(mod==='Frota'){
+          document.getElementById('moduleGate').style.display='none';
+          document.querySelector('header.app-header').style.display='';
+          document.querySelector('main').style.display='';
+          document.querySelectorAll('main > .card').forEach(function(el){el.style.display='';});
+          document.body.dataset.module='Frota';
+          document.body.dataset.access='vehicles';
+          window.scrollTo({top:0,behavior:'smooth'});
         }else alert('Este setor será configurado posteriormente.');
       };
     });
@@ -2357,14 +2375,14 @@ document.addEventListener('DOMContentLoaded',()=>{
  function openUserModule(module){
    if(!hasPermission(module))return;
    if(module==='fleet'){
-     // Frota abre a página principal de veículos, com consulta FIPE e cadastro.
+     // Frota = página de veículos: consulta FIPE e cadastro.
      document.getElementById('moduleGate').style.display='none';
      const hdr=document.querySelector('header.app-header'); if(hdr)hdr.style.display='';
      const main=document.querySelector('main'); if(main)main.style.display='';
-     // Aciona a abertura do módulo de veículos sem alterar a página FIPE existente.
-     const vehicleBtn=document.querySelector('[data-module="Veiculos"],#vehicleModuleBtn,[data-action="vehicles"]');
-     if(vehicleBtn){ vehicleBtn.click(); }
-     else if(typeof window.openVehiclesPage==='function'){ window.openVehiclesPage(); }
+     document.querySelectorAll('main > .card').forEach(function(el){el.style.display='';});
+     document.body.dataset.module='Frota';
+     document.body.dataset.access='vehicles';
+     window.scrollTo({top:0,behavior:'smooth'});
      return;
    }
    if(module==='vehicles'){
