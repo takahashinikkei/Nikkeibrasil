@@ -256,9 +256,9 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 #employeesPanel .employee-main-line span{font-size:13px;color:#475569;white-space:nowrap}
 #employeesPanel .employee-main-line .employee-status{font-weight:800;color:#b42318}
 #employeesPanel .employee-main-line .employee-status.active{color:#15803d}
-</style></head>
+</style><style id="employeeActionButtonsV2">#employeesPanel .employee-action-btn{flex:1!important;min-width:0!important;width:auto!important;height:34px!important;padding:0 5px!important;font-size:11px!important;font-weight:800!important;white-space:nowrap!important}#employeesPanel .employee-delete-btn{color:#b42318!important}@media(max-width:560px){#employeesPanel .employee-action-btn{font-size:10px!important;padding:0 3px!important}}</style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 008</div>
+<div id="appVersionBadge">VERSÃO 009</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3181,7 +3181,7 @@ document.addEventListener('DOMContentLoaded',()=>{
      const adm=x.admission_date?formatDate(x.admission_date):'Não informada';
      const tempo=serviceTime(x.admission_date);
      const birth=filter==='ANIVERSARIANTES'&&x.birth_date?'🎂 '+formatDate(x.birth_date):'';
-     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div>'+(birth?'<div class="muted">'+esc2(birth)+'</div>':'')+'<div class="muted">Admissão: '+esc2(adm)+' • Tempo de serviço: '+esc2(tempo)+' • Cidade: '+esc2(x.city||'Não informada')+'</div><div class="muted">'+esc2([x.city,x.state].filter(Boolean).join(' - '))+'</div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="secondary" data-employee-edit="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800">🔐 Editar permissões</button><button type="button" class="secondary" data-employee-delete="'+esc2(x.id)+'" style="flex:1;height:36px;font-size:12px;font-weight:800;color:#b42318">🗑️ Excluir</button></div></div>';
+     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div>'+(birth?'<div class="muted">'+esc2(birth)+'</div>':'')+'<div class="muted">Admissão: '+esc2(adm)+' • Tempo de serviço: '+esc2(tempo)+' • Cidade: '+esc2(x.city||'Não informada')+'</div><div style="display:flex;gap:5px;margin-top:6px"><button type="button" class="secondary employee-action-btn" data-employee-edit="'+esc2(x.id)+'">🔐 Permissões</button><button type="button" class="secondary employee-action-btn" data-employee-edit-cadastro="'+esc2(x.id)+'">✏️ Cadastro</button><button type="button" class="secondary employee-action-btn employee-delete-btn" data-employee-delete="'+esc2(x.id)+'">🗑️ Excluir</button></div></div>'
    }).join(''):'Nenhum funcionário nesta categoria.';
  }
  async function load(){
@@ -3248,6 +3248,6 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
  setTimeout(ensureUI,300);
 })();
-</script></body>
+</script><script id="employeeCadastroDirectFix">(function(){function bind(){var p=document.getElementById("employeesPanel");if(!p||p.dataset.cadastroActionsBound)return;p.dataset.cadastroActionsBound="1";p.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-employee-edit-cadastro]");if(b){e.preventDefault();e.stopPropagation();if(typeof window.__openEmployeeEdit==="function")window.__openEmployeeEdit(b.getAttribute("data-employee-edit-cadastro"));}});}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind);else bind();setTimeout(bind,500);})();</script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
