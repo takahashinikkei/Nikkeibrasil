@@ -2108,60 +2108,104 @@ document.addEventListener('DOMContentLoaded',()=>{
 (function(){
   const SUPA_URL='https://qincxigrvlvudsqcukxt.supabase.co';
   const SUPA_KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+
+  function showLoginMessage(msg){
+    const el=document.getElementById('loginStatus');
+    if(el){el.style.display='block';el.textContent=msg;}
+  }
+
   async function hashText(v){
     const b=new TextEncoder().encode(v);
     const h=await crypto.subtle.digest('SHA-256',b);
     return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');
   }
-  async function robustLogin(){
-    const status=document.getElementById('loginStatus');
+
+  function openMasterMenu(){
+    localStorage.setItem('nikkeiMasterSession','1');
+    localStorage.removeItem('nikkeiAccessGranted');
+    const login=document.getElementById('loginPage');
+    const access=document.getElementById('accessPage');
+    const gate=document.getElementById('moduleGate');
+    if(login)login.style.display='none';
+    if(access)access.style.display='none';
+    if(gate)gate.style.display='flex';
+    const sectors=document.getElementById('sectorButtons');
+    const master=document.getElementById('masterButtons');
+    const requests=document.getElementById('accessRequestsPanel');
+    const employees=document.getElementById('employeesPanel');
+    if(sectors)sectors.style.display='grid';
+    if(master)master.style.display='none';
+    if(requests)requests.style.display='none';
+    if(employees)employees.style.display='none';
+    const txt=document.getElementById('moduleGateText');
+    if(txt)txt.textContent='Selecione o setor para entrar';
+  }
+
+  async function loginNikkei(){
     const input=document.getElementById('loginUsername');
     const pass=document.getElementById('loginPassword');
     const remember=document.getElementById('rememberLoginEmail');
     const btn=document.querySelector('#loginPage .access-actions .primary');
     const u=(input?.value||'').trim().toLowerCase();
     const p=pass?.value||'';
+
     if(remember?.checked) localStorage.setItem('nikkeiSavedLoginEmail',u);
     else localStorage.removeItem('nikkeiSavedLoginEmail');
-    const show=(msg)=>{if(status){status.style.display='block';status.textContent=msg;}};
-    if(!u){show('Informe o email.');return;}
-    if(!p){show('Informe a senha.');return;}
+
+    if(!u){showLoginMessage('Informe o email ou usuário master.');return;}
+    if(!p){showLoginMessage('Informe a senha.');return;}
+
+    // MASTER: usuário fixo administrativo do sistema.
+    // Credencial definida para o projeto: master / master.
+    if(u==='master' && p==='master'){
+      openMasterMenu();
+      return;
+    }
+
+    if(u==='master'){
+      showLoginMessage('Usuário Master ou senha inválidos.');
+      return;
+    }
+
+    if(!/^\S+@\S+\.\S+$/.test(u)){
+      showLoginMessage('Informe um email válido.');
+      return;
+    }
+
     if(btn){btn.disabled=true;btn.textContent='Entrando...';}
     try{
       const ph=await hashText(p);
-      if(u==='master' && ph==='fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9'){
-        if(typeof enterMasterAccess==='function') enterMasterAccess();
-        else {document.getElementById('loginPage').style.display='none';document.getElementById('moduleGate').style.display='flex';}
-        return;
-      }
-      if(!/^\S+@\S+\.\S+$/.test(u)){show('Informe um email válido.');return;}
       const headers={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
       const r=await fetch(SUPA_URL+'/rest/v1/employees?username=eq.'+encodeURIComponent(u)+'&status=eq.active&select=*',{headers});
-      if(!r.ok) throw new Error('Falha ao consultar usuário ('+r.status+').');
+      if(!r.ok)throw new Error('Falha ao consultar usuário ('+r.status+').');
       const rows=await r.json();
       const row=rows&&rows[0];
-      if(!row){show('Usuário não autorizado ou cadastro não encontrado.');return;}
-      if(row.password_hash!==ph){show('Email ou senha inválidos.');return;}
+      if(!row){showLoginMessage('Usuário não autorizado ou cadastro não encontrado.');return;}
+      if(row.password_hash!==ph){showLoginMessage('Email ou senha inválidos.');return;}
       localStorage.setItem('nikkeiAccessGranted','1');
       if(row.access_request_id) localStorage.setItem('nikkeiAccessRequestId',row.access_request_id);
       document.getElementById('loginPage').style.display='none';
       document.getElementById('moduleGate').style.display='flex';
-      if(status) status.style.display='none';
+      const status=document.getElementById('loginStatus');if(status)status.style.display='none';
     }catch(e){
-      show('Não foi possível entrar agora: '+(e?.message||'erro de comunicação.'));
+      showLoginMessage('Não foi possível entrar agora: '+(e?.message||'erro de comunicação.'));
     }finally{
       if(btn){btn.disabled=false;btn.textContent='Entrar';}
     }
   }
-  window.doLogin=robustLogin;
+
+  window.doLogin=loginNikkei;
+  window.loginNikkei=loginNikkei;
+  window.enterMasterAccess=openMasterMenu;
+
   function bind(){
     const b=document.querySelector('#loginPage .access-actions .primary');
     if(b){
       b.onclick=null;
-      b.addEventListener('click',function(e){e.preventDefault();robustLogin();});
+      b.addEventListener('click',function(e){e.preventDefault();loginNikkei();});
     }
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind); else bind();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
 </script></body>
 </html>
