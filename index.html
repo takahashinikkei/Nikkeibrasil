@@ -127,7 +127,31 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 .brand-logo-wrap{display:block;width:100%;max-width:100%;margin:0 auto 16px;overflow:hidden;background:#fff}
 .brand-logo-wrap .brand-logo{display:block;width:100%;height:auto;max-width:none;object-fit:contain;margin:0;border-radius:0;box-shadow:none}
 @media(max-width:520px){.brand-logo-wrap{width:100%;max-width:100%;margin-bottom:12px}}
-</style><style id="nikkei-access-fixes">
+<style id="nikkei-access-compact">
+#accessPage .access-box{padding:14px 16px;width:min(900px,100%);border-radius:18px}
+#accessPage .access-box h1{font-size:24px;line-height:1.05;margin-bottom:2px}
+#accessPage .access-note{font-size:12px;margin-bottom:7px}
+#accessPage .row{gap:6px;margin-top:5px}
+#accessPage label{font-size:11px;margin-bottom:2px;display:block}
+#accessPage input,#accessPage select{height:34px!important;min-height:34px!important;padding:6px 8px!important;font-size:13px!important;box-sizing:border-box}
+#accessPage .driver-cnh{margin-top:5px;gap:6px}
+#accessPage .driver-cnh button{height:32px!important;font-size:11px!important;padding:0 9px!important}
+#accessPage .muted{font-size:11px}
+#accessPage .access-compact-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+#accessPage .access-location{grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) minmax(0,.65fr)!important}
+#accessPage .access-actions{margin-top:8px}
+#accessPage .access-actions button{height:42px!important}
+#accessPage .access-master-link{margin-top:5px}
+@media(max-width:700px){
+ #accessPage .access-box{padding:12px}
+ #accessPage .access-compact-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #accessPage .access-location{grid-template-columns:1fr 1.4fr!important}
+ #accessPage .access-location>div:last-child{grid-column:1/-1}
+}
+@media(max-width:430px){
+ #accessPage .access-location{grid-template-columns:1fr 1fr!important}
+}
+</style></style><style id="nikkei-access-fixes">
 .access-plate-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .access-plate-grid select{min-width:0;padding-left:7px;padding-right:7px;font-size:13px}
 .access-birth-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;width:100%!important}
@@ -166,13 +190,10 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
    <div class="driver-cnh"><input id="reqCnhFile" type="file" accept="application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none"><button type="button" class="secondary" onclick="document.getElementById('reqCnhFile').click()">📎 Incluir CNH / RG</button><span id="reqCnhStatus" class="muted">Nenhum documento</span></div>
    <div class="row access-two"><div><label>Email</label><input id="reqEmail" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="email"></div><div><label>Senha</label><input id="reqPassword" type="password" autocomplete="new-password"></div></div>
    <div class="row access-two"><div><label>Nome</label><input id="reqName" type="text"></div><div><label>Sobrenome</label><input id="reqSurname" type="text"></div></div>
-   <div class="row access-two access-birth-row"><div><label>Data Nasc.</label><input id="reqBirthDate" class="access-birthdate" type="date"></div><div><label>Idade</label><input id="reqAge" type="text" readonly placeholder="Calculada automaticamente"></div></div>
-   <div class="row access-two"><div><label>RG</label><input id="reqRg" type="text"></div><div><label>CPF</label><input id="reqCpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"></div></div>
-   <div class="row access-two access-location"><div><label>CEP</label><input id="reqCep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code"></div><div><label>Cidade</label><select id="reqCity" disabled><option>Informe o CEP</option></select></div><div><label>Estado</label><select id="reqState" disabled><option value="">Informe o CEP</option></select></div></div>
-   <div class="row access-address"><div><label>Endereço</label><input id="reqAddress" type="text" readonly></div><div class="access-number"><label>Nº</label><input id="reqAddressNumber" type="text" disabled></div></div>
-   <div class="row access-two access-neighborhood"><div><label>Bairro</label><input id="reqNeighborhood" type="text" readonly></div><div><label>Complemento</label><input id="reqComplement" type="text" placeholder="Apartamento, bloco, sala..."></div></div>
-   <div class="row access-phones"><div><label>Celular WhatsApp <span style="color:#c00">*</span></label><input id="reqPhone" required type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Celular 2</label><input id="reqPhone2" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
-   <div class="row access-two access-emergency"><div><label>Nome</label><input id="reqEmergencyName" type="text" placeholder="Nome do contato"></div><div><label>Contato de emergência</label><input id="reqPhoneAlt" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
+   <div class="row access-compact-4 access-personal-grid"><div><label>Data Nasc.</label><input id="reqBirthDate" class="access-birthdate" type="date"></div><div><label>Idade</label><input id="reqAge" type="text" readonly placeholder="Automática"></div><div><label>RG</label><input id="reqRg" type="text"></div><div><label>CPF</label><input id="reqCpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"></div></div>
+   <div class="row access-location"><div><label>CEP</label><input id="reqCep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code"></div><div><label>Cidade</label><select id="reqCity" disabled><option>Informe o CEP</option></select></div><div><label>Estado</label><select id="reqState" disabled><option value="">Informe o CEP</option></select></div></div>
+   <div class="row access-compact-4 access-address-grid"><div><label>Endereço</label><input id="reqAddress" type="text" readonly></div><div><label>Nº</label><input id="reqAddressNumber" type="text" disabled></div><div><label>Bairro</label><input id="reqNeighborhood" type="text" readonly></div><div><label>Complemento</label><input id="reqComplement" type="text" placeholder="Apto, bloco, sala..."></div></div>
+   <div class="row access-compact-4 access-contact-grid"><div><label>WhatsApp <span style="color:#c00">*</span></label><input id="reqPhone" required type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Celular 2</label><input id="reqPhone2" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Nome contato</label><input id="reqEmergencyName" type="text" placeholder="Nome"></div><div><label>Contato emergência</label><input id="reqPhoneAlt" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
    
    <label>Função</label>
    <div class="access-type-menu access-function-menu" id="reqFunctionMenu">
