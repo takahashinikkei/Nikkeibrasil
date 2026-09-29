@@ -2592,6 +2592,65 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
 </script>
+<script id="masterPanelsRobustFix">
+(function(){
+ const URL='https://qincxigrvlvudsqcukxt.supabase.co';
+ const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+ const H={'apikey':KEY,'Authorization':'Bearer '+KEY};
+ function by(id){return document.getElementById(id)}
+ function showPanel(name){
+   const gate=by('moduleGate'), master=by('masterButtons'), sectors=by('sectorButtons'), req=by('accessRequestsPanel'), emp=by('employeesPanel'), perm=by('employeePermissionPanel');
+   if(gate)gate.style.display='flex';
+   if(master)master.style.display='none';
+   if(sectors)sectors.style.display='none';
+   if(req)req.style.display=name==='requests'?'block':'none';
+   if(emp)emp.style.display=name==='employees'?'block':'none';
+   if(perm)perm.style.display='none';
+   const txt=by('moduleGateText');if(txt)txt.textContent=name==='employees'?'Funcionários':'Master';
+ }
+ async function loadRequests(){
+   showPanel('requests');
+   const el=by('accessRequestsList');if(el)el.textContent='Carregando...';
+   try{
+     const r=await fetch(URL+'/rest/v1/access_requests?status=eq.pending&select=*',{headers:H});
+     if(!r.ok)throw new Error('Supabase '+r.status+': '+await r.text());
+     const rows=await r.json();
+     window.__nikkeiAccessRequests=rows;
+     renderAccessRequests(rows);
+   }catch(e){if(el)el.innerHTML='<div style="padding:12px;color:#b42318">Erro ao carregar solicitações.<br><small>'+esc(e.message||e)+'</small></div>';}
+ }
+ async function loadEmployees(){
+   showPanel('employees');
+   const el=by('employeesList');if(el)el.textContent='Carregando funcionários...';
+   try{
+     const r=await fetch(URL+'/rest/v1/employees?select=*',{headers:H});
+     if(!r.ok)throw new Error('Supabase '+r.status+': '+await r.text());
+     const rows=await r.json();
+     rows.sort(function(a,b){return String(a.name||'').localeCompare(String(b.name||''),'pt-BR');});
+     renderEmployeesPanel(rows.map(function(x){return {id:x.id,name:x.name,surname:x.surname,functionRole:x.function_role,phone:x.phone,cpf:x.cpf,rg:x.rg,city:x.city,state:x.state,status:x.status,permissions:x.permissions||{}};}));
+   }catch(e){if(el)el.innerHTML='<div style="padding:12px;color:#b42318">Erro ao carregar funcionários.<br><small>'+esc(e.message||e)+'</small></div>';}
+ }
+ function backToMaster(){
+   const req=by('accessRequestsPanel'),emp=by('employeesPanel'),perm=by('employeePermissionPanel'),master=by('masterButtons'),sectors=by('sectorButtons'),gate=by('moduleGate');
+   if(req)req.style.display='none';if(emp)emp.style.display='none';if(perm)perm.style.display='none';
+   if(gate)gate.style.display='flex';if(sectors)sectors.style.display='none';if(master)master.style.display='grid';
+   const txt=by('moduleGateText');if(txt)txt.textContent='Master';
+ }
+ window.openEmployeesPanel=loadEmployees;
+ window.closeEmployeesPanel=backToMaster;
+ function bind(){
+   const empBtn=document.querySelector('#masterButtons [data-action="employees"]');
+   const reqBtn=document.querySelector('#masterButtons [data-action="requests"]');
+   const backEmp=by('employeesPanel')?.querySelector('button');
+   const backReq=by('accessRequestsBackBtn');
+   if(empBtn){empBtn.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();loadEmployees();};}
+   if(reqBtn){reqBtn.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();loadRequests();};}
+   if(backEmp){backEmp.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();backToMaster();};}
+   if(backReq){backReq.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();backToMaster();};}
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
+</script>
 </body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
