@@ -101,7 +101,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 <style id="moduleGateStyle">
 .login-fields{display:grid;gap:6px}.login-fields input{margin-bottom:6px}.access-page{position:fixed;inset:0;z-index:100001;background:#000;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px}.access-box{width:min(780px,100%);background:#fff;border-radius:22px;padding:20px}.access-box h1{margin:0 0 4px}.access-note{color:#64748b;font-size:14px;margin:0 0 12px}.access-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.access-actions button{margin-top:0!important;height:52px!important}.access-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.access-type-menu button{height:34px;font-size:11px;font-weight:800;padding:0 4px}.access-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.access-plate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.access-status{padding:12px;border-radius:12px;background:#f8fafc;margin-top:10px;display:none}.access-master-link{text-align:center;margin-top:10px}.access-master-link button{width:auto;height:30px;background:transparent;border:0;color:#475569;text-decoration:underline;font-size:12px}.request-list{max-height:65vh;overflow:auto;text-align:left}.request-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.request-item .actions{display:flex;gap:6px;margin-top:8px}.request-item .actions button{height:38px;font-size:12px}@media(max-width:520px){.access-type-menu{grid-template-columns:repeat(3,minmax(0,1fr))}.access-plate-grid{grid-template-columns:1fr 1fr}.access-actions{grid-template-columns:1fr 1fr}}#moduleGate{position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;padding:24px}
 .module-gate-box{width:min(460px,100%);text-align:center;background:#fff;border-radius:24px;padding:30px 22px;box-shadow:0 20px 60px #0005}
-.module-gate-box h1{margin:0 0 6px;font-size:30px;color:#111827}
+.module-gate-box h1{margin:0 0 22px;font-size:24px;line-height:1.2;font-weight:900;letter-spacing:.2px;color:#111827;text-align:center}
 .module-gate-box p{margin:0 0 24px;color:#64748b;font-size:15px}
 .module-buttons{display:grid;gap:12px}
 .module-buttons button{height:52px;border:0;border-radius:13px;background:#111827;color:#fff;font-size:17px;font-weight:800;cursor:pointer}
@@ -212,7 +212,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 <div id="moduleGate">
   <div class="module-gate-box">
     <div class="brand-logo-wrap"><div class="brand-logo"  alt="Nikkei Brasil"></div></div>
-    <p id="moduleGateText">Selecione o setor para entrar</p>
+    <h1 id="moduleGateText">Selecione o setor para entrar</h1>
     <div class="module-buttons" id="sectorButtons">
       <button data-module="Master">Master</button>
       <button data-module="Frota">Frota</button>
