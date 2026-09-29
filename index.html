@@ -289,9 +289,14 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  #employeeEditPanel .access-location>div:last-child{grid-column:auto}
  #employeesPanel .employee-action-btn{font-size:9px!important;padding:0 2px!important}
 }
+</style><style id="employeeButtonsCompactV4">
+#employeesPanel .employee-actions-row{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;width:100%!important;margin-top:5px!important}
+#employeesPanel .employee-actions-row .employee-action-btn{width:100%!important;height:30px!important;min-height:30px!important;min-width:0!important;padding:0 3px!important;margin:0!important;font-size:10px!important;line-height:1!important;font-weight:800!important;box-sizing:border-box!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#employeesPanel .employee-actions-row .employee-delete-btn{color:#b42318!important}
+@media(max-width:430px){#employeesPanel .employee-actions-row .employee-action-btn{height:28px!important;min-height:28px!important;font-size:9px!important;padding:0 2px!important}}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 011</div>
+<div id="appVersionBadge">VERSÃO 012</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
