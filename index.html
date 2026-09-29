@@ -2493,6 +2493,39 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindFrota);else bindFrota();
 })();
 </script>
+<script id="employeesMenuDirectFix">
+(function(){
+  function showOnlyEmployees(){
+    var gate=document.getElementById('moduleGate');
+    var master=document.getElementById('masterButtons');
+    var requests=document.getElementById('accessRequestsPanel');
+    var employees=document.getElementById('employeesPanel');
+    var perms=document.getElementById('employeePermissionPanel');
+    if(gate)gate.style.display='flex';
+    if(master)master.style.display='none';
+    if(requests)requests.style.display='none';
+    if(perms)perms.style.display='none';
+    if(employees)employees.style.display='block';
+    var txt=document.getElementById('moduleGateText');
+    if(txt)txt.textContent='Funcionários';
+    if(typeof window.openEmployeesPanel==='function'){
+      window.openEmployeesPanel();
+    }
+  }
+  function bind(){
+    var b=document.querySelector('#masterButtons [data-action="employees"]');
+    if(b && !b.dataset.employeeDirectFix){
+      b.dataset.employeeDirectFix='1';
+      b.addEventListener('click',function(ev){
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        showOnlyEmployees();
+      },true);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
+</script>
 </body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
