@@ -1920,12 +1920,20 @@ async function openEmployeesPanel(){
   if(listEl)listEl.innerHTML='<div style="padding:12px;color:#b42318">Não foi possível carregar os funcionários.<br><small>'+esc(e.message||e)+'</small></div>';
  }
 }
-function closeEmployeesPanel(){
- document.getElementById('employeesPanel').style.display='none';
- document.getElementById('employeePermissionPanel').style.display='none';
- document.getElementById('masterButtons').style.display='grid';
- document.getElementById('moduleGateText').textContent='Master';
-}
+window.closeEmployeesPanel=function(){
+ var employees=document.getElementById('employeesPanel');
+ var perms=document.getElementById('employeePermissionPanel');
+ var requests=document.getElementById('accessRequestsPanel');
+ var master=document.getElementById('masterButtons');
+ var gate=document.getElementById('moduleGate');
+ if(employees)employees.style.display='none';
+ if(perms)perms.style.display='none';
+ if(requests)requests.style.display='none';
+ if(master)master.style.display='grid';
+ if(gate)gate.style.display='flex';
+ var txt=document.getElementById('moduleGateText');
+ if(txt)txt.textContent='Master';
+};
 window.editEmployeePermissions=async function(id){
  if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o Master pode alterar permissões.');return;}
  try{
@@ -2566,6 +2574,22 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
+</script>
+<script id="employeesBackDirectFix">
+(function(){
+ function bind(){
+  var b=document.querySelector('#employeesPanel button[onclick*="closeEmployeesPanel"]');
+  if(b && !b.dataset.backDirectFix){
+   b.dataset.backDirectFix='1';
+   b.onclick=function(ev){
+    if(ev){ev.preventDefault();ev.stopImmediatePropagation();}
+    window.closeEmployeesPanel();
+    return false;
+   };
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
 </script>
 </body>
