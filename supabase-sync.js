@@ -184,7 +184,24 @@ window.nikkeiDownloadDriverCnh=async(id)=>{
  if(error)throw error;
  const url=URL.createObjectURL(data),a=document.createElement('a');a.href=url;a.download=x.cnhName||'CNH';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
-async function loginAccess(email,passwordHash){if(!sb)return null;const {data,error}=await sb.from('access_requests').select('*').ilike('username',email.trim().toLowerCase()).eq('password_hash',passwordHash).eq('status','approved').maybeSingle();if(error)throw error;return data?accessRequestFromRow(data):null}
+async function loginAccess(email,passwordHash){
+ const username=String(email||'').trim().toLowerCase();
+ if(!username||!passwordHash)return null;
+ const URL='https://qincxigrvlvudsqcukxt.supabase.co';
+ const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+ const headers={apikey:KEY,Authorization:'Bearer '+KEY};
+ try{
+  const r=await fetch(URL+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(username)+'&password_hash=eq.'+encodeURIComponent(passwordHash)+'&status=eq.approved&select=*',{headers});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const rows=await r.json();
+  return rows&&rows.length?accessRequestFromRow(rows[0]):null;
+ }catch(e){
+  if(!sb)throw e;
+  const {data,error}=await sb.from('access_requests').select('*').ilike('username',username).eq('password_hash',passwordHash).eq('status','approved').maybeSingle();
+  if(error)throw error;
+  return data?accessRequestFromRow(data):null;
+ }
+}
 function accessRequestFromRow(r){return {id:r.id,name:r.name||'',surname:r.surname||'',address:r.address||'',addressNumber:r.address_number||'',neighborhood:r.neighborhood||'',state:r.state||'',city:r.city||'',phone:r.phone||'',phone2:r.phone2||'',phoneAlt:r.phone_alt||'',cpf:r.cpf||'',rg:r.rg||'',vehicleType:r.vehicle_type||'',vehicleSubtype:r.vehicle_subtype||'',bodyType:r.body_type||'',vehicleConfiguration:r.vehicle_configuration||'',plateCavalo:r.plate_cavalo||'',plateCarreta:r.plate_carreta||'',plateCarreta2:r.plate_carreta2||'',cnhPath:r.cnh_path||'',cnhName:r.cnh_name||'',cnhMime:r.cnh_mime||'',status:r.status,accessCode:r.access_code,createdAt:r.created_at,approvedAt:r.approved_at};}
 async function createAccessRequest(x,file){
  if(!sb)throw new Error('Banco de dados indisponível.');
