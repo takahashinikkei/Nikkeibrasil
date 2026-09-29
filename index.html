@@ -215,7 +215,6 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
     <p id="moduleGateText">Selecione o setor para entrar</p>
     <div class="module-buttons" id="sectorButtons">
       <button data-module="Master">Master</button>
-      <button data-module="Motoristas">Motoristas</button>
       <button data-module="Frota">Frota</button>
       <button data-module="Operacional">Operacional</button>
       <button data-module="Financeiro">Financeiro</button>
@@ -2245,7 +2244,6 @@ document.addEventListener('DOMContentLoaded',()=>{
  const MODULES=[
   ['vehicles','🚗 Veículos'],
   ['employees','👥 Funcionários'],
-  ['drivers','👨‍✈️ Motoristas'],
   ['fleet','🚚 Frota'],
   ['operational','⚙️ Operacional'],
   ['finance','💰 Financeiro']
@@ -2337,7 +2335,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(!sectors)return;
    sectors.querySelectorAll('button').forEach(b=>{
      const m=b.dataset.module;
-     const key={Motoristas:'drivers',Frota:'fleet',Operacional:'operational',Financeiro:'finance'}[m];
+     const key={Frota:'fleet',Operacional:'operational',Financeiro:'finance'}[m];
      if(m==='Master')b.style.display='none';
      else if(key)b.style.display=perms[key]?'':'none';
    });
@@ -2358,7 +2356,6 @@ document.addEventListener('DOMContentLoaded',()=>{
  };
  function openUserModule(module){
    if(!hasPermission(module))return;
-   if(module==='drivers'){openDriversPage();return}
    if(module==='fleet'){
      // Frota abre a página principal de veículos, com consulta FIPE e cadastro.
      document.getElementById('moduleGate').style.display='none';
@@ -2386,7 +2383,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    const b=ev.target.closest&&ev.target.closest('#sectorButtons button');
    if(!b||localStorage.getItem('nikkeiMasterSession')==='1')return;
    const m=b.dataset.module;
-   const map={Motoristas:'drivers',Frota:'fleet',Operacional:'operational',Financeiro:'finance',Veiculos:'vehicles',Funcionarios:'employees'};
+   const map={Frota:'fleet',Operacional:'operational',Financeiro:'finance',Veiculos:'vehicles',Funcionarios:'employees'};
    if(!map[m])return;
    ev.preventDefault();ev.stopImmediatePropagation();openUserModule(map[m]);
  },true);
