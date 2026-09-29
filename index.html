@@ -2988,6 +2988,74 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
+</script><script id="employeeEditFinalFix">
+(function(){
+  const SUPA='https://qincxigrvlvudsqcukxt.supabase.co';
+  const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+  const H={'apikey':KEY,'Authorization':'Bearer '+KEY};
+  window.editEmployeePermissions=async function(id){
+    if(localStorage.getItem('nikkeiMasterSession')!=='1'){
+      alert('Somente o Master pode alterar permissões.');
+      return;
+    }
+    if(!id){alert('Funcionário inválido.');return;}
+    try{
+      const r=await fetch(SUPA+'/rest/v1/employees?id=eq.'+encodeURIComponent(id)+'&select=id,name,surname,username,permissions',{headers:H});
+      if(!r.ok)throw new Error('Erro ao carregar funcionário: '+await r.text());
+      const rows=await r.json();
+      if(!rows.length)throw new Error('Funcionário não encontrado.');
+      const emp=rows[0];
+      const mods=[
+        ['vehicles','🚗 Veículos'],
+        ['employees','👥 Funcionários'],
+        ['fleet','🚚 Frota'],
+        ['operational','⚙️ Operacional'],
+        ['finance','💰 Financeiro']
+      ];
+      const info=document.getElementById('employeePermissionInfo');
+      const opts=document.getElementById('employeePermissionOptions');
+      const panel=document.getElementById('employeePermissionPanel');
+      const employees=document.getElementById('employeesPanel');
+      const save=document.getElementById('saveEmployeePermissionsBtn');
+      if(!info||!opts||!panel||!employees||!save)throw new Error('Painel de permissões não encontrado.');
+      info.innerHTML='<b>'+esc((emp.name||'')+' '+(emp.surname||''))+'</b><br>'+esc(emp.username||'');
+      opts.innerHTML=mods.map(function(m){
+        return '<label style="display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;font-weight:800;cursor:pointer"><input type="checkbox" data-emp-perm="'+m[0]+'" style="width:19px;height:19px" '+(emp.permissions&&emp.permissions[m[0]]?'checked':'')+'><span>'+m[1]+'</span></label>';
+      }).join('');
+      employees.style.display='none';
+      panel.style.display='block';
+      save.onclick=async function(){
+        const selected={};
+        opts.querySelectorAll('input[data-emp-perm]').forEach(function(x){selected[x.dataset.empPerm]=x.checked;});
+        save.disabled=true;save.textContent='Salvando...';
+        try{
+          const up=await fetch(SUPA+'/rest/v1/employees?id=eq.'+encodeURIComponent(emp.id),{
+            method:'PATCH',
+            headers:{...H,'Content-Type':'application/json','Prefer':'return=minimal'},
+            body:JSON.stringify({permissions:selected})
+          });
+          if(!up.ok)throw new Error(await up.text());
+          alert('Permissões atualizadas com sucesso.');
+          panel.style.display='none';
+          if(typeof window.openEmployeesPanel==='function')window.openEmployeesPanel();
+        }catch(e){alert('Erro ao salvar permissões: '+(e.message||e));}
+        finally{save.disabled=false;save.textContent='✓ Salvar permissões';}
+      };
+    }catch(e){
+      console.error(e);
+      alert(e.message||'Não foi possível abrir as permissões.');
+    }
+  };
+  function bind(){
+    document.addEventListener('click',function(e){
+      const b=e.target&&e.target.closest?e.target.closest('[data-employee-edit]'):null;
+      if(!b)return;
+      e.preventDefault();e.stopImmediatePropagation();
+      window.editEmployeePermissions(b.getAttribute('data-employee-edit'));
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
 </script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
