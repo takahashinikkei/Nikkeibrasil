@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 040</div>
+<div id="appVersionBadge">VERSÃO 041</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -870,7 +870,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
       <div id="employeePermissionOptions" style="display:grid;gap:10px"></div>
       <div class="actions" style="margin-top:16px">
         <button id="saveEmployeePermissionsBtn" class="primary" type="button">✓ Salvar permissões</button>
-        <button id="employeePermissionBackBtn" class="secondary" type="button" onclick="returnToEmployeeListFromPermissions(event)">← Voltar</button>
+        
       </div>
     </div>
   </div>
@@ -4503,6 +4503,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(cleanButton,800);
   setTimeout(cleanButton,1500);
 })();
-</script></body>
+</script><style id="employeePermissionOnlySaveV41">
+/* V041 — painel de permissões: somente Salvar */
+#employeePermissionPanel .actions{
+  display:block!important;
+}
+#employeePermissionPanel .actions #saveEmployeePermissionsBtn{
+  display:block!important;
+  width:100%!important;
+}
+#employeePermissionPanel .actions button:not(#saveEmployeePermissionsBtn){
+  display:none!important;
+}
+</style></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
