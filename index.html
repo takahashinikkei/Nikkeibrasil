@@ -419,9 +419,69 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
     padding:0 3px!important;
   }
 }
+</style><style id="employeeButtonsSameAsFiltersV21">
+/* Os três botões de ação seguem a mesma formatação dos botões
+   OPERACIONAL / MOTORISTA / FINANCEIRO. */
+#employeesPanel .employee-actions-row{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:4px!important;
+  width:100%!important;
+  margin-top:5px!important;
+  align-items:stretch!important;
+}
+#employeesPanel .employee-actions-row .employee-action-btn{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:28px!important;
+  min-height:28px!important;
+  margin:0!important;
+  padding:0 3px!important;
+  border-radius:8px!important;
+  font-size:9px!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#employeesPanel .employee-actions-row .employee-delete-btn{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  font-size:0!important;
+  color:#b42318!important;
+}
+#employeesPanel .employee-actions-row .employee-delete-btn::before{
+  content:'🗑️'!important;
+  font-size:13px!important;
+  line-height:1!important;
+}
+@media(min-width:561px){
+  #employeesPanel .employee-actions-row .employee-action-btn{
+    height:38px!important;
+    min-height:38px!important;
+    border-radius:9px!important;
+    padding:0 8px!important;
+    font-size:13px!important;
+  }
+  #employeesPanel .employee-actions-row .employee-delete-btn{
+    height:38px!important;
+    min-height:38px!important;
+  }
+  #employeesPanel .employee-actions-row .employee-delete-btn::before{
+    font-size:15px!important;
+  }
+}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 020</div>
+<div id="appVersionBadge">VERSÃO 021</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
