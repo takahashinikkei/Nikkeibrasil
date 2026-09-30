@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 047</div>
+<div id="appVersionBadge">VERSÃO 048</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -976,8 +976,12 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 <div class="card stock-page" id="stockPage">
  <div class="stock-page-header">
   <h3 style="margin:0">🚚 Frota completa</h3>
-  <div class="stock-page-controls">
-   <button class="secondary small-btn" onclick="closeStockPage()">← Voltar</button>
+  <div id="fleetFilterButtons" class="stock-page-controls" style="display:flex;flex-wrap:wrap;gap:7px;align-items:center">
+   <button type="button" class="secondary small-btn" data-fleet-filter="car" onclick="setFleetFilter('car')">🚗 Carro</button>
+   <button type="button" class="secondary small-btn" data-fleet-filter="caminhao" onclick="setFleetFilter('caminhao')">🚚 Caminhão</button>
+   <button type="button" class="secondary small-btn" data-fleet-filter="carreta" onclick="setFleetFilter('carreta')">🚛 Carreta</button>
+   <button type="button" class="secondary small-btn active" data-fleet-filter="all" onclick="setFleetFilter('all')">Todos</button>
+   <button type="button" class="secondary small-btn" onclick="closeStockPage()">← Voltar</button>
   </div>
  </div>
  <div id="stockList" style="margin-top:10px"><span class="muted">Nenhum veículo em estoque.</span></div>
@@ -1581,8 +1585,27 @@ function toggleStockDetails(i){
  localStorage.setItem("fipeFavorites",JSON.stringify(f));
  renderStock();
 }
+let fleetFilter="all";
+function fleetVehicleCategory(x){
+ const t=String(x&&x.vehicleType||"").toUpperCase();
+ if(t==="CARRO")return "car";
+ if(t==="CR")return "carreta";
+ if(t==="CM"||t==="CV")return "caminhao";
+ const qt=String(x&&x.type||"").toLowerCase();
+ if(qt.includes("car"))return "car";
+ if(qt.includes("truck")||qt.includes("camin"))return "caminhao";
+ return "car";
+}
+function setFleetFilter(filter){
+ fleetFilter=filter||"all";
+ document.querySelectorAll("#fleetFilterButtons button").forEach(b=>{
+   b.classList.toggle("active",b.dataset.fleetFilter===fleetFilter);
+ });
+ renderStock();
+}
 function renderStock(){
- const f=getFavorites();
+ const allFavorites=getFavorites();
+ const f=fleetFilter==="all"?allFavorites:allFavorites.filter(x=>fleetVehicleCategory(x)===fleetFilter);
  let fipe=0,cost=0,classTotals={P:0,C:0,A:0},classCosts={P:0,C:0,A:0};
  f.forEach(x=>{
   const pv=stockPriceValue(x);
@@ -1609,7 +1632,7 @@ function renderStock(){
  $("stockProfitC").textContent=money(classTotals.C-classCosts.C);
  $("stockProfitA").textContent=money(classTotals.A-classCosts.A);
 
- $("stockList").innerHTML=f.length?f.map((x,i)=>{
+ $("stockList").innerHTML=f.length?f.map(x=>{ const i=allFavorites.indexOf(x);
    const costItem=(Number(x.purchaseValue)||0)+(Number(x.extraCost)||0)+(Number(x.documentationCost)||0)+(Number(x.maintenanceCost)||0);
    const pv=stockPriceValue(x), sale=Number(x.saleValue)||0, p=(sale>0?sale:pv)-costItem;
    const km=x.km?Number(x.km).toLocaleString("pt-BR")+" km":"";
@@ -4619,6 +4642,18 @@ document.addEventListener('DOMContentLoaded',()=>{
     grid-template-columns:1fr!important;
     gap:8px!important;
   }
+}
+</style><style id="fleetFiltersV48">
+/* V048 — filtros da Frota: Carro, Caminhão, Carreta e Todos */
+#fleetFilterButtons button{min-width:92px}
+#fleetFilterButtons button.active{
+  background:#111827!important;
+  color:#fff!important;
+  border-color:#111827!important;
+}
+@media(max-width:700px){
+  #fleetFilterButtons{width:100%;justify-content:flex-start}
+  #fleetFilterButtons button{min-width:0;flex:1 1 calc(50% - 7px)}
 }
 </style></body>
 </html>
