@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 048</div>
+<div id="appVersionBadge">VERSÃO 049</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4655,6 +4655,53 @@ document.addEventListener('DOMContentLoaded',()=>{
   #fleetFilterButtons{width:100%;justify-content:flex-start}
   #fleetFilterButtons button{min-width:0;flex:1 1 calc(50% - 7px)}
 }
-</style></body>
+</style><style id="masterVehiclesConfigV49">
+/* V049 — Master > Veículos abre o cadastro com configuração de veículo */
+#driverPage .driver-nav button{min-width:140px}
+</style>
+<script id="masterVehiclesConfigV49">
+(function(){
+  function openMasterVehicles(e){
+    if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
+    window.__driverPageOrigin='master';
+    if(typeof window.openDriversPage==='function'){
+      window.openDriversPage();
+      var title=document.querySelector('#driverPage h2');
+      if(title)title.textContent='🚚 Veículos';
+    }
+    return false;
+  }
+
+  /* O botão Master > Veículos passa a abrir a página de cadastro
+     onde ficam Caminhão, Van, 3/4, Toco, Truck, Bitruck, Baú/Sider
+     e as configurações de cavalo/carreta. */
+  window.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest('#masterButtons [data-action="vehicles"]'):null;
+    if(!b)return;
+    openMasterVehicles(e);
+  },true);
+
+  var originalClose=window.closeDriversPage;
+  window.closeDriversPage=function(){
+    if(window.__driverPageOrigin==='master'){
+      var page=document.getElementById('driverPage');
+      var gate=document.getElementById('moduleGate');
+      var master=document.getElementById('masterButtons');
+      var sectors=document.getElementById('sectorButtons');
+      var title=document.getElementById('moduleGateText');
+      if(page)page.style.display='none';
+      var header=document.querySelector('header.app-header'); if(header)header.style.display='';
+      var main=document.querySelector('main'); if(main)main.style.display='';
+      if(gate)gate.style.display='flex';
+      if(sectors)sectors.style.display='none';
+      if(master)master.style.display='grid';
+      if(title)title.textContent='Master';
+      window.scrollTo(0,0);
+      return;
+    }
+    if(typeof originalClose==='function')return originalClose();
+  };
+})();
+</script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
