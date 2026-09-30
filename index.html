@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 044</div>
+<div id="appVersionBadge">VERSÃO 045</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -2936,9 +2936,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     // MASTER: usuário fixo administrativo do sistema.
     // Credencial definida para o projeto: master / master.
     if(u==='master' && p==='master'){
+      localStorage.setItem('nikkeiMasterSession','1');
       openMasterMenu();
       return;
     }
+
+    /* Qualquer login de funcionário encerra uma eventual sessão Master antiga. */
+    localStorage.removeItem('nikkeiMasterSession');
 
     if(u==='master'){
       showLoginMessage('Usuário Master ou senha inválidos.');
@@ -4554,6 +4558,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   pointer-events:auto!important;
   user-select:text!important;
 }
-</style></body>
+</style><script id="loginPermissionsIsolationV45">
+(function(){
+  /* Garante que uma sessão Master antiga não contamine o login de funcionário. */
+  function clearMasterForEmployee(){
+    var input=document.getElementById('loginUsername');
+    var u=(input&&input.value||'').trim().toLowerCase();
+    if(u && u!=='master') localStorage.removeItem('nikkeiMasterSession');
+  }
+  var input=document.getElementById('loginUsername');
+  if(input) input.addEventListener('input',clearMasterForEmployee);
+  if(input) input.addEventListener('change',clearMasterForEmployee);
+})();
+</script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
