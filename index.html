@@ -668,9 +668,43 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
   }
   #employeeEditPanel label{font-size:10px!important}
 }
+</style><style id="employeeEditHeaderFinalV23">
+/* V023 — cabeçalho do cadastro */
+#employeeEditPanel .employee-edit-header h2{
+  font-size:19px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+#employeeEditPanel .employee-edit-header .secondary{
+  width:auto!important;
+  min-width:0!important;
+  max-width:105px!important;
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 10px!important;
+  border-radius:9px!important;
+  font-size:13px!important;
+  line-height:1!important;
+  margin:0!important;
+}
+#employeeEditPanel .access-note{
+  display:none!important;
+}
+@media(max-width:430px){
+  #employeeEditPanel .employee-edit-header h2{
+    font-size:17px!important;
+  }
+  #employeeEditPanel .employee-edit-header .secondary{
+    height:30px!important;
+    min-height:30px!important;
+    max-width:92px!important;
+    padding:0 8px!important;
+    font-size:12px!important;
+  }
+}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 022</div>
+<div id="appVersionBadge">VERSÃO 023</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3515,7 +3549,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    }
    if(!document.getElementById('employeeEditPanel')){
      const ep=document.createElement('div');ep.id='employeeEditPanel';ep.style.cssText='display:none';ep.className='access-box employee-edit-box';
-     ep.innerHTML='<div class="employee-edit-header"><h2 style="margin:0">✏️ Editar cadastro</h2><button type="button" class="secondary" id="employeeEditBack">← Voltar</button></div><p class="access-note" style="margin:8px 0 14px">Atualize os dados cadastrais do funcionário.</p><div class="row access-two"><div><label>Email</label><input id="eeUsername" type="email"></div><div><label>Nova senha</label><input id="eePassword" type="password" autocomplete="new-password"></div></div><div class="row access-two"><div><label>Nome</label><input id="eeName" type="text"></div><div><label>Sobrenome</label><input id="eeSurname" type="text"></div></div><div class="row access-compact-4 access-personal-grid"><div><label>Data Nasc.</label><input id="eeBirthDate" class="access-birthdate" type="date"></div><div><label>Data Admissão</label><input id="eeAdmissionDate" type="date"></div><div><label>CPF</label><input id="eeCpf" type="text"></div><div><label>RG</label><input id="eeRg" type="text"></div></div><div class="row access-location"><div><label>CEP</label><input id="eeCep" type="text" inputmode="numeric" maxlength="9"></div><div><label>Cidade</label><input id="eeCity" type="text"></div><div><label>Estado</label><input id="eeState" type="text"></div></div><div class="row access-compact-4 access-address-grid"><div><label>Endereço</label><input id="eeAddress" type="text"></div><div><label>Nº</label><input id="eeAddressNumber" type="text"></div><div><label>Bairro</label><input id="eeNeighborhood" type="text"></div><div><label>Complemento</label><input id="eeComplement" type="text"></div></div><div class="row access-compact-4 access-contact-grid"><div><label>WhatsApp</label><input id="eePhone" type="tel"></div><div><label>Celular 2</label><input id="eePhone2" type="tel"></div><div><label>Nome contato</label><input id="eeEmergency" type="text"></div><div><label>Contato emergência</label><input id="eePhoneAlt" type="tel"></div></div><div class="row access-two"><div><label>Função</label><select id="eeRole"><option value="MOTORISTA">Motorista</option><option value="EXPEDICAO">Expedição</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option></select></div><div><label>Placa</label><input id="eePlate" type="text"></div></div><div class="employee-password-note">A senha atual não é exibida. Se precisar alterá-la, informe uma nova senha.</div><div class="access-actions"><button type="button" class="primary" id="saveEmployeeEdit">✓ Salvar cadastro</button><button type="button" class="secondary" id="employeeEditBack2">← Cancelar</button></div>';
+     ep.innerHTML='<div class="employee-edit-header"><h2 style="margin:0">✏️ Editar cadastro</h2><button type="button" class="secondary" id="employeeEditBack">← Voltar</button></div><p class="access-note" style="margin:8px 0 14px"></p><div class="row access-two"><div><label>Email</label><input id="eeUsername" type="email"></div><div><label>Nova senha</label><input id="eePassword" type="password" autocomplete="new-password"></div></div><div class="row access-two"><div><label>Nome</label><input id="eeName" type="text"></div><div><label>Sobrenome</label><input id="eeSurname" type="text"></div></div><div class="row access-compact-4 access-personal-grid"><div><label>Data Nasc.</label><input id="eeBirthDate" class="access-birthdate" type="date"></div><div><label>Data Admissão</label><input id="eeAdmissionDate" type="date"></div><div><label>CPF</label><input id="eeCpf" type="text"></div><div><label>RG</label><input id="eeRg" type="text"></div></div><div class="row access-location"><div><label>CEP</label><input id="eeCep" type="text" inputmode="numeric" maxlength="9"></div><div><label>Cidade</label><input id="eeCity" type="text"></div><div><label>Estado</label><input id="eeState" type="text"></div></div><div class="row access-compact-4 access-address-grid"><div><label>Endereço</label><input id="eeAddress" type="text"></div><div><label>Nº</label><input id="eeAddressNumber" type="text"></div><div><label>Bairro</label><input id="eeNeighborhood" type="text"></div><div><label>Complemento</label><input id="eeComplement" type="text"></div></div><div class="row access-compact-4 access-contact-grid"><div><label>WhatsApp</label><input id="eePhone" type="tel"></div><div><label>Celular 2</label><input id="eePhone2" type="tel"></div><div><label>Nome contato</label><input id="eeEmergency" type="text"></div><div><label>Contato emergência</label><input id="eePhoneAlt" type="tel"></div></div><div class="row access-two"><div><label>Função</label><select id="eeRole"><option value="MOTORISTA">Motorista</option><option value="EXPEDICAO">Expedição</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option></select></div><div><label>Placa</label><input id="eePlate" type="text"></div></div><div class="employee-password-note">A senha atual não é exibida. Se precisar alterá-la, informe uma nova senha.</div><div class="access-actions"><button type="button" class="primary" id="saveEmployeeEdit">✓ Salvar cadastro</button><button type="button" class="secondary" id="employeeEditBack2">← Cancelar</button></div>';
      panel.parentNode.insertBefore(ep,panel.nextSibling);
      ep.querySelector('#employeeEditBack').onclick=function(){ep.style.display='none';panel.style.display='block';};
      ep.querySelector('#employeeEditBack2').onclick=function(){ep.style.display='none';panel.style.display='block';};
