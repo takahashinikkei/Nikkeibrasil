@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 070</div>
+<div id="appVersionBadge">VERSÃO 071</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4870,7 +4870,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         data.vehicleType='CM';
         if(!data.vehicleSubtype){
           title='Tipo de veículo';
-          html+=button('Van','vehicle','VAN',false)+button('3/4','vehicle','3/4',false)+
+          html+=button('Van/Delivery','vehicle','VAN',false)+button('3/4','vehicle','3/4',false)+
             button('Toco','vehicle','TOCO',false)+button('Truck','vehicle','TRUCK',false)+
             button('Carreteiro','vehicle','BITRUCK',false)+button('Rodotrem','vehicle','CAVALO',false);
         }else if(data.vehicleSubtype==='CAVALO'){
@@ -5288,6 +5288,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   /* V070 — nomes exibidos: BITRUCK = Carreteiro; CAVALO = Rodotrem.
      Os códigos internos permanecem inalterados para não afetar o banco de dados. */
   window.__nikkeiVehicleDisplayNames={BITRUCK:'Carreteiro',CAVALO:'Rodotrem'};
+})();
+</script><script id="vehicleDisplayNamesV71">
+(function(){
+  window.__nikkeiVehicleDisplayNames=Object.assign({},window.__nikkeiVehicleDisplayNames||{},{VAN:'Van/Delivery'});
 })();
 </script></body>
 </html>
