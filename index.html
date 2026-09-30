@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 034</div>
+<div id="appVersionBadge">VERSÃO 035</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4273,6 +4273,39 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
   else bind();
   setTimeout(bind,300);setTimeout(bind,800);setTimeout(bind,1500);
+})();
+</script><style id="employeePermissionButtonsV35">
+/* V035 — remover Editar cadastro do painel de permissões */
+#employeePermissionPanel #editEmployeeCadastroBtn,
+#employeePermissionPanel [data-action="edit-cadastro"],
+#employeePermissionPanel button[onclick*="editEmployee"],
+#employeePermissionPanel button[onclick*="openEmployeeEdit"]{
+  display:none!important;
+}
+#employeePermissionPanel .actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+}
+#employeePermissionPanel .actions #saveEmployeePermissionsBtn{
+  grid-column:1 / 2!important;
+}
+#employeePermissionPanel .actions button.secondary{
+  grid-column:2 / 3!important;
+}
+</style>
+<script id="employeePermissionButtonsV35">
+(function(){
+  function clean(){
+    var p=document.getElementById('employeePermissionPanel');
+    if(!p)return;
+    Array.prototype.forEach.call(p.querySelectorAll('button'),function(b){
+      var t=(b.textContent||'').toLowerCase();
+      if(t.indexOf('editar cadastro')>=0)b.remove();
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',clean);else clean();
+  setTimeout(clean,300);setTimeout(clean,800);
 })();
 </script></body>
 </html>
