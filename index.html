@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 072</div>
+<div id="appVersionBadge">VERSÃO 073</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4877,7 +4877,7 @@ document.addEventListener('DOMContentLoaded',()=>{
           html+=button('Carreteiro','vehicle','CAVALO',true);
           title='Configuração do cavalo';
           if(!data.vehicleConfiguration){
-            html+=button('Cav. 4x2','config','4x2',false)+button('Cav. 6x2','config','6x2',false)+button('Cav. 6x4','config','6x4',false);
+            html+=button('Cav. 4x2','config','4x2',false)+button('Cav. 6x2','config','6x2',false)+button('Rodotrem','config','6x4',false);
           }else html+=button(configLabel(data.vehicleConfiguration),'config',data.vehicleConfiguration,true);
         }else{
           html+=button(vehicleLabel(data.vehicleSubtype),'vehicle',data.vehicleSubtype,true);
@@ -5299,6 +5299,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     BITRUCK:'Bitruck',
     CAVALO:'Carreteiro'
   });
+})();
+</script><script id="vehicleConfigDisplayV73">
+(function(){
+  var old=window.configLabel;
+  if(typeof old==='function'){
+    window.configLabel=function(v){return v==='6x4'?'Rodotrem':old(v);};
+  }
 })();
 </script></body>
 </html>
