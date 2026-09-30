@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 054</div>
+<div id="appVersionBadge">VERSÃO 055</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4763,7 +4763,49 @@ document.addEventListener('DOMContentLoaded',()=>{
     window.scrollTo(0,0);
   };
 })();
-</script><script id="accessSubmitFixV53">
+</script><script id="accessFormControlsFixV55">
+(function(){
+  function bind(){
+    var fm=document.getElementById('reqFunctionMenu');
+    if(fm && !fm.dataset.v55){
+      fm.dataset.v55='1';
+      fm.addEventListener('click',function(e){
+        var b=e.target&&e.target.closest?e.target.closest('button'):null;
+        if(!b)return;
+        var t=(b.textContent||'').trim().toUpperCase();
+        try{
+          if(t.indexOf('MOTORISTA')>=0 && typeof window.reqFunction==='function'){window.reqFunction('MOTORISTA');return;}
+          if(t.indexOf('EXPEDIÇÃO')>=0 && typeof window.reqFunction==='function'){window.reqFunction('EXPEDICAO');return;}
+          if(t.indexOf('OPERACIONAL')>=0 && typeof window.reqFunction==='function'){window.reqFunction('OPERACIONAL');return;}
+          if(t.indexOf('FINANCEIRO')>=0 && typeof window.reqFunction==='function'){window.reqFunction('FINANCEIRO');return;}
+        }catch(err){console.error(err);}
+      },true);
+    }
+    var cep=document.getElementById('reqCep');
+    if(cep && !cep.dataset.v55){
+      cep.dataset.v55='1';
+      var runCep=function(){
+        var d=(cep.value||'').replace(/\D/g,'');
+        if(d.length===8 && typeof window.lookupAccessCep==='function'){
+          window.lookupAccessCep();
+        }
+      };
+      cep.addEventListener('input',function(){
+        if(typeof window.maskCep==='function')window.maskCep(cep);
+        runCep();
+      });
+      cep.addEventListener('change',runCep);
+      cep.addEventListener('blur',runCep);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);
+  setTimeout(bind,500);
+  setTimeout(bind,1200);
+})();
+</script>
+<script id="accessSubmitFixV53">
 (function(){
   function message(txt){
     var box=document.getElementById('accessStatus');
