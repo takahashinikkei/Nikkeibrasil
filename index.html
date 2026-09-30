@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 032</div>
+<div id="appVersionBadge">VERSÃO 033</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4183,6 +4183,56 @@ document.addEventListener('DOMContentLoaded',()=>{
   font-size:15px!important;
   line-height:1!important;
 }
-</style></body>
+</style><style id="employeePermissionBackV33">
+/* V033 — Voltar das permissões retorna corretamente para Funcionários */
+#employeePermissionPanel .actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+}
+#employeePermissionPanel .actions button{
+  width:100%!important;
+  min-height:44px!important;
+}
+</style>
+<script id="employeePermissionBackV33">
+(function(){
+  function back(){
+    var perm=document.getElementById('employeePermissionPanel');
+    var emp=document.getElementById('employeesPanel');
+    if(perm) perm.style.display='none';
+    if(emp){
+      emp.style.display='block';
+      emp.scrollIntoView({block:'start',behavior:'auto'});
+    }
+    var gate=document.getElementById('moduleGate');
+    var access=document.getElementById('accessRequestsPanel');
+    if(gate) gate.style.display='none';
+    if(access) access.style.display='none';
+    var master=document.getElementById('masterButtons');
+    if(master) master.style.display='none';
+    window.scrollTo(0,0);
+  }
+  window.closeEmployeePermissionPanel=back;
+  function bind(){
+    var b=document.querySelector('#employeePermissionPanel .actions button.secondary');
+    if(b && !b.dataset.backV33){
+      b.dataset.backV33='1';
+      b.removeAttribute('onclick');
+      b.addEventListener('click',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        back();
+      },true);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,300);
+  setTimeout(bind,800);
+  setTimeout(bind,1500);
+})();
+</script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
