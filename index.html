@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 053</div>
+<div id="appVersionBadge">VERSÃO 054</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4771,7 +4771,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     else alert(txt);
   }
   window.safeSubmitAccessRequest=async function(e){
-    if(e){e.preventDefault();e.stopPropagation();}
+    if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
     try{
       var get=function(id){var x=document.getElementById(id);return x?(x.value||'').trim():''};
       var missing=[];
