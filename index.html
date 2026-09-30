@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 068</div>
+<div id="appVersionBadge">VERSÃO 069</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -850,7 +850,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
    <div class="row access-two access-admission-row"><div><label>Data Admissão</label><input id="reqAdmissionDate" type="text" inputmode="numeric" maxlength="8" placeholder="DD/MM/AA"></div><div><label>Tempo de Serviço</label><input id="reqServiceTime" type="text" readonly placeholder="Automático"></div></div>
    <div class="row access-location"><div><label>CEP</label><input id="reqCep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code"></div><div><label>Cidade</label><select id="reqCity" disabled><option>Informe o CEP</option></select></div><div><label>Estado</label><select id="reqState" disabled><option value="">Informe o CEP</option></select></div></div>
    <div class="row access-address-main"><div><label>Endereço</label><input id="reqAddress" type="text" readonly></div><div><label>Nº</label><input id="reqAddressNumber" type="text" disabled></div><div><label>Complemento</label><input id="reqComplement" type="text" placeholder="Apto, bloco, sala..."></div></div>
-   <div class="row access-address-neighborhood"><div><label>Bairro</label><input id="reqNeighborhood" type="text" readonly></div></div>
+   <div class="row access-address-neighborhood"><div><label>Bairro</label><input id="reqNeighborhood" type="text" readonly></div><div><label>Observações</label><input id="reqObservations" type="text" placeholder="Observações"></div></div>
    <div class="row access-compact-4 access-contact-grid"><div><label>WhatsApp <span style="color:#c00">*</span></label><input id="reqPhone" required type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Celular 2</label><input id="reqPhone2" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Nome contato</label><input id="reqEmergencyName" type="text" placeholder="Nome"></div><div><label>Contato emergência</label><input id="reqPhoneAlt" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
    
    <label id="reqFunctionLabel">Função</label>
@@ -2912,7 +2912,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       const row={
         username:email,password_hash:await (async()=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(password));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')})(),name:val('reqName'),surname:val('reqSurname'),
         birth_date:brDateToIso(val('reqBirthDate'))||null,admission_date:brDateToIso(val('reqAdmissionDate'))||null,address:val('reqAddress')||null,address_number:val('reqAddressNumber')||null,
-        neighborhood:val('reqNeighborhood')||null,state:val('reqState')||null,city:val('reqCity')||null,
+        neighborhood:val('reqNeighborhood')||null,observations:val('reqObservations')||null,state:val('reqState')||null,city:val('reqCity')||null,
         phone:val('reqPhone')||null,phone2:val('reqPhone2')||null,phone_alt:val('reqPhoneAlt')||null,
         emergency_contact_name:val('reqEmergencyName')||null,cpf:val('reqCpf')||null,rg:val('reqRg')||null,
         function_role:role,vehicle_type:rd.vehicleType||null,
@@ -5267,6 +5267,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   else bind();
   setTimeout(bind,200);
 })();
-</script></body>
+</script><style id="accessObservationsV69">
+#accessPage .access-address-neighborhood{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:8px!important;
+  width:100%!important;
+}
+#accessPage .access-address-neighborhood>div{
+  min-width:0!important;
+  width:100%!important;
+}
+#accessPage .access-address-neighborhood input{
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+</style></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
