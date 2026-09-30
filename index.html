@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 026</div>
+<div id="appVersionBadge">VERSÃO 027</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3645,7 +3645,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    }
    if(!document.getElementById('employeeEditPanel')){
      const ep=document.createElement('div');ep.id='employeeEditPanel';ep.style.cssText='display:none';ep.className='access-box employee-edit-box';
-     ep.innerHTML='<div class="employee-edit-header"><h2 style="margin:0">✏️ Editar cadastro</h2><button type="button" class="secondary" id="employeeEditBack">← Voltar</button></div><p class="access-note" style="margin:8px 0 14px"></p><div class="row access-two"><div><label>Email</label><input id="eeUsername" type="email"></div><div><label>Nova senha</label><input id="eePassword" type="password" autocomplete="new-password"></div></div><div class="row access-two"><div><label>Nome</label><input id="eeName" type="text"></div><div><label>Sobrenome</label><input id="eeSurname" type="text"></div></div><div class="row access-personal-grid" style="display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;width:100%!important"><div style="min-width:0!important"><label>Data Nasc.</label><input id="eeBirthDate" class="access-birthdate" type="date" style="width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important"><label>Data Admissão</label><input id="eeAdmissionDate" type="date" style="width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important"><label>CPF</label><input id="eeCpf" type="text" style="width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important"><label>RG</label><input id="eeRg" type="text" style="width:100%!important;box-sizing:border-box!important"></div></div><div class="row access-location" style="display:grid!important;grid-template-columns:minmax(0,.75fr) minmax(0,1.45fr) minmax(0,.55fr)!important;gap:8px!important;width:100%!important"><div style="min-width:0!important"><label>CEP</label><input id="eeCep" type="text" inputmode="numeric" maxlength="9" style="width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important"><label>Cidade</label><input id="eeCity" type="text" style="width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important"><label>Estado</label><input id="eeState" type="text" style="width:100%!important;box-sizing:border-box!important"></div></div><div class="row access-compact-4 access-address-grid"><div><label>Endereço</label><input id="eeAddress" type="text"></div><div><label>Nº</label><input id="eeAddressNumber" type="text"></div><div><label>Bairro</label><input id="eeNeighborhood" type="text"></div><div><label>Complemento</label><input id="eeComplement" type="text"></div></div><div class="row access-compact-4 access-contact-grid"><div><label>WhatsApp</label><input id="eePhone" type="tel"></div><div><label>Celular 2</label><input id="eePhone2" type="tel"></div><div><label>Nome contato</label><input id="eeEmergency" type="text"></div><div><label>Contato emergência</label><input id="eePhoneAlt" type="tel"></div></div><div class="row access-two"><div><label>Função</label><select id="eeRole"><option value="MOTORISTA">Motorista</option><option value="EXPEDICAO">Expedição</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option></select></div><div><label>Placa</label><input id="eePlate" type="text"></div></div><div class="employee-password-note">A senha atual não é exibida. Se precisar alterá-la, informe uma nova senha.</div><div class="access-actions"><button type="button" class="primary" id="saveEmployeeEdit">✓ Salvar cadastro</button><button type="button" class="secondary" id="employeeEditBack2">← Cancelar</button></div>';
+     ep.innerHTML='<div class="employee-edit-header"><h2 style="margin:0">✏️ Editar cadastro</h2><button type="button" class="secondary" id="employeeEditBack">← Voltar</button></div><p class="access-note" style="margin:8px 0 14px"></p><div class="row access-two"><div><label>Email</label><input id="eeUsername" type="email"></div><div><label>Nova senha</label><input id="eePassword" type="password" autocomplete="new-password"></div></div><div class="row access-two"><div><label>Nome</label><input id="eeName" type="text"></div><div><label>Sobrenome</label><input id="eeSurname" type="text"></div></div><div class="row access-personal-grid" style="display:flex!important;flex-wrap:wrap!important;gap:0!important;width:100%!important"><div style="min-width:0!important;width:calc(50% - 6px)!important;margin-right:12px!important"><label>Data Nasc.</label><input id="eeBirthDate" class="access-birthdate" type="date" style="display:block!important;width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important;width:calc(50% - 6px)!important"><label>Data Admissão</label><input id="eeAdmissionDate" type="date" style="display:block!important;width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important;width:calc(50% - 6px)!important;margin-right:12px!important"><label>CPF</label><input id="eeCpf" type="text" style="display:block!important;width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important;width:calc(50% - 6px)!important"><label>RG</label><input id="eeRg" type="text" style="display:block!important;width:100%!important;box-sizing:border-box!important"></div></div><div class="row access-location" style="display:grid!important;grid-template-columns:minmax(0,.75fr) minmax(0,1.45fr) minmax(0,.55fr)!important;gap:8px!important;width:100%!important"><div style="min-width:0!important"><label>CEP</label><input id="eeCep" type="text" inputmode="numeric" maxlength="9" style="width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important"><label>Cidade</label><input id="eeCity" type="text" style="width:100%!important;box-sizing:border-box!important"></div><div style="min-width:0!important"><label>Estado</label><input id="eeState" type="text" style="width:100%!important;box-sizing:border-box!important"></div></div><div class="row access-compact-4 access-address-grid"><div><label>Endereço</label><input id="eeAddress" type="text"></div><div><label>Nº</label><input id="eeAddressNumber" type="text"></div><div><label>Bairro</label><input id="eeNeighborhood" type="text"></div><div><label>Complemento</label><input id="eeComplement" type="text"></div></div><div class="row access-compact-4 access-contact-grid"><div><label>WhatsApp</label><input id="eePhone" type="tel"></div><div><label>Celular 2</label><input id="eePhone2" type="tel"></div><div><label>Nome contato</label><input id="eeEmergency" type="text"></div><div><label>Contato emergência</label><input id="eePhoneAlt" type="tel"></div></div><div class="row access-two"><div><label>Função</label><select id="eeRole"><option value="MOTORISTA">Motorista</option><option value="EXPEDICAO">Expedição</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option></select></div><div><label>Placa</label><input id="eePlate" type="text"></div></div><div class="employee-password-note">A senha atual não é exibida. Se precisar alterá-la, informe uma nova senha.</div><div class="access-actions"><button type="button" class="primary" id="saveEmployeeEdit">✓ Salvar cadastro</button><button type="button" class="secondary" id="employeeEditBack2">← Cancelar</button></div>';
      panel.parentNode.insertBefore(ep,panel.nextSibling);
      ep.querySelector('#employeeEditBack').onclick=function(){ep.style.display='none';panel.style.display='block';};
      ep.querySelector('#employeeEditBack2').onclick=function(){ep.style.display='none';panel.style.display='block';};
@@ -3937,6 +3937,68 @@ document.addEventListener('DOMContentLoaded',()=>{
   #employeeEditPanel .access-location{
     grid-template-columns:minmax(0,.75fr) minmax(0,1.45fr) minmax(0,.55fr)!important;
     column-gap:8px!important;
+  }
+}
+</style><style id="employeeDateSpacingV27">
+/* V027 — separação física dos campos, sem depender de gap do grid */
+#employeeEditPanel .access-personal-grid{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:0!important;
+  width:100%!important;
+}
+#employeeEditPanel .access-personal-grid > div{
+  flex:0 0 calc(50% - 6px)!important;
+  width:calc(50% - 6px)!important;
+  min-width:0!important;
+}
+#employeeEditPanel .access-personal-grid > div:nth-child(odd){
+  margin-right:12px!important;
+}
+#employeeEditPanel .access-personal-grid input{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#employeeEditPanel .access-location{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:0!important;
+  width:100%!important;
+}
+#employeeEditPanel .access-location > div{
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+#employeeEditPanel .access-location > div:nth-child(1){
+  flex:0 0 24%!important;width:24%!important;margin-right:10px!important;
+}
+#employeeEditPanel .access-location > div:nth-child(2){
+  flex:0 0 calc(56% - 10px)!important;width:calc(56% - 10px)!important;margin-right:10px!important;
+}
+#employeeEditPanel .access-location > div:nth-child(3){
+  flex:0 0 20%!important;width:20%!important;
+}
+#employeeEditPanel .access-location input{
+  display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+}
+@media(max-width:560px){
+  #employeeEditPanel .access-personal-grid > div{
+    flex-basis:calc(50% - 4px)!important;
+    width:calc(50% - 4px)!important;
+  }
+  #employeeEditPanel .access-personal-grid > div:nth-child(odd){
+    margin-right:8px!important;
+  }
+  #employeeEditPanel .access-location > div:nth-child(1){
+    flex-basis:24%!important;width:24%!important;margin-right:7px!important;
+  }
+  #employeeEditPanel .access-location > div:nth-child(2){
+    flex-basis:calc(56% - 7px)!important;width:calc(56% - 7px)!important;margin-right:7px!important;
+  }
+  #employeeEditPanel .access-location > div:nth-child(3){
+    flex-basis:20%!important;width:20%!important;
   }
 }
 </style></body>
