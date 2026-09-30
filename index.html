@@ -396,7 +396,30 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
  #employeesPanel .employee-actions-row .employee-delete-btn{width:36px!important;min-width:36px!important;max-width:36px!important;height:32px!important;min-height:32px!important}
 }
 </style>
-</head>
+<style id="employeeButtonsSameAsOperacionalV5">
+#employeesPanel .employee-actions-row .employee-action-btn{
+  width:100%!important;
+  min-width:0!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:0 4px!important;
+  margin:0!important;
+  font-size:11px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#employeesPanel .employee-actions-row .employee-delete-btn{color:#b42318!important}
+@media(max-width:560px){
+  #employeesPanel .employee-actions-row .employee-action-btn{
+    font-size:10px!important;
+    padding:0 3px!important;
+  }
+}
+</style></head>
 <body>
 <div id="appVersionBadge">VERSÃO 020</div>
 <div id="loginPage" class="access-page">
