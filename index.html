@@ -800,14 +800,14 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 050</div>
+<div id="appVersionBadge">VERSÃO 051</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
   <p class="access-note">Entre com seu email e senha para acessar o sistema.</p>
   <div class="login-fields"><label>Email</label><input id="loginUsername" type="text" inputmode="email" placeholder="seuemail@exemplo.com ou master" autocomplete="username"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
   <label class="remember-login"><input id="rememberLoginEmail" type="checkbox"> <span>Salvar email</span></label>
-  <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="showRegistration()">Cadastrar</button></div>
+  <div class="access-actions"><button class="primary" type="button" onclick="doLogin()">Entrar</button><button class="secondary" type="button" onclick="return showRegistration()">Cadastrar</button></div>
   <div id="loginStatus" class="access-status"></div>
  </div>
 </div>
@@ -2692,8 +2692,27 @@ async function rejectAccess(id){
  }catch(e){alert('Erro ao excluir: '+(e.message||e))}
 }
 async function sha256Text(v){const b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('')}
-function showRegistration(){document.getElementById('loginPage').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
-function showLogin(){document.getElementById('accessPage').style.display='none';document.getElementById('loginPage').style.display='flex'}
+function showRegistration(){
+  const login=document.getElementById('loginPage');
+  const access=document.getElementById('accessPage');
+  if(!access)return false;
+  if(login)login.style.display='none';
+  access.style.display='flex';
+  access.removeAttribute('hidden');
+  const status=document.getElementById('accessStatus')||document.getElementById('loginStatus');
+  if(status)status.style.display='none';
+  if(typeof initAccessForm==='function')initAccessForm();
+  window.scrollTo(0,0);
+  return false;
+}
+function showLogin(){
+  const access=document.getElementById('accessPage');
+  const login=document.getElementById('loginPage');
+  if(access)access.style.display='none';
+  if(login){login.style.display='flex';login.removeAttribute('hidden');}
+  window.scrollTo(0,0);
+  return false;
+}
 async function doLogin(){const input=document.getElementById('loginUsername'),remember=document.getElementById('rememberLoginEmail'),u=input.value.trim().toLowerCase(),p=document.getElementById('loginPassword').value;
 if(remember&&remember.checked)localStorage.setItem('nikkeiSavedLoginEmail',u);else localStorage.removeItem('nikkeiSavedLoginEmail');
 if(!p){document.getElementById('loginStatus').style.display='block';document.getElementById('loginStatus').textContent='Informe a senha.';return}
