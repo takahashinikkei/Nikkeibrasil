@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 039</div>
+<div id="appVersionBadge">VERSÃO 040</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4444,6 +4444,64 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,200);
   setTimeout(bind,700);
   setTimeout(bind,1500);
+})();
+</script><style id="employeePermissionBackV40">
+/* V040 — interceptação final do botão Voltar de Permissões */
+</style>
+<script id="employeePermissionBackV40">
+(function(){
+  function showEmployees(){
+    var gate=document.getElementById('moduleGate');
+    var sectors=document.getElementById('sectorButtons');
+    var master=document.getElementById('masterButtons');
+    var requests=document.getElementById('accessRequestsPanel');
+    var employees=document.getElementById('employeesPanel');
+    var permissions=document.getElementById('employeePermissionPanel');
+    var gateText=document.getElementById('moduleGateText');
+
+    if(gate)gate.style.display='block';
+    if(sectors)sectors.style.display='none';
+    if(master)master.style.display='none';
+    if(requests)requests.style.display='none';
+    if(permissions)permissions.style.display='none';
+    if(employees)employees.style.display='block';
+    if(gateText)gateText.style.display='none';
+    document.body.dataset.module='Master';
+    document.body.dataset.access='master';
+    window.scrollTo(0,0);
+  }
+
+  /* Window/capture vem antes dos handlers antigos em document e impede
+     qualquer rotina antiga de mandar a tela para Controle Geral. */
+  window.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest('#employeePermissionBackBtn'):null;
+    if(!b)return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    showEmployees();
+  },true);
+
+  function cleanButton(){
+    var old=document.getElementById('employeePermissionBackBtn');
+    if(!old||old.dataset.v40)return;
+    var b=old.cloneNode(true);
+    b.removeAttribute('onclick');
+    b.dataset.v40='1';
+    old.parentNode.replaceChild(b,old);
+    b.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      showEmployees();
+    },false);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',cleanButton);
+  else cleanButton();
+  setTimeout(cleanButton,300);
+  setTimeout(cleanButton,800);
+  setTimeout(cleanButton,1500);
 })();
 </script></body>
 </html>
