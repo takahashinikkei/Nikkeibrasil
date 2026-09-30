@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 052</div>
+<div id="appVersionBadge">VERSÃO 053</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -859,7 +859,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
    </div>
 <div id="reqVehicleSection" style="display:none"></div>
    <div class="access-plate-grid" id="reqPlateGrid" style="display:none"></div>
-   <div class="access-actions"><button class="primary" type="button" onclick="submitAccessRequest()">Solicitar acesso</button><button class="secondary" type="button" onclick="showAccessStatus()">Consultar autorização</button></div>
+   <div class="access-actions"><button class="primary" type="button" id="submitAccessButton" onclick="return safeSubmitAccessRequest(event)">Solicitar acesso</button><button class="secondary" type="button" onclick="showAccessStatus()">Consultar autorização</button></div>
   </div>
   <div id="accessStatus" class="access-status"></div>
   <div class="access-master-link"><button type="button" onclick="showLogin()">Voltar para login</button></div>
@@ -4763,6 +4763,64 @@ document.addEventListener('DOMContentLoaded',()=>{
     window.scrollTo(0,0);
   };
 })();
-</script></body>
+</script><script id="accessSubmitFixV53">
+(function(){
+  function message(txt){
+    var box=document.getElementById('accessStatus');
+    if(box){box.style.display='block';box.style.background='#fef2f2';box.style.color='#991b1b';box.textContent=txt;}
+    else alert(txt);
+  }
+  window.safeSubmitAccessRequest=async function(e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    try{
+      var get=function(id){var x=document.getElementById(id);return x?(x.value||'').trim():''};
+      var missing=[];
+      if(!get('reqEmail'))missing.push('Email');
+      if(!get('reqPassword'))missing.push('Senha');
+      if(!get('reqName'))missing.push('Nome');
+      if(!get('reqSurname'))missing.push('Sobrenome');
+      if(!get('reqBirthDate'))missing.push('Data de nascimento');
+      if(!get('reqRg'))missing.push('RG');
+      if(!get('reqCpf'))missing.push('CPF');
+      if(!get('reqPhone'))missing.push('WhatsApp');
+      if(typeof reqData!=='undefined' && !reqData.functionRole){
+        var active=document.querySelector('#reqFunctionMenu button.active');
+        if(active && /motorista|expedição|operacional|financeiro/i.test(active.textContent)){
+          var t=active.textContent.toUpperCase();
+          reqData.functionRole=t.includes('MOTORISTA')?'MOTORISTA':t.includes('EXPEDI')?'EXPEDICAO':t.includes('FINANCE')?'FINANCEIRO':'OPERACIONAL';
+        }
+      }
+      if(typeof reqData==='undefined' || !reqData.functionRole)missing.push('Função');
+      if(missing.length){
+        message('Preencha: '+missing.join(', ')+'.');
+        return false;
+      }
+      var btn=document.getElementById('submitAccessButton');
+      if(btn){btn.disabled=true;btn.textContent='Enviando...';}
+      if(typeof window.submitAccessRequest==='function'){
+        await window.submitAccessRequest();
+      }else{
+        message('Erro ao carregar a função de envio. Atualize a página (Ctrl+F5) e tente novamente.');
+      }
+    }catch(err){
+      message('Não foi possível enviar a solicitação: '+(err&&err.message?err.message:err));
+    }finally{
+      var btn=document.getElementById('submitAccessButton');
+      if(btn){btn.disabled=false;btn.textContent='Solicitar acesso';}
+    }
+    return false;
+  };
+  function bind(){
+    var b=document.getElementById('submitAccessButton');
+    if(!b || b.dataset.v53)return;
+    b.dataset.v53='1';
+    b.addEventListener('click',function(e){window.safeSubmitAccessRequest(e);},true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);setTimeout(bind,500);
+})();
+</script>
+</body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
