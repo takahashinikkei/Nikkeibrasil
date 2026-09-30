@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 031</div>
+<div id="appVersionBadge">VERSÃO 032</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3724,7 +3724,7 @@ document.addEventListener('DOMContentLoaded',()=>{
      const adm=x.admission_date?formatDate(x.admission_date):'Não informada';
      const tempo=serviceTime(x.admission_date);
      const birth=filter==='ANIVERSARIANTES'&&x.birth_date?'🎂 '+formatDate(x.birth_date):'';
-     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div>'+(birth?'<div class="muted">'+esc2(birth)+'</div>':'')+'<div class="muted">Admissão: '+esc2(adm)+' • Tempo de serviço: '+esc2(tempo)+' • Cidade: '+esc2(x.city||'Não informada')+'</div><div class="employee-actions-row" style="display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;width:100%!important;align-items:stretch!important"><button type="button" class="secondary employee-action-btn" style="width:100%!important;min-width:0!important;height:34px!important;min-height:34px!important;margin:0!important;padding:0 4px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:10px!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important" data-employee-edit="'+esc2(x.id)+'">🔐 Permissões</button><button type="button" class="secondary employee-action-btn" style="width:100%!important;min-width:0!important;height:34px!important;min-height:34px!important;margin:0!important;padding:0 4px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:10px!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important" data-employee-edit-cadastro="'+esc2(x.id)+'">✏️ Cadastro</button><button type="button" class="secondary employee-action-btn employee-delete-btn" style="width:100%!important;min-width:0!important;height:34px!important;min-height:34px!important;margin:0!important;padding:0!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:14px!important" data-employee-delete="'+esc2(x.id)+'">🗑️</button></div></div>'
+     return '<div class="request-item"><div class="employee-main-line"><b>'+esc2(nm)+'</b><span>📱 '+esc2(ph||'Não informado')+'</span><span>• '+esc2(role)+'</span><span class="employee-status '+(st==='active'?'active':'')+'">• '+esc2(stLabel)+'</span></div>'+(birth?'<div class="muted">'+esc2(birth)+'</div>':'')+'<div class="muted">Admissão: '+esc2(adm)+' • Tempo de serviço: '+esc2(tempo)+' • Cidade: '+esc2(x.city||'Não informada')+'</div><div class="employee-actions-row" style="display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;width:100%!important;align-items:stretch!important"><button type="button" class="secondary employee-action-btn" style="width:100%!important;min-width:0!important;height:34px!important;min-height:34px!important;margin:0!important;padding:0 4px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:10px!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important" data-employee-edit="'+esc2(x.id)+'">🔐 Permissões</button><button type="button" class="secondary employee-action-btn" style="width:100%!important;min-width:0!important;height:34px!important;min-height:34px!important;margin:0!important;padding:0 4px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:10px!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important" data-employee-edit-cadastro="'+esc2(x.id)+'">✏️ Cadastro</button><button type="button" class="secondary employee-action-btn employee-delete-btn" style="width:100%!important;min-width:0!important;height:34px!important;min-height:34px!important;margin:0!important;padding:0!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:14px!important" data-employee-delete="'+esc2(x.id)+'"></button></div></div>'
    }).join(''):'Nenhum funcionário nesta categoria.';
  }
  async function load(){
@@ -4145,6 +4145,43 @@ document.addEventListener('DOMContentLoaded',()=>{
     font-size:13px!important;
     margin-bottom:5px!important;
   }
+}
+</style><style id="employeeContactLayoutV32">
+/* V032 — WEB: contatos em 2 linhas para evitar compressão */
+@media (min-width:701px){
+  #employeeEditPanel .access-contact-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px!important;
+    width:100%!important;
+  }
+  #employeeEditPanel .access-contact-grid > div{
+    width:100%!important;
+    min-width:0!important;
+  }
+  #employeeEditPanel .access-contact-grid input{
+    width:100%!important;
+    min-width:0!important;
+    height:44px!important;
+    min-height:44px!important;
+    box-sizing:border-box!important;
+    font-size:14px!important;
+    padding:8px 10px!important;
+  }
+  #employeeEditPanel .access-contact-grid label{
+    font-size:12px!important;
+    margin-bottom:4px!important;
+  }
+}
+/* Botão Excluir: somente um ícone de lixeira */
+#employeesPanel .employee-actions-row > .employee-delete-btn{
+  font-size:0!important;
+  color:#b42318!important;
+}
+#employeesPanel .employee-actions-row > .employee-delete-btn::before{
+  content:'🗑️'!important;
+  font-size:15px!important;
+  line-height:1!important;
 }
 </style></body>
 </html>
