@@ -398,7 +398,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 </style>
 </head>
 <body>
-<div id="appVersionBadge">VERSÃO 019</div>
+<div id="appVersionBadge">VERSÃO 020</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -1752,7 +1752,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=72').catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=73').catch(()=>{}));
 }
 </script>
 <script>
@@ -3389,6 +3389,57 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
  setTimeout(ensureUI,300);
 })();
-</script><script id="employeeCadastroDirectFix">(function(){function bind(){var p=document.getElementById("employeesPanel");if(!p||p.dataset.cadastroActionsBound)return;p.dataset.cadastroActionsBound="1";p.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-employee-edit-cadastro]");if(b){e.preventDefault();e.stopPropagation();if(typeof window.__openEmployeeEdit==="function")window.__openEmployeeEdit(b.getAttribute("data-employee-edit-cadastro"));}});}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind);else bind();setTimeout(bind,500);})();</script></body>
+</script><script id="employeeCadastroDirectFix">(function(){function bind(){var p=document.getElementById("employeesPanel");if(!p||p.dataset.cadastroActionsBound)return;p.dataset.cadastroActionsBound="1";p.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-employee-edit-cadastro]");if(b){e.preventDefault();e.stopPropagation();if(typeof window.__openEmployeeEdit==="function")window.__openEmployeeEdit(b.getAttribute("data-employee-edit-cadastro"));}});}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind);else bind();setTimeout(bind,500);})();</script><style id="employeeButtonsEqualV20">
+#employeesPanel .employee-actions-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px!important;
+  gap:6px!important;
+  width:100%!important;
+  align-items:stretch!important;
+}
+#employeesPanel .employee-actions-row .employee-action-btn{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:34px!important;
+  min-height:34px!important;
+  margin:0!important;
+  padding:0 6px!important;
+  box-sizing:border-box!important;
+  flex:none!important;
+  font-size:10px!important;
+  font-weight:800!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#employeesPanel .employee-actions-row .employee-delete-btn{
+  width:36px!important;
+  min-width:36px!important;
+  max-width:36px!important;
+  height:34px!important;
+  min-height:34px!important;
+}
+@media(max-width:560px){
+  #employeesPanel .employee-actions-row{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px!important;
+    gap:5px!important;
+  }
+  #employeesPanel .employee-actions-row .employee-action-btn{
+    height:32px!important;
+    min-height:32px!important;
+    font-size:10px!important;
+    padding:0 4px!important;
+  }
+  #employeesPanel .employee-actions-row .employee-delete-btn{
+    width:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    height:32px!important;
+    min-height:32px!important;
+  }
+}
+</style></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
