@@ -713,9 +713,94 @@ body:has(#employeesPanel[style*="display: block"]) #appVersionBadge{
 body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
   display:none!important;
 }
+</style><style id="employeeEditAlignmentV24">
+/* V024 — alinhamento definitivo do cadastro */
+#employeeEditPanel .access-personal-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+#employeeEditPanel .access-personal-grid>div{
+  min-width:0!important;
+}
+#employeeEditPanel .access-location{
+  display:grid!important;
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) minmax(0,.65fr)!important;
+  gap:6px!important;
+}
+#employeeEditPanel .access-location>div{
+  min-width:0!important;
+  width:100%!important;
+}
+#employeeEditPanel .access-location>div:last-child{
+  grid-column:auto!important;
+}
+
+/* Os três botões de funcionário ocupam exatamente 1/3 cada. */
+#employeesPanel .employee-actions-row{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  width:100%!important;
+}
+#employeesPanel .employee-actions-row > button.employee-action-btn,
+#employeesPanel .employee-actions-row > button.employee-delete-btn{
+  grid-column:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  flex:1 1 0!important;
+  height:38px!important;
+  min-height:38px!important;
+  max-height:38px!important;
+  margin:0!important;
+  padding:0 6px!important;
+  border-radius:9px!important;
+  box-sizing:border-box!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#employeesPanel .employee-actions-row > button.employee-delete-btn{
+  font-size:0!important;
+}
+#employeesPanel .employee-actions-row > button.employee-delete-btn::before{
+  content:'🗑️'!important;
+  font-size:15px!important;
+}
+@media(max-width:560px){
+  #employeeEditPanel .access-location{
+    grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) minmax(0,.65fr)!important;
+  }
+  #employeeEditPanel .access-location>div:last-child{
+    grid-column:auto!important;
+  }
+  #employeesPanel .employee-actions-row{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+  }
+  #employeesPanel .employee-actions-row > button.employee-action-btn,
+  #employeesPanel .employee-actions-row > button.employee-delete-btn{
+    height:32px!important;
+    min-height:32px!important;
+    max-height:32px!important;
+    padding:0 3px!important;
+    border-radius:8px!important;
+    font-size:9px!important;
+  }
+  #employeesPanel .employee-actions-row > button.employee-delete-btn{
+    font-size:0!important;
+  }
+  #employeesPanel .employee-actions-row > button.employee-delete-btn::before{
+    font-size:13px!important;
+  }
+}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 023</div>
+<div id="appVersionBadge">VERSÃO 024</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
