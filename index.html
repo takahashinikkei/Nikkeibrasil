@@ -184,7 +184,7 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
 }
 </style>
 <style id="moduleGateStyle">
-.login-fields{display:grid;gap:6px}.login-fields input{margin-bottom:6px}.access-page{position:fixed;inset:0;z-index:100001;background:#000;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px}.access-box{width:min(780px,100%);background:#fff;border-radius:22px;padding:20px}.access-box h1{margin:0 0 4px}.access-note{color:#64748b;font-size:14px;margin:0 0 12px}.access-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.access-actions button{margin-top:0!important;height:52px!important}.access-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}#reqFunctionMenu .access-flow-back{grid-column:1/-1;height:30px!important;background:#f8fafc;color:#475569;font-size:11px!important}.access-type-menu button{height:34px;font-size:11px;font-weight:800;padding:0 4px}.access-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.access-plate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.access-status{padding:12px;border-radius:12px;background:#f8fafc;margin-top:10px;display:none}.access-master-link{text-align:center;margin-top:10px}.access-master-link button{width:auto;height:30px;background:transparent;border:0;color:#475569;text-decoration:underline;font-size:12px}.request-list{max-height:65vh;overflow:auto;text-align:left}.request-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.request-item .actions{display:flex;gap:6px;margin-top:8px}.request-item .actions button{height:38px;font-size:12px}@media(max-width:520px){.access-type-menu{grid-template-columns:repeat(3,minmax(0,1fr))}.access-plate-grid{grid-template-columns:1fr 1fr}.access-actions{grid-template-columns:1fr 1fr}}#moduleGate{position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-fields{display:grid;gap:6px}.login-fields input{margin-bottom:6px}.access-page{position:fixed;inset:0;z-index:100001;background:#000;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px}.access-box{width:min(780px,100%);background:#fff;border-radius:22px;padding:20px}.access-box h1{margin:0 0 4px}.access-note{color:#64748b;font-size:14px;margin:0 0 12px}.access-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}.access-actions button{margin-top:0!important;height:52px!important}.access-type-menu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}#reqFunctionMenu .access-flow-back{grid-column:1/-1;height:30px!important;background:#f8fafc;color:#475569;font-size:11px!important}.access-type-menu button{height:34px;font-size:11px;font-weight:800;padding:0 4px}.access-type-menu button.active{background:#047857;color:#fff;border-color:#047857}.access-plate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.access-status{padding:12px;border-radius:12px;background:#f8fafc;margin-top:10px;display:none}.access-master-link{text-align:center;margin-top:10px}.access-master-link button{width:auto;height:30px;background:transparent;border:0;color:#475569;text-decoration:underline;font-size:12px}.request-list{max-height:65vh;overflow:auto;text-align:left}.request-item{padding:12px 0;border-bottom:1px solid #e5e7eb}.request-item .actions{display:flex;gap:6px;margin-top:8px}.request-item .actions button{height:38px;font-size:12px}@media(max-width:520px){.access-type-menu{grid-template-columns:repeat(3,minmax(0,1fr))}.access-plate-grid{grid-template-columns:1fr 1fr}.access-actions{grid-template-columns:1fr 1fr}}#moduleGate{position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;padding:24px}
 .module-gate-box{width:min(460px,100%);text-align:center;background:#fff;border-radius:24px;padding:30px 22px;box-shadow:0 20px 60px #0005}
 .module-gate-box h1{margin:0 0 22px;font-size:24px;line-height:1.2;font-weight:900;letter-spacing:.2px;color:#111827;text-align:center}
 .module-gate-box p{margin:0 0 24px;color:#64748b;font-size:15px}
@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 062</div>
+<div id="appVersionBadge">VERSÃO 063</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -859,7 +859,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
    </div>
 
    <div class="access-plate-grid" id="reqPlateGrid" style="display:none"></div>
-   <div class="access-actions"><button class="primary" type="button" id="submitAccessButton" onclick="return safeSubmitAccessRequest(event)">Solicitar acesso</button><button class="secondary" type="button" onclick="showAccessStatus()">Consultar autorização</button></div>
+   <div class="access-actions"><button class="primary" type="button" id="submitAccessButton" onclick="return safeSubmitAccessRequest(event)">Solicitar acesso</button></div>
   </div>
   <div id="accessStatus" class="access-status"></div>
   <div class="access-master-link"><button type="button" onclick="showLogin()">Voltar para login</button></div>
@@ -2350,7 +2350,7 @@ async function lookupAccessCep(){
   alert('CEP não encontrado. Digite um CEP válido para preencher o endereço.');
  }
 }
-function initAccessForm(){const cep=document.getElementById('reqCep');if(cep){cep.oninput=function(){maskCep(this)};cep.onblur=lookupAccessCep;}const s=document.getElementById('reqState');if(!s||s.options.length>1)return;s.innerHTML='<option value="">Selecione o estado</option>'+reqStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');s.onchange=async()=>{const st=s.value,c=document.getElementById('reqCity');c.innerHTML='<option>Carregando cidades...</option>';c.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();c.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');c.disabled=false}catch(e){c.innerHTML='<option>Erro ao carregar</option>'}};['reqPhone','reqPhone2','reqPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});document.getElementById('reqCpf').oninput=function(){maskCpf(this)};document.getElementById('reqBirthDate').onchange=updateReqAge;document.getElementById('reqCnhFile').onchange=function(){reqData.cnhFile=this.files[0]||null;const f=reqData.cnhFile;document.getElementById('reqCnhStatus').textContent=f?(f.name+' — arquivo anexado para download pelo Master.'):'Nenhuma CNH';};renderReqType()}
+function initAccessForm(){const cep=document.getElementById('reqCep');if(cep){cep.oninput=function(){maskCep(this)};cep.onblur=lookupAccessCep;}const s=document.getElementById('reqState');if(!s||s.options.length>1)return;s.innerHTML='<option value="">Selecione o estado</option>'+reqStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');s.onchange=async()=>{const st=s.value,c=document.getElementById('reqCity');c.innerHTML='<option>Carregando cidades...</option>';c.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();c.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');c.disabled=false}catch(e){c.innerHTML='<option>Erro ao carregar</option>'}};['reqPhone','reqPhone2','reqPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});document.getElementById('reqCpf').oninput=function(){maskCpf(this)};document.getElementById('reqBirthDate').onchange=updateReqAge;document.getElementById('reqCnhFile').onchange=function(){reqData.cnhFile=this.files[0]||null;const f=reqData.cnhFile;if(f){document.getElementById('reqCnhStatus').textContent=f.name+' — iniciando leitura da CNH...';ocrCnhAndFill(f);}else document.getElementById('reqCnhStatus').textContent='Nenhuma CNH';};renderReqType()}
 async function ocrCnhAndFill(file){
  const st=document.getElementById('reqCnhStatus');
  let worker=null;
@@ -2735,8 +2735,11 @@ function showRegistration(){
 function showLogin(){
   const access=document.getElementById('accessPage');
   const login=document.getElementById('loginPage');
+  const gate=document.getElementById('moduleGate');
   if(access)access.style.display='none';
+  if(gate)gate.style.display='none';
   if(login){login.style.display='flex';login.removeAttribute('hidden');}
+  const status=document.getElementById('loginStatus');if(status)status.style.display='none';
   window.scrollTo(0,0);
   return false;
 }
@@ -4793,14 +4796,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,1200);
 })();
 </script>
-<style id="accessFlowV62Style">
-.access-measurements{grid-column:1/-1;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;padding:10px;background:#f8fafc;border-radius:12px}
-.access-measurements>div{min-width:0}
-.access-measurements label{font-size:10px;margin:3px 0 4px}
-.access-measurements input{height:40px!important;font-size:13px!important;padding:0 8px!important}
-.access-measurements .access-cubage input{font-weight:850;background:#f1f5f9}
-@media(max-width:520px){.access-measurements{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.access-measurements label{font-size:9px}}
-</style>\n<script id="accessFormRescueV62">
+<script id="accessFormRescueV63">
 (function(){
   var data=(typeof reqData!=='undefined'&&reqData)?reqData:(window.reqData||{});
   data.functionRole=data.functionRole||'';
@@ -4881,7 +4877,7 @@ document.addEventListener('DOMContentLoaded',()=>{
           html+=button(vehicleLabel(data.vehicleSubtype),'vehicle',data.vehicleSubtype,true);
           title='Carroceria';
           if(!data.bodyType)html+=button('Baú','body','BAU',false)+button('Sider','body','SIDER',false);
-          else html+=button(bodyLabel(data.bodyType),'body',data.bodyType,true)+measuresMarkup();
+          else html+=button(bodyLabel(data.bodyType),'body',data.bodyType,true);
         }
       }else if(parent==='EXPEDICAO'){
         title='Função de expedição';
@@ -4990,7 +4986,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   function bind(){
     var fm=document.getElementById('reqFunctionMenu');
     if(fm&&!fm.dataset.v62Bound){
-      fm.dataset.v62Bound='1';fm.addEventListener('click',handleMenuClick,true);fm.addEventListener('input',handleMeasureInput);
+      fm.dataset.v62Bound='1';fm.addEventListener('click',handleMenuClick,true);
     }
     renderFunction();
   }
