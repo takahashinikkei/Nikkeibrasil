@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 058</div>
+<div id="appVersionBadge">VERSÃO 059</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -2172,7 +2172,7 @@ document.addEventListener('DOMContentLoaded', function(){
   const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
   window.nikkeiCreateAccessRequest=async function(x,file){
     const username=String(x.username||'').trim().toLowerCase();
-    const row={username,password_hash:x.passwordHash,name:x.name,surname:x.surname,birth_date:x.birthDate||null,address:x.address||null,address_number:x.addressNumber||null,neighborhood:x.neighborhood||null,state:x.state||null,city:x.city||null,phone:x.phone||null,phone2:x.phone2||null,phone_alt:x.phoneAlt||null,emergency_contact_name:x.emergencyContactName||null,cpf:x.cpf||null,rg:x.rg||null,function_role:x.functionRole||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,vehicle_configuration:x.vehicleConfiguration||null,plate:x.plateVehicle||null,plate_cavalo:x.plateCavalo||null,plate_carreta:x.plateCarreta||null,plate_carreta2:x.plateCarreta2||null,status:'pending'};
+    const row={username,password_hash:x.passwordHash,name:x.name,surname:x.surname,birth_date:x.birthDate||null,address:x.address||null,address_number:x.addressNumber||null,neighborhood:x.neighborhood||null,state:x.state||null,city:x.city||null,phone:x.phone||null,phone2:x.phone2||null,phone_alt:x.phoneAlt||null,emergency_contact_name:x.emergencyContactName||null,cpf:x.cpf||null,rg:x.rg||null,function_role:x.functionRole||null,vehicle_type:x.vehicleType||null,vehicle_subtype:x.vehicleSubtype||null,body_type:x.bodyType||null,pallets:x.pallets||null,body_height:x.bodyHeight||null,body_width:x.bodyWidth||null,body_length:x.bodyLength||null,vehicle_configuration:x.vehicleConfiguration||null,plate:x.plateVehicle||null,plate_cavalo:x.plateCavalo||null,plate_carreta:x.plateCarreta||null,plate_carreta2:x.plateCarreta2||null,status:'pending'};
     if(!username)throw new Error('Informe o email.');
     const headers={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
     const q=await fetch(URL+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(username)+'&select=id,status',{headers});
@@ -2530,7 +2530,7 @@ async function submitAccessRequest(){
  if(phones.some(v=>v&&!validDriverPhone(v))){alert('Os telefones preenchidos devem estar no formato (11) 99999-9999.');return}
  const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',headers={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
  try{
-  const row={username:email,password_hash:await sha256Text(document.getElementById('reqPassword').value),name:g('reqName'),surname:g('reqSurname'),birth_date:g('reqBirthDate'),address:g('reqAddress'),address_number:g('reqAddressNumber'),neighborhood:g('reqNeighborhood'),state:document.getElementById('reqState').value,city:document.getElementById('reqCity').value,phone:phones[0],phone2:phones[1],phone_alt:phones[2],emergency_contact_name:g('reqEmergencyName'),cpf:g('reqCpf'),rg:g('reqRg'),function_role:reqData.functionRole,vehicle_type:reqData.vehicleType||null,vehicle_subtype:reqData.vehicleSubtype||null,body_type:reqData.bodyType||null,vehicle_configuration:reqData.vehicleConfiguration||null,plate:reqData.plateVehicle||null,plate_cavalo:reqData.plateCavalo||null,plate_carreta:reqData.plateCarreta||null,plate_carreta2:reqData.plateCarreta2||null,status:'pending'};
+  const row={username:email,password_hash:await sha256Text(document.getElementById('reqPassword').value),name:g('reqName'),surname:g('reqSurname'),birth_date:g('reqBirthDate'),address:g('reqAddress'),address_number:g('reqAddressNumber'),neighborhood:g('reqNeighborhood'),state:document.getElementById('reqState').value,city:document.getElementById('reqCity').value,phone:phones[0],phone2:phones[1],phone_alt:phones[2],emergency_contact_name:g('reqEmergencyName'),cpf:g('reqCpf'),rg:g('reqRg'),function_role:reqData.functionRole,vehicle_type:reqData.vehicleType||null,vehicle_subtype:reqData.vehicleSubtype||null,body_type:reqData.bodyType||null,pallets:reqData.pallets||null,body_height:reqData.bodyHeight||null,body_width:reqData.bodyWidth||null,body_length:reqData.bodyLength||null,vehicle_configuration:reqData.vehicleConfiguration||null,plate:reqData.plateVehicle||null,plate_cavalo:reqData.plateCavalo||null,plate_carreta:reqData.plateCarreta||null,plate_carreta2:reqData.plateCarreta2||null,status:'pending'};
   const q=await fetch(URL+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(email)+'&select=id,status',{headers});
   if(!q.ok)throw new Error('Não foi possível consultar a solicitação no banco.');
   const found=await q.json(); let data;
@@ -2680,7 +2680,7 @@ window.deleteEmployee=async function(id){
 function openEmployeeAccessRequest(){if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso restrito ao usuário administrador.');return;}document.getElementById('moduleGate').style.display='none';document.getElementById('employeesPanel').style.display='none';document.getElementById('accessPage').style.display='flex';document.getElementById('accessStatus').style.display='none';initAccessForm()}
 function renderAccessRequests(list){
  const el=document.getElementById('accessRequestsList');if(!el)return;
- el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">'+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+' • '+esc([x.vehicleSubtype,x.body_type==='BAU'?'Baú':x.body_type==='SIDER'?'Sider':x.body_type,x.vehicleConfiguration].filter(Boolean).join(' • '))+'</div><div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div>'+(x.status==='pending'?'<div class="actions"><button type="button" class="primary access-approve-btn" data-id="'+esc(x.id)+'">Liberar acesso</button><button type="button" class="secondary access-reject-btn" data-id="'+esc(x.id)+'">Recusar</button></div>':'')+'</div>').join(''):'Nenhuma solicitação.';
+ el.innerHTML=list.length?list.map(x=>'<div class="request-item"><b>'+esc((x.name||'')+' '+(x.surname||''))+'</b><div class="muted">'+esc(x.phone||'')+' • CPF: '+esc(x.cpf||'')+'</div><div class="muted">'+esc([x.city,x.state].filter(Boolean).join(' - '))+' • '+esc([x.vehicle_subtype,x.body_type==='BAU'?'Baú':x.body_type==='SIDER'?'Sider':x.body_type,x.vehicle_configuration].filter(Boolean).join(' • '))+'</div>'+((x.pallets!==null&&x.pallets!==''||x.body_height!==null&&x.body_height!==''||x.body_width!==null&&x.body_width!==''||x.body_length!==null&&x.body_length!=='')?'<div class="muted">Medidas: '+esc([x.pallets!==null&&x.pallets!==''?x.pallets+' paletes':null,x.body_height!==null&&x.body_height!==''?x.body_height+' m altura':null,x.body_width!==null&&x.body_width!==''?x.body_width+' m largura':null,x.body_length!==null&&x.body_length!==''?x.body_length+' m comprimento':null].filter(Boolean).join(' • '))+'</div>':'')+'<div class="muted">Status: <b>'+esc(x.status||'pending')+'</b></div>'+(x.status==='pending'?'<div class="actions"><button type="button" class="primary access-approve-btn" data-id="'+esc(x.id)+'">Liberar acesso</button><button type="button" class="secondary access-reject-btn" data-id="'+esc(x.id)+'">Recusar</button></div>':'')+'</div>').join(''):'Nenhuma solicitação.';
 }
 async function approveAccess(id){
  if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o usuário Master pode liberar acessos.');return;}
@@ -2909,6 +2909,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         function_role:role,vehicle_type:rd.vehicleType||null,
         vehicle_subtype:rd.vehicleSubtype||null,
         body_type:rd.bodyType||null,
+        pallets:rd.pallets||null,body_height:rd.bodyHeight||null,body_width:rd.bodyWidth||null,body_length:rd.bodyLength||null,
         vehicle_configuration:rd.vehicleConfiguration||null,
         plate:rd.plateVehicle||null,
         plate_cavalo:rd.plateCavalo||null,
@@ -3127,6 +3128,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       state:req.state,city:req.city,phone:req.phone,phone2:req.phone2,phone_alt:req.phone_alt,
       emergency_contact_name:req.emergency_contact_name,cpf:req.cpf,rg:req.rg,function_role:req.function_role,admission_date:new Date().toISOString().slice(0,10),
       vehicle_type:req.vehicle_type,vehicle_subtype:req.vehicle_subtype,body_type:req.body_type,
+      pallets:req.pallets,body_height:req.body_height,body_width:req.body_width,body_length:req.body_length,
       vehicle_configuration:req.vehicle_configuration,plate:req.plate,plate_cavalo:req.plate_cavalo,
       plate_carreta:req.plate_carreta,plate_carreta2:req.plate_carreta2,cnh_path:req.cnh_path,
       cnh_name:req.cnh_name,cnh_mime:req.cnh_mime,permissions:selected,status:'active',approved_at:new Date().toISOString()
@@ -4791,7 +4793,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,1200);
 })();
 </script>
-<script id="accessFormRescueV58">
+<style id="accessFlowV59Style">
+.access-measurements{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;padding:10px;background:#f8fafc;border-radius:12px}
+.access-measurements>div{min-width:0}
+.access-measurements label{font-size:10px;margin:3px 0 4px}
+.access-measurements input{height:40px!important;font-size:13px!important;padding:0 8px!important}
+.access-measurements .access-cubage input{font-weight:850;background:#f1f5f9}
+@media(max-width:520px){.access-measurements{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.access-measurements label{font-size:9px}}
+</style>\n<script id="accessFormRescueV59">
 (function(){
   var data=(typeof reqData!=='undefined'&&reqData)?reqData:(window.reqData||{});
   data.functionRole=data.functionRole||'';
@@ -4803,82 +4812,83 @@ document.addEventListener('DOMContentLoaded',()=>{
   data.plateCavalo=data.plateCavalo||'';
   data.plateCarreta=data.plateCarreta||'';
   data.plateCarreta2=data.plateCarreta2||'';
+  data.pallets=data.pallets||'';
+  data.bodyHeight=data.bodyHeight||'';
+  data.bodyWidth=data.bodyWidth||'';
+  data.bodyLength=data.bodyLength||'';
   window.__nikkeiAccessData=data;
   window.reqData=data;
 
   var legacyConfig={CAV4X2:'4x2',CAV6X2:'6x2',CAV6X4:'6x4'};
   var legacyConfiguration=legacyConfig[data.vehicleSubtype];
-  if(legacyConfiguration){
-    data.vehicleSubtype='CAVALO';
-    data.vehicleConfiguration=legacyConfiguration;
-  }
+  if(legacyConfiguration){data.vehicleSubtype='CAVALO';data.vehicleConfiguration=legacyConfiguration;}
 
-  function button(text,action,value,active,extraClass){
-    var classes=(active?'active ':'')+(extraClass||'');
-    return '<button type="button" class="'+classes.trim()+'" data-access-action="'+action+'" data-access-value="'+value+'">'+text+'</button>';
+  function button(text,action,value,active){
+    return '<button type="button" class="'+(active?'active':'')+'" data-access-action="'+action+'" data-access-value="'+value+'">'+text+'</button>';
   }
-  function back(target){return button('← Voltar','back',target,false,'access-flow-back');}
+  function clearMeasures(){
+    data.pallets='';data.bodyHeight='';data.bodyWidth='';data.bodyLength='';
+  }
   function clearVehicle(){
-    data.vehicleType='';
-    data.vehicleSubtype='';
-    data.bodyType='';
-    data.vehicleConfiguration='';
-    data.plateVehicle='';
-    data.plateCavalo='';
-    data.plateCarreta='';
-    data.plateCarreta2='';
+    data.vehicleType='';data.vehicleSubtype='';data.bodyType='';data.vehicleConfiguration='';
+    data.plateVehicle='';data.plateCavalo='';data.plateCarreta='';data.plateCarreta2='';
+    clearMeasures();
+  }
+  function baseRole(role){return role.indexOf('EXPEDICAO')===0?'EXPEDICAO':role;}
+  function bodyLabel(value){return value==='BAU'?'Baú':'Sider';}
+  function vehicleLabel(value){return ({VAN:'Van','3/4':'3/4',TOCO:'Toco',TRUCK:'Truck',BITRUCK:'Bitruck',CAVALO:'Cavalo'})[value]||value;}
+  function configLabel(value){return value==='4x2'?'Cav. 4x2':value==='6x2'?'Cav. 6x2':'Cav. 6x4';}
+  function cubage(){
+    var h=Number(data.bodyHeight)||0,w=Number(data.bodyWidth)||0,l=Number(data.bodyLength)||0;
+    return (h*w*l).toFixed(2);
+  }
+  function measureField(label,key,value,step){
+    return '<div><label>'+label+'</label><input type="number" min="0" step="'+step+'" data-access-measure="'+key+'" value="'+String(value||'')+'"></div>';
+  }
+  function measuresMarkup(){
+    return '<div class="access-measurements">'+
+      measureField('PALETES','pallets',data.pallets,'1')+
+      measureField('ALTURA (M)','bodyHeight',data.bodyHeight,'0.01')+
+      measureField('LARGURA (M)','bodyWidth',data.bodyWidth,'0.01')+
+      measureField('COMPRIMENTO (M)','bodyLength',data.bodyLength,'0.01')+
+      '<div class="access-cubage"><label>CUBAGEM (M³)</label><input id="reqBodyCubage" readonly value="'+cubage()+'"></div>'+
+      '</div>';
   }
   function renderFunction(){
-    var fm=document.getElementById('reqFunctionMenu');
-    if(!fm)return;
+    var fm=document.getElementById('reqFunctionMenu');if(!fm)return;
     var label=document.getElementById('reqFunctionLabel');
-    var role=(data.functionRole||'').toUpperCase();
-    var html='';
-    var title='Função';
+    var role=(data.functionRole||'').toUpperCase(),parent=baseRole(role),html='',title='Função';
     if(!role){
-      html=button('Motorista','role','MOTORISTA')+
-        button('Expedição','role','EXPEDICAO')+
-        button('Operacional','role','OPERACIONAL')+
-        button('Financeiro','role','FINANCEIRO');
-    }else if(role==='MOTORISTA'){
-      data.vehicleType='CM';
-      if(!data.vehicleSubtype){
-        title='Tipo de veículo';
-        html=back('role')+
-          button('Van','vehicle','VAN')+
-          button('3/4','vehicle','3/4')+
-          button('Toco','vehicle','TOCO')+
-          button('Truck','vehicle','TRUCK')+
-          button('Bitruck','vehicle','BITRUCK')+
-          button('Cavalo','vehicle','CAVALO');
-      }else if(data.vehicleSubtype==='CAVALO'){
-        title='Configuração do cavalo';
-        html=back('vehicle')+
-          button('Cav. 4x2','config','4x2',data.vehicleConfiguration==='4x2')+
-          button('Cav. 6x2','config','6x2',data.vehicleConfiguration==='6x2')+
-          button('Cav. 6x4','config','6x4',data.vehicleConfiguration==='6x4');
-      }else{
-        title='Carroceria';
-        html=back('vehicle')+
-          button('Baú','body','BAU',data.bodyType==='BAU')+
-          button('Sider','body','SIDER',data.bodyType==='SIDER');
-      }
-    }else if(role.indexOf('EXPEDICAO')===0){
-      title='Função de expedição';
-      html=back(role==='EXPEDICAO'?'role':'expedition')+
-        button('Ajudante','expedition','AJUDANTE',role==='EXPEDICAO_AJUDANTE')+
-        button('Conferente','expedition','CONFERENTE',role==='EXPEDICAO_CONFERENTE');
-    }else if(role==='OPERACIONAL'||role==='FINANCEIRO'){
-      html=back('role')+
-        button('Operacional','role','OPERACIONAL',role==='OPERACIONAL')+
-        button('Financeiro','role','FINANCEIRO',role==='FINANCEIRO');
+      html=button('Motorista','role','MOTORISTA',false)+button('Expedição','role','EXPEDICAO',false)+
+        button('Operacional','role','OPERACIONAL',false)+button('Financeiro','role','FINANCEIRO',false);
     }else{
-      clearVehicle();
-      data.functionRole='';
-      html=button('Motorista','role','MOTORISTA')+
-        button('Expedição','role','EXPEDICAO')+
-        button('Operacional','role','OPERACIONAL')+
-        button('Financeiro','role','FINANCEIRO');
+      var parentText=parent==='MOTORISTA'?'Motorista':parent==='EXPEDICAO'?'Expedição':parent==='OPERACIONAL'?'Operacional':'Financeiro';
+      html=button(parentText,'role',parent,true);
+      if(parent==='MOTORISTA'){
+        data.vehicleType='CM';
+        if(!data.vehicleSubtype){
+          title='Tipo de veículo';
+          html+=button('Van','vehicle','VAN',false)+button('3/4','vehicle','3/4',false)+
+            button('Toco','vehicle','TOCO',false)+button('Truck','vehicle','TRUCK',false)+
+            button('Bitruck','vehicle','BITRUCK',false)+button('Cavalo','vehicle','CAVALO',false);
+        }else if(data.vehicleSubtype==='CAVALO'){
+          title='Configuração do cavalo';
+          if(!data.vehicleConfiguration){
+            html+=button('Cav. 4x2','config','4x2',false)+button('Cav. 6x2','config','6x2',false)+button('Cav. 6x4','config','6x4',false);
+          }else html+=button(configLabel(data.vehicleConfiguration),'config',data.vehicleConfiguration,true);
+        }else{
+          title='Carroceria';
+          if(!data.bodyType)html+=button('Baú','body','BAU',false)+button('Sider','body','SIDER',false);
+          else html+=button(bodyLabel(data.bodyType),'body',data.bodyType,true)+measuresMarkup();
+        }
+      }else if(parent==='EXPEDICAO'){
+        title='Função de expedição';
+        if(role==='EXPEDICAO')html+=button('Ajudante','expedition','AJUDANTE',false)+button('Conferente','expedition','CONFERENTE',false);
+        else{
+          var expValue=role==='EXPEDICAO_AJUDANTE'?'AJUDANTE':'CONFERENTE';
+          html+=button(expValue==='AJUDANTE'?'Ajudante':'Conferente','expedition',expValue,true);
+        }
+      }
     }
     if(label)label.textContent=title;
     fm.innerHTML=html;
@@ -4887,127 +4897,102 @@ document.addEventListener('DOMContentLoaded',()=>{
     var fm=document.getElementById('reqFunctionMenu');
     var b=e.target&&e.target.closest?e.target.closest('button[data-access-action]'):null;
     if(!fm||!b||!fm.contains(b))return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    var action=b.getAttribute('data-access-action');
-    var value=b.getAttribute('data-access-value')||'';
+    e.preventDefault();e.stopImmediatePropagation();
+    var action=b.getAttribute('data-access-action'),value=b.getAttribute('data-access-value')||'',role=(data.functionRole||'').toUpperCase();
     if(action==='role'){
-      clearVehicle();
-      data.functionRole=value;
+      if(baseRole(role)===value){data.functionRole='';clearVehicle();}
+      else{clearVehicle();data.functionRole=value;}
     }else if(action==='vehicle'){
-      clearVehicle();
-      data.functionRole='MOTORISTA';
-      data.vehicleType='CM';
-      data.vehicleSubtype=value;
+      if(data.vehicleSubtype===value){
+        data.vehicleSubtype='';data.bodyType='';data.vehicleConfiguration='';
+        data.plateVehicle='';data.plateCavalo='';data.plateCarreta='';data.plateCarreta2='';clearMeasures();
+      }else{
+        data.vehicleSubtype=value;data.bodyType='';data.vehicleConfiguration='';
+        data.plateVehicle='';data.plateCavalo='';data.plateCarreta='';data.plateCarreta2='';clearMeasures();
+      }
+      data.functionRole='MOTORISTA';data.vehicleType='CM';
     }else if(action==='body'){
-      data.bodyType=data.bodyType===value?'':value;
+      if(data.bodyType===value){data.bodyType='';clearMeasures();}
+      else{data.bodyType=value;clearMeasures();}
     }else if(action==='config'){
-      data.functionRole='MOTORISTA';
-      data.vehicleType='CM';
-      data.vehicleSubtype='CAVALO';
-      data.bodyType='';
       data.vehicleConfiguration=data.vehicleConfiguration===value?'':value;
     }else if(action==='expedition'){
-      clearVehicle();
-      data.functionRole='EXPEDICAO_'+value;
-    }else if(action==='back'){
-      if(value==='role'){
-        clearVehicle();
-        data.functionRole='';
-      }else if(value==='vehicle'){
-        data.vehicleSubtype='';
-        data.bodyType='';
-        data.vehicleConfiguration='';
-        data.plateVehicle='';
-        data.plateCavalo='';
-        data.plateCarreta='';
-        data.plateCarreta2='';
-      }else if(value==='expedition'){
-        data.functionRole='EXPEDICAO';
-      }
+      data.functionRole=role==='EXPEDICAO_'+value?'EXPEDICAO':'EXPEDICAO_'+value;
     }
     renderFunction();
+  }
+  function handleMeasureInput(e){
+    var field=e.target&&e.target.getAttribute?e.target.getAttribute('data-access-measure'):null;
+    if(!field||['pallets','bodyHeight','bodyWidth','bodyLength'].indexOf(field)<0)return;
+    data[field]=e.target.value;
+    var total=document.getElementById('reqBodyCubage');if(total)total.value=cubage();
   }
   window.reqFunction=function(t){
     var value=String(t||'').toUpperCase();
     if(['MOTORISTA','EXPEDICAO','OPERACIONAL','FINANCEIRO'].indexOf(value)<0)return;
-    clearVehicle();
-    data.functionRole=value;
+    if(baseRole((data.functionRole||'').toUpperCase())===value){data.functionRole='';clearVehicle();}
+    else{clearVehicle();data.functionRole=value;}
     renderFunction();
   };
   window.reqVehicleChoice=function(t){
-    var value=String(t||'').toUpperCase();
-    var configs={CAV4X2:'4x2',CAV6X2:'6x2',CAV6X4:'6x4'};
-    clearVehicle();
-    data.functionRole='MOTORISTA';
-    data.vehicleType='CM';
-    data.vehicleSubtype=configs[value]?'CAVALO':value;
-    data.vehicleConfiguration=configs[value]||'';
-    renderFunction();
+    var value=String(t||'').toUpperCase(),configs={CAV4X2:'4x2',CAV6X2:'6x2',CAV6X4:'6x4'};
+    if(configs[value]){
+      if(data.vehicleConfiguration===configs[value])data.vehicleConfiguration='';
+      else{data.vehicleSubtype='CAVALO';data.vehicleConfiguration=configs[value];}
+    }else if(data.vehicleSubtype===value){data.vehicleSubtype='';data.bodyType='';data.vehicleConfiguration='';clearMeasures();}
+    else{data.vehicleSubtype=value;data.bodyType='';data.vehicleConfiguration='';clearMeasures();}
+    data.functionRole='MOTORISTA';data.vehicleType='CM';renderFunction();
   };
   window.reqBodyChoice=function(t){
-    data.bodyType=String(t||'').toUpperCase();
+    var value=String(t||'').toUpperCase();
+    if(data.bodyType===value){data.bodyType='';clearMeasures();}else{data.bodyType=value;clearMeasures();}
     renderFunction();
   };
   window.reqConfig=function(t){
-    data.vehicleConfiguration=String(t||'');
-    data.vehicleSubtype='CAVALO';
-    data.vehicleType='CM';
-    data.functionRole='MOTORISTA';
-    renderFunction();
+    var value=String(t||'');data.vehicleConfiguration=data.vehicleConfiguration===value?'':value;
+    data.vehicleSubtype='CAVALO';data.vehicleType='CM';data.functionRole='MOTORISTA';renderFunction();
   };
   window.reqExpChoice=function(t){
-    var value=String(t||'').toUpperCase();
-    if(value!=='AJUDANTE'&&value!=='CONFERENTE')return;
-    data.functionRole='EXPEDICAO_'+value;
-    renderFunction();
+    var value=String(t||'').toUpperCase();if(value!=='AJUDANTE'&&value!=='CONFERENTE')return;
+    data.functionRole=data.functionRole==='EXPEDICAO_'+value?'EXPEDICAO':'EXPEDICAO_'+value;renderFunction();
   };
   window.renderAccessFunction=renderFunction;
 
   window.maskCep=function(el){
     var d=String(el&&el.value||'').replace(/\D/g,'').slice(0,8);
-    if(el)el.value=d.length>5?d.slice(0,5)+'-'+d.slice(5):d;
+    if(el)el.value=d.length>5?d.slice(0,5)+'-'+d.slice(5);
   };
-
   var cepTimer=null;
   window.lookupAccessCep=async function(){
-    var el=document.getElementById('reqCep');
-    if(!el)return;
+    var el=document.getElementById('reqCep');if(!el)return;
     var cep=String(el.value||'').replace(/\D/g,'');
     var addr=document.getElementById('reqAddress'),bairro=document.getElementById('reqNeighborhood');
     var city=document.getElementById('reqCity'),state=document.getElementById('reqState'),num=document.getElementById('reqAddressNumber');
     if(cep.length!==8)return;
-    if(addr)addr.value='Consultando...';
-    if(bairro)bairro.value='Consultando...';
+    if(addr)addr.value='Consultando...';if(bairro)bairro.value='Consultando...';
     try{
       var resp=await fetch('https://viacep.com.br/ws/'+cep+'/json/',{cache:'no-store'});
       if(!resp.ok)throw new Error('Falha na consulta');
-      var d=await resp.json();
-      if(d.erro)throw new Error('CEP não encontrado');
-      if(addr)addr.value=d.logradouro||'';
-      if(bairro)bairro.value=d.bairro||'';
+      var d=await resp.json();if(d.erro)throw new Error('CEP não encontrado');
+      if(addr)addr.value=d.logradouro||'';if(bairro)bairro.value=d.bairro||'';
       if(city){city.innerHTML='<option value="'+(d.localidade||'')+'">'+(d.localidade||'')+'</option>';city.value=d.localidade||'';city.disabled=true;}
       if(state){state.innerHTML='<option value="'+(d.uf||'')+'">'+(d.estado||d.uf||'')+'</option>';state.value=d.uf||'';state.disabled=true;}
       if(num){num.disabled=false;num.focus();}
     }catch(e){
-      if(addr)addr.value='';
-      if(bairro)bairro.value='';
+      if(addr)addr.value='';if(bairro)bairro.value='';
       if(city){city.innerHTML='<option value="">Não foi possível consultar</option>';city.disabled=true;}
       if(state){state.innerHTML='<option value="">Não foi possível consultar</option>';state.disabled=true;}
       console.error('CEP:',e);
     }
   };
-
   function bind(){
     var fm=document.getElementById('reqFunctionMenu');
-    if(fm&&!fm.dataset.v58Bound){
-      fm.dataset.v58Bound='1';
-      fm.addEventListener('click',handleMenuClick,true);
+    if(fm&&!fm.dataset.v59Bound){
+      fm.dataset.v59Bound='1';fm.addEventListener('click',handleMenuClick,true);fm.addEventListener('input',handleMeasureInput);
     }
     renderFunction();
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});
-  else bind();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();
 </script>
 <script id="accessSubmitFixV53">
