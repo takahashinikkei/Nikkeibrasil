@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 037</div>
+<div id="appVersionBadge">VERSÃO 038</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4354,6 +4354,43 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
   else bind();
   setTimeout(bind,200);setTimeout(bind,700);setTimeout(bind,1500);
+})();
+</script><style id="employeePermissionBackV38">
+/* V038 — correção definitiva: Voltar de Permissões retorna para Funcionários */
+</style>
+<script id="employeePermissionBackV38">
+(function(){
+  function goToEmployees(){
+    var ids=['employeePermissionPanel','accessRequestsPanel','masterButtons','moduleGate'];
+    var perm=document.getElementById('employeePermissionPanel');
+    var emp=document.getElementById('employeesPanel');
+    ids.forEach(function(id){
+      var el=document.getElementById(id);
+      if(!el)return;
+      if(id==='moduleGate')el.style.display='none';
+      else if(id==='masterButtons'||id==='accessRequestsPanel'||id==='employeePermissionPanel')el.style.display='none';
+    });
+    if(emp)emp.style.display='block';
+    var gateText=document.getElementById('moduleGateText');
+    if(gateText)gateText.style.display='none';
+    document.body.dataset.module='Master';
+    document.body.dataset.access='master';
+    window.scrollTo(0,0);
+  }
+  window.closeEmployeePermissionPanel=goToEmployees;
+  window.returnToEmployeeListFromPermissions=function(e){
+    if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
+    goToEmployees();
+    return false;
+  };
+  window.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest('#employeePermissionBackBtn'):null;
+    if(!b)return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    goToEmployees();
+  },true);
 })();
 </script></body>
 </html>
