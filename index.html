@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 071</div>
+<div id="appVersionBadge">VERSÃO 072</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4872,9 +4872,9 @@ document.addEventListener('DOMContentLoaded',()=>{
           title='Tipo de veículo';
           html+=button('Van/Delivery','vehicle','VAN',false)+button('3/4','vehicle','3/4',false)+
             button('Toco','vehicle','TOCO',false)+button('Truck','vehicle','TRUCK',false)+
-            button('Carreteiro','vehicle','BITRUCK',false)+button('Rodotrem','vehicle','CAVALO',false);
+            button('Bitruck','vehicle','BITRUCK',false)+button('Carreteiro','vehicle','CAVALO',false);
         }else if(data.vehicleSubtype==='CAVALO'){
-          html+=button('Rodotrem','vehicle','CAVALO',true);
+          html+=button('Carreteiro','vehicle','CAVALO',true);
           title='Configuração do cavalo';
           if(!data.vehicleConfiguration){
             html+=button('Cav. 4x2','config','4x2',false)+button('Cav. 6x2','config','6x2',false)+button('Cav. 6x4','config','6x4',false);
@@ -5292,6 +5292,13 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script><script id="vehicleDisplayNamesV71">
 (function(){
   window.__nikkeiVehicleDisplayNames=Object.assign({},window.__nikkeiVehicleDisplayNames||{},{VAN:'Van/Delivery'});
+})();
+</script><script id="vehicleDisplayNamesV72">
+(function(){
+  window.__nikkeiVehicleDisplayNames=Object.assign({},window.__nikkeiVehicleDisplayNames||{},{
+    BITRUCK:'Bitruck',
+    CAVALO:'Carreteiro'
+  });
 })();
 </script></body>
 </html>
