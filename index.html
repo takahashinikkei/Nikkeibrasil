@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 063</div>
+<div id="appVersionBadge">VERSÃO 064</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -5049,6 +5049,63 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
   else bind();
   setTimeout(bind,100);setTimeout(bind,500);
+})();
+</script>
+<style id="accessLayoutFixV64">
+/* V064 — Email/Senha e Nome/Sobrenome lado a lado também no celular */
+#accessPage .access-two{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  width:100%!important;
+}
+#accessPage .access-two>div{
+  min-width:0!important;
+  width:100%!important;
+}
+#accessPage .access-two input{
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+@media(max-width:520px){
+  #accessPage .access-two{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+  #accessPage .access-two label{font-size:12px!important}
+  #accessPage .access-two input{font-size:14px!important;padding:0 9px!important}
+}
+</style>
+<script id="accessBackFixV64">
+(function(){
+  function goLogin(e){
+    if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
+    var access=document.getElementById('accessPage');
+    var login=document.getElementById('loginPage');
+    var gate=document.getElementById('moduleGate');
+    var status=document.getElementById('loginStatus');
+    if(access)access.style.display='none';
+    if(gate)gate.style.display='none';
+    if(login){
+      login.style.display='flex';
+      login.removeAttribute('hidden');
+    }
+    if(status)status.style.display='none';
+    window.scrollTo(0,0);
+    return false;
+  }
+  window.showLogin=goLogin;
+  function bind(){
+    var b=document.querySelector('#accessPage .access-master-link button');
+    if(!b || b.dataset.v64)return;
+    b.dataset.v64='1';
+    b.addEventListener('click',goLogin,true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);
+  setTimeout(bind,500);
 })();
 </script>
 </body>
