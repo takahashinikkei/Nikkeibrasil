@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 064</div>
+<div id="appVersionBadge">VERSÃO 065</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -846,6 +846,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
    <div class="row access-two"><div><label>Email</label><input id="reqEmail" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="email"></div><div><label>Senha</label><input id="reqPassword" type="password" autocomplete="new-password"></div></div>
    <div class="row access-two"><div><label>Nome</label><input id="reqName" type="text"></div><div><label>Sobrenome</label><input id="reqSurname" type="text"></div></div>
    <div class="row access-compact-4 access-personal-grid"><div><label>Data Nasc.</label><input id="reqBirthDate" class="access-birthdate" type="date"></div><div><label>Idade</label><input id="reqAge" type="text" readonly placeholder="Automática"></div><div><label>RG</label><input id="reqRg" type="text"></div><div><label>CPF</label><input id="reqCpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"></div></div>
+   <div class="row access-two access-admission-row"><div><label>Data Admissão</label><input id="reqAdmissionDate" type="date"></div><div><label>Tempo de Serviço</label><input id="reqServiceTime" type="text" readonly placeholder="Automático"></div></div>
    <div class="row access-location"><div><label>CEP</label><input id="reqCep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code"></div><div><label>Cidade</label><select id="reqCity" disabled><option>Informe o CEP</option></select></div><div><label>Estado</label><select id="reqState" disabled><option value="">Informe o CEP</option></select></div></div>
    <div class="row access-compact-4 access-address-grid"><div><label>Endereço</label><input id="reqAddress" type="text" readonly></div><div><label>Nº</label><input id="reqAddressNumber" type="text" disabled></div><div><label>Bairro</label><input id="reqNeighborhood" type="text" readonly></div><div><label>Complemento</label><input id="reqComplement" type="text" placeholder="Apto, bloco, sala..."></div></div>
    <div class="row access-compact-4 access-contact-grid"><div><label>WhatsApp <span style="color:#c00">*</span></label><input id="reqPhone" required type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Celular 2</label><input id="reqPhone2" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div><div><label>Nome contato</label><input id="reqEmergencyName" type="text" placeholder="Nome"></div><div><label>Contato emergência</label><input id="reqPhoneAlt" type="tel" inputmode="numeric" maxlength="15" placeholder="(11) 99999-9999"></div></div>
@@ -2350,7 +2351,7 @@ async function lookupAccessCep(){
   alert('CEP não encontrado. Digite um CEP válido para preencher o endereço.');
  }
 }
-function initAccessForm(){const cep=document.getElementById('reqCep');if(cep){cep.oninput=function(){maskCep(this)};cep.onblur=lookupAccessCep;}const s=document.getElementById('reqState');if(!s||s.options.length>1)return;s.innerHTML='<option value="">Selecione o estado</option>'+reqStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');s.onchange=async()=>{const st=s.value,c=document.getElementById('reqCity');c.innerHTML='<option>Carregando cidades...</option>';c.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();c.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');c.disabled=false}catch(e){c.innerHTML='<option>Erro ao carregar</option>'}};['reqPhone','reqPhone2','reqPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});document.getElementById('reqCpf').oninput=function(){maskCpf(this)};document.getElementById('reqBirthDate').onchange=updateReqAge;document.getElementById('reqCnhFile').onchange=function(){reqData.cnhFile=this.files[0]||null;const f=reqData.cnhFile;if(f){document.getElementById('reqCnhStatus').textContent=f.name+' — iniciando leitura da CNH...';ocrCnhAndFill(f);}else document.getElementById('reqCnhStatus').textContent='Nenhuma CNH';};renderReqType()}
+function initAccessForm(){const cep=document.getElementById('reqCep');if(cep){cep.oninput=function(){maskCep(this)};cep.onblur=lookupAccessCep;}const s=document.getElementById('reqState');if(!s||s.options.length>1)return;s.innerHTML='<option value="">Selecione o estado</option>'+reqStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');s.onchange=async()=>{const st=s.value,c=document.getElementById('reqCity');c.innerHTML='<option>Carregando cidades...</option>';c.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();c.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');c.disabled=false}catch(e){c.innerHTML='<option>Erro ao carregar</option>'}};['reqPhone','reqPhone2','reqPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});document.getElementById('reqCpf').oninput=function(){maskCpf(this)};document.getElementById('reqBirthDate').onchange=updateReqAge;var adm=document.getElementById('reqAdmissionDate');if(adm)adm.onchange=updateReqServiceTime;document.getElementById('reqCnhFile').onchange=function(){reqData.cnhFile=this.files[0]||null;const f=reqData.cnhFile;if(f){document.getElementById('reqCnhStatus').textContent=f.name+' — iniciando leitura da CNH...';ocrCnhAndFill(f);}else document.getElementById('reqCnhStatus').textContent='Nenhuma CNH';};renderReqType()}
 async function ocrCnhAndFill(file){
  const st=document.getElementById('reqCnhStatus');
  let worker=null;
@@ -2905,7 +2906,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
       const row={
         username:email,password_hash:await (async()=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(password));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')})(),name:val('reqName'),surname:val('reqSurname'),
-        birth_date:val('reqBirthDate')||null,address:val('reqAddress')||null,address_number:val('reqAddressNumber')||null,
+        birth_date:val('reqBirthDate')||null,admission_date:val('reqAdmissionDate')||null,address:val('reqAddress')||null,address_number:val('reqAddressNumber')||null,
         neighborhood:val('reqNeighborhood')||null,state:val('reqState')||null,city:val('reqCity')||null,
         phone:val('reqPhone')||null,phone2:val('reqPhone2')||null,phone_alt:val('reqPhoneAlt')||null,
         emergency_contact_name:val('reqEmergencyName')||null,cpf:val('reqCpf')||null,rg:val('reqRg')||null,
@@ -5106,6 +5107,55 @@ document.addEventListener('DOMContentLoaded',()=>{
   else bind();
   setTimeout(bind,100);
   setTimeout(bind,500);
+})();
+</script>
+<style id="accessLayoutFixV65">
+/* V065 — CEP, Cidade e Estado na mesma linha; admissão e tempo de serviço */
+#accessPage .access-location{
+  display:grid!important;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) minmax(0,.7fr)!important;
+  gap:8px!important;
+  width:100%!important;
+}
+#accessPage .access-location>div{min-width:0!important;width:100%!important}
+#accessPage .access-location input,
+#accessPage .access-location select{width:100%!important;min-width:0!important;box-sizing:border-box!important}
+#accessPage .access-admission-row{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+}
+#accessPage .access-admission-row>div{min-width:0!important;width:100%!important}
+#accessPage .access-admission-row input{width:100%!important;min-width:0!important;box-sizing:border-box!important}
+</style>
+<script id="accessServiceTimeV65">
+(function(){
+  function calc(){
+    var d=document.getElementById('reqAdmissionDate'), out=document.getElementById('reqServiceTime');
+    if(!d||!out)return;
+    var s=d.value;
+    if(!s){out.value='';return;}
+    var parts=s.split('-').map(Number);
+    var adm=new Date(parts[0],parts[1]-1,parts[2]);
+    var now=new Date();
+    if(isNaN(adm.getTime())||adm>now){out.value='';return;}
+    var years=now.getFullYear()-adm.getFullYear();
+    var months=now.getMonth()-adm.getMonth();
+    if(now.getDate()<adm.getDate())months--;
+    if(months<0){years--;months+=12;}
+    if(years<0){out.value='';return;}
+    out.value=years+' '+(years===1?'ano':'anos')+' '+months+' '+(months===1?'mês':'meses');
+  }
+  window.updateReqServiceTime=calc;
+  function bind(){
+    var d=document.getElementById('reqAdmissionDate');
+    if(d&&!d.dataset.v65){d.dataset.v65='1';d.addEventListener('change',calc);d.addEventListener('input',calc);}
+    calc();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,200);
 })();
 </script>
 </body>
