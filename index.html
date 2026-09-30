@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 036</div>
+<div id="appVersionBadge">VERSÃO 037</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -870,7 +870,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
       <div id="employeePermissionOptions" style="display:grid;gap:10px"></div>
       <div class="actions" style="margin-top:16px">
         <button id="saveEmployeePermissionsBtn" class="primary" type="button">✓ Salvar permissões</button>
-        <button class="secondary" type="button" onclick="closeEmployeePermissionPanel()">← Voltar</button>
+        <button id="employeePermissionBackBtn" class="secondary" type="button" onclick="returnToEmployeeListFromPermissions(event)">← Voltar</button>
       </div>
     </div>
   </div>
@@ -4316,6 +4316,45 @@ document.addEventListener('DOMContentLoaded',()=>{
 #employeePermissionPanel .actions{
   grid-template-columns:1fr 1fr!important;
 }
-</style></body>
+</style><style id="employeePermissionBackV37">
+/* V037 — Voltar de Permissões retorna exclusivamente para Master > Funcionários */
+</style>
+<script id="employeePermissionBackV37">
+(function(){
+  function returnToEmployeeList(){
+    var permissions=document.getElementById('employeePermissionPanel');
+    var employees=document.getElementById('employeesPanel');
+    var requests=document.getElementById('accessRequestsPanel');
+    var master=document.getElementById('masterButtons');
+    var gate=document.getElementById('moduleGate');
+    var gateText=document.getElementById('moduleGateText');
+    if(permissions)permissions.style.display='none';
+    if(requests)requests.style.display='none';
+    if(master)master.style.display='none';
+    if(gate)gate.style.display='none';
+    if(gateText)gateText.style.display='none';
+    if(employees)employees.style.display='block';
+    document.body.dataset.module='Master';
+    document.body.dataset.access='master';
+    window.scrollTo(0,0);
+    return false;
+  }
+  window.returnToEmployeeListFromPermissions=function(e){
+    if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
+    returnToEmployeeList();
+    return false;
+  };
+  window.closeEmployeePermissionPanel=returnToEmployeeList;
+  function bind(){
+    var b=document.getElementById('employeePermissionBackBtn');
+    if(!b||b.dataset.v37)return;
+    b.dataset.v37='1';
+    b.onclick=function(e){return window.returnToEmployeeListFromPermissions(e);};
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,200);setTimeout(bind,700);setTimeout(bind,1500);
+})();
+</script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
