@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 059</div>
+<div id="appVersionBadge">VERSÃO 060</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4793,14 +4793,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,1200);
 })();
 </script>
-<style id="accessFlowV59Style">
+<style id="accessFlowV60Style">
 .access-measurements{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;padding:10px;background:#f8fafc;border-radius:12px}
 .access-measurements>div{min-width:0}
 .access-measurements label{font-size:10px;margin:3px 0 4px}
 .access-measurements input{height:40px!important;font-size:13px!important;padding:0 8px!important}
 .access-measurements .access-cubage input{font-weight:850;background:#f1f5f9}
 @media(max-width:520px){.access-measurements{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.access-measurements label{font-size:9px}}
-</style>\n<script id="accessFormRescueV59">
+</style>\n<script id="accessFormRescueV60">
 (function(){
   var data=(typeof reqData!=='undefined'&&reqData)?reqData:(window.reqData||{});
   data.functionRole=data.functionRole||'';
@@ -4960,7 +4960,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   window.maskCep=function(el){
     var d=String(el&&el.value||'').replace(/\D/g,'').slice(0,8);
-    if(el)el.value=d.length>5?d.slice(0,5)+'-'+d.slice(5);
+    if(el)el.value=d.length>5?d.slice(0,5)+'-'+d.slice(5):d;
   };
   var cepTimer=null;
   window.lookupAccessCep=async function(){
@@ -4987,8 +4987,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   };
   function bind(){
     var fm=document.getElementById('reqFunctionMenu');
-    if(fm&&!fm.dataset.v59Bound){
-      fm.dataset.v59Bound='1';fm.addEventListener('click',handleMenuClick,true);fm.addEventListener('input',handleMeasureInput);
+    if(fm&&!fm.dataset.v60Bound){
+      fm.dataset.v60Bound='1';fm.addEventListener('click',handleMenuClick,true);fm.addEventListener('input',handleMeasureInput);
     }
     renderFunction();
   }
