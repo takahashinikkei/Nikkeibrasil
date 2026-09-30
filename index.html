@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 033</div>
+<div id="appVersionBadge">VERSÃO 034</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4232,6 +4232,47 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,300);
   setTimeout(bind,800);
   setTimeout(bind,1500);
+})();
+</script><style id="employeePermissionBackV34">
+/* V034 — Voltar de Editar permissões permanece dentro de Master > Funcionários */
+#employeePermissionPanel .actions button.secondary{cursor:pointer}
+</style>
+<script id="employeePermissionBackV34">
+(function(){
+  function returnToEmployees(){
+    var gate=document.getElementById('moduleGate');
+    var master=document.getElementById('masterButtons');
+    var requests=document.getElementById('accessRequestsPanel');
+    var employees=document.getElementById('employeesPanel');
+    var permissions=document.getElementById('employeePermissionPanel');
+    var gateText=document.getElementById('moduleGateText');
+    if(gate)gate.style.display='flex';
+    if(master)master.style.display='none';
+    if(requests)requests.style.display='none';
+    if(permissions)permissions.style.display='none';
+    if(gateText)gateText.style.display='none';
+    if(employees)employees.style.display='block';
+    document.body.dataset.module='Master';
+    document.body.dataset.access='master';
+    window.scrollTo(0,0);
+  }
+  window.closeEmployeePermissionPanel=returnToEmployees;
+  function bind(){
+    var b=document.querySelector('#employeePermissionPanel .actions button.secondary');
+    if(!b)return;
+    b.removeAttribute('onclick');
+    if(b.dataset.backV34)return;
+    b.dataset.backV34='1';
+    b.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      returnToEmployees();
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,300);setTimeout(bind,800);setTimeout(bind,1500);
 })();
 </script></body>
 </html>
