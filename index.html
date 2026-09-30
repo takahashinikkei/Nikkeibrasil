@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 074</div>
+<div id="appVersionBadge">VERSÃO 075</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -842,7 +842,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
  <div class="access-box">
   <h1>Solicitar acesso</h1><p class="access-note">Preencha seus dados para solicitar autorização.</p>
   <div id="accessForm">
-   <div class="driver-cnh"><input id="reqCnhFile" type="file" accept="application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none"><button type="button" class="secondary" onclick="document.getElementById('reqCnhFile').click()">📎 Incluir CNH / RG</button><span id="reqCnhStatus" class="muted">Nenhum documento</span></div>
+   <div class="driver-cnh"><input id="reqCnhFile" type="file" accept="application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none"><button type="button" class="secondary" onclick="document.getElementById('reqCnhFile').click()">📎 Incluir CNH</button><span id="reqCnhStatus" class="muted">Nenhum documento</span></div>
    <div class="row access-two"><div><label>Email</label><input id="reqEmail" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="email"></div><div><label>Senha</label><input id="reqPassword" type="password" autocomplete="new-password"></div></div>
    <div class="row access-two"><div><label>Nome</label><input id="reqName" type="text"></div><div><label>Sobrenome</label><input id="reqSurname" type="text"></div></div>
    <div class="row access-two access-docs-row"><div><label>RG</label><input id="reqRg" type="text"></div><div><label>CPF</label><input id="reqCpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"></div></div>
@@ -5313,6 +5313,59 @@ document.addEventListener('DOMContentLoaded',()=>{
   window.__nikkeiVehicleDisplayNames=Object.assign({},window.__nikkeiVehicleDisplayNames||{},{
     VAN:'Van/Delivery',BITRUCK:'Bitruck',CAVALO:'Carreteiro',CAV6X4:'Rodotrem'
   });
+})();
+</script><script id="cnhStorageDownloadV75">
+(function(){
+  const URL='https://qincxigrvlvudsqcukxt.supabase.co';
+  const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
+  const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'};
+
+  /* Download da CNH gravada no Storage, usando URL assinada temporária. */
+  window.nikkeiDownloadDriverCnh=async function(id){
+    try{
+      const q=await fetch(URL+'/rest/v1/employees?id=eq.'+encodeURIComponent(id)+'&select=id,cnh_path,cnh_name,cnh_mime',{headers:H});
+      if(!q.ok)throw new Error('Não foi possível localizar o funcionário.');
+      const rows=await q.json();
+      const emp=rows[0];
+      if(!emp||!emp.cnh_path)throw new Error('CNH não cadastrada para este funcionário.');
+      const s=await fetch(URL+'/storage/v1/object/sign/driver-documents/'+emp.cnh_path,{
+        method:'POST',headers:H,body:JSON.stringify({expiresIn:3600})
+      });
+      if(!s.ok)throw new Error('Não foi possível gerar o download da CNH.');
+      const data=await s.json();
+      const signed=data&&data.signedURL;
+      if(!signed)throw new Error('URL de download não disponível.');
+      const full=signed.startsWith('http')?signed:URL+'/storage/v1'+signed;
+      const a=document.createElement('a');
+      a.href=full;
+      a.target='_blank';
+      a.rel='noopener';
+      a.download=emp.cnh_name||'CNH';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }catch(e){
+      alert(e&&e.message?e.message:'Não foi possível baixar a CNH.');
+    }
+  };
+
+  /* Garante que a CNH escolhida seja processada tanto como foto quanto PDF. */
+  function bindCnh(){
+    const input=document.getElementById('reqCnhFile');
+    if(!input||input.dataset.v75)return;
+    input.dataset.v75='1';
+    input.setAttribute('accept','application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif');
+    input.addEventListener('change',function(){
+      const f=input.files&&input.files[0];
+      if(!f)return;
+      const status=document.getElementById('reqCnhStatus');
+      if(status)status.textContent=f.name+' — lendo CNH...';
+      if(typeof ocrCnhAndFill==='function')ocrCnhAndFill(f);
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindCnh);
+  else bindCnh();
+  setTimeout(bindCnh,300);
 })();
 </script></body>
 </html>
