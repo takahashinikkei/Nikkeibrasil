@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 055</div>
+<div id="appVersionBadge">VERSÃO 056</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4803,6 +4803,148 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,100);
   setTimeout(bind,500);
   setTimeout(bind,1200);
+})();
+</script>
+<script id="accessFormRescueV56">
+(function(){
+  var data=window.__nikkeiAccessData||{functionRole:'',vehicleType:'',vehicleSubtype:'',vehicleConfiguration:'',plateVehicle:'',plateCavalo:'',plateCarreta:'',plateCarreta2:'',cnhFile:null};
+  window.__nikkeiAccessData=data;
+  window.reqData=data;
+
+  function btn(text,active,fn){
+    return '<button type="button" class="'+(active?'active':'')+'" onclick="'+fn+'">'+text+'</button>';
+  }
+  function renderFunction(){
+    var fm=document.getElementById('reqFunctionMenu');
+    if(!fm)return;
+    var role=data.functionRole||'';
+    var h='';
+    if(role==='MOTORISTA'){
+      h=btn('Motorista',true,"reqFunction('MOTORISTA')")
+       +btn('Van',data.vehicleSubtype==='VAN',"reqVehicleChoice('VAN')")
+       +btn('3/4',data.vehicleSubtype==='3/4',"reqVehicleChoice('3/4')")
+       +btn('Toco',data.vehicleSubtype==='TOCO',"reqVehicleChoice('TOCO')")
+       +btn('Truck',data.vehicleSubtype==='TRUCK',"reqVehicleChoice('TRUCK')")
+       +btn('Bitruck',data.vehicleSubtype==='BITRUCK',"reqVehicleChoice('BITRUCK')")
+       +btn('Cav. 4x2',data.vehicleSubtype==='CAV4X2',"reqVehicleChoice('CAV4X2')")
+       +btn('Cav. 6x2',data.vehicleSubtype==='CAV6X2',"reqVehicleChoice('CAV6X2')")
+       +btn('Cav. 6x4',data.vehicleSubtype==='CAV6X4',"reqVehicleChoice('CAV6X4')");
+    }else if(role.indexOf('EXPEDICAO')===0){
+      h=btn('Expedição',true,"reqFunction('EXPEDICAO')")
+       +btn('Ajudante',role==='EXPEDICAO_AJUDANTE',"reqExpChoice('AJUDANTE')")
+       +btn('Conferente',role==='EXPEDICAO_CONFERENTE',"reqExpChoice('CONFERENTE')");
+    }else if(role==='OPERACIONAL'){
+      h=btn('Operacional',true,"reqFunction('OPERACIONAL')")
+       +btn('Financeiro',false,"reqFunction('FINANCEIRO')");
+    }else if(role==='FINANCEIRO'){
+      h=btn('Financeiro',true,"reqFunction('FINANCEIRO')")
+       +btn('Operacional',false,"reqFunction('OPERACIONAL')");
+    }else{
+      h=btn('Motorista',false,"reqFunction('MOTORISTA')")
+       +btn('Expedição',false,"reqFunction('EXPEDICAO')")
+       +btn('Operacional',false,"reqFunction('OPERACIONAL')")
+       +btn('Financeiro',false,"reqFunction('FINANCEIRO')");
+    }
+    fm.innerHTML=h;
+    renderVehicleArea();
+  }
+  function renderVehicleArea(){
+    var area=document.getElementById('reqVehicleSection');
+    if(!area)return;
+    if(data.functionRole!=='MOTORISTA'){area.style.display='none';area.innerHTML='';return;}
+    area.style.display='block';
+    area.innerHTML='<div class="access-type-menu" style="margin-top:6px">'
+      +'<button type="button" class="'+(data.vehicleSubtype==='VAN'?'active':'')+'" onclick="reqVehicleChoice(\'VAN\')">Van</button>'
+      +'<button type="button" class="'+(data.vehicleSubtype==='3/4'?'active':'')+'" onclick="reqVehicleChoice(\'3/4\')">3/4</button>'
+      +'<button type="button" class="'+(data.vehicleSubtype==='TOCO'?'active':'')+'" onclick="reqVehicleChoice(\'TOCO\')">Toco</button>'
+      +'<button type="button" class="'+(data.vehicleSubtype==='TRUCK'?'active':'')+'" onclick="reqVehicleChoice(\'TRUCK\')">Truck</button>'
+      +'<button type="button" class="'+(data.vehicleSubtype==='BITRUCK'?'active':'')+'" onclick="reqVehicleChoice(\'BITRUCK\')">Bitruck</button>'
+      +'<button type="button" class="'+(data.vehicleSubtype==='CAV4X2'?'active':'')+'" onclick="reqVehicleChoice(\'CAV4X2\')">Cavalo 4x2</button>'
+      +'<button type="button" class="'+(data.vehicleSubtype==='CAV6X2'?'active':'')+'" onclick="reqVehicleChoice(\'CAV6X2\')">Cavalo 6x2</button>'
+      +'<button type="button" class="'+(data.vehicleSubtype==='CAV6X4'?'active':'')+'" onclick="reqVehicleChoice(\'CAV6X4\')">Cavalo 6x4</button>'
+      +'</div>';
+  }
+  window.reqFunction=function(t){
+    data.functionRole=t;
+    if(t!=='MOTORISTA'){data.vehicleType='';data.vehicleSubtype='';data.vehicleConfiguration='';}
+    renderFunction();
+  };
+  window.reqVehicleChoice=function(t){
+    data.functionRole='MOTORISTA';data.vehicleType='CM';
+    data.vehicleSubtype=data.vehicleSubtype===t?'':t;
+    data.vehicleConfiguration='';
+    renderFunction();
+  };
+  window.reqExpChoice=function(t){
+    data.functionRole='EXPEDICAO_'+t;
+    data.vehicleType='';data.vehicleSubtype='';data.vehicleConfiguration='';
+    renderFunction();
+  };
+
+  window.maskCep=function(el){
+    var d=String(el&&el.value||'').replace(/\D/g,'').slice(0,8);
+    if(el)el.value=d.length>5?d.slice(0,5)+'-'+d.slice(5):d;
+  };
+
+  var cepTimer=null;
+  window.lookupAccessCep=async function(){
+    var el=document.getElementById('reqCep');
+    if(!el)return;
+    var cep=String(el.value||'').replace(/\D/g,'');
+    var addr=document.getElementById('reqAddress'),bairro=document.getElementById('reqNeighborhood');
+    var city=document.getElementById('reqCity'),state=document.getElementById('reqState'),num=document.getElementById('reqAddressNumber');
+    if(cep.length!==8)return;
+    if(addr)addr.value='Consultando...';
+    if(bairro)bairro.value='Consultando...';
+    try{
+      var resp=await fetch('https://viacep.com.br/ws/'+cep+'/json/',{cache:'no-store'});
+      if(!resp.ok)throw new Error('Falha na consulta');
+      var d=await resp.json();
+      if(d.erro)throw new Error('CEP não encontrado');
+      if(addr)addr.value=d.logradouro||'';
+      if(bairro)bairro.value=d.bairro||'';
+      if(city){city.innerHTML='<option value="'+(d.localidade||'')+'">'+(d.localidade||'')+'</option>';city.value=d.localidade||'';city.disabled=true;}
+      if(state){state.innerHTML='<option value="'+(d.uf||'')+'">'+(d.estado||d.uf||'')+'</option>';state.value=d.uf||'';state.disabled=true;}
+      if(num){num.disabled=false;num.focus();}
+    }catch(e){
+      if(addr)addr.value='';
+      if(bairro)bairro.value='';
+      if(city){city.innerHTML='<option value="">Não foi possível consultar</option>';city.disabled=true;}
+      if(state){state.innerHTML='<option value="">Não foi possível consultar</option>';state.disabled=true;}
+      console.error('CEP:',e);
+    }
+  };
+
+  function bind(){
+    var fm=document.getElementById('reqFunctionMenu');
+    if(fm&&!fm.dataset.rescueBound){
+      fm.dataset.rescueBound='1';
+      fm.addEventListener('click',function(e){
+        var b=e.target.closest&&e.target.closest('button');
+        if(!b)return;
+        e.preventDefault();e.stopImmediatePropagation();
+        var t=(b.textContent||'').trim().toUpperCase();
+        if(t==='MOTORISTA')window.reqFunction('MOTORISTA');
+        else if(t==='EXPEDIÇÃO')window.reqFunction('EXPEDICAO');
+        else if(t==='OPERACIONAL')window.reqFunction('OPERACIONAL');
+        else if(t==='FINANCEIRO')window.reqFunction('FINANCEIRO');
+      },true);
+    }
+    var cep=document.getElementById('reqCep');
+    if(cep&&!cep.dataset.rescueBound){
+      cep.dataset.rescueBound='1';
+      cep.addEventListener('input',function(){
+        window.maskCep(cep);
+        clearTimeout(cepTimer);
+        if(String(cep.value).replace(/\D/g,'').length===8)cepTimer=setTimeout(window.lookupAccessCep,150);
+      });
+      cep.addEventListener('blur',window.lookupAccessCep);
+    }
+    renderFunction();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);
 })();
 </script>
 <script id="accessSubmitFixV53">
