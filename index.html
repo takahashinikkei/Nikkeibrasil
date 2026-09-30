@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 076</div>
+<div id="appVersionBadge">VERSÃO 077</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -2497,6 +2497,30 @@ async function ocrCnhAndFill(file){
  }finally{
    try{if(worker)await worker.terminate();}catch(_){}
  }
+}
+async function applyCnhJsonFromText(text){
+  if(!String(text||'').trim())return 0;
+  const status=document.getElementById('reqCnhStatus');
+  try{
+    if(status)status.textContent='Organizando dados da CNH em JSON...';
+    const res=await fetch('https://qincxigrvlvudsqcukxt.supabase.co/functions/v1/parse-cnh-json',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text:String(text)})
+    });
+    if(!res.ok)throw new Error('Serviço JSON indisponível');
+    const data=await res.json();
+    const set=(id,v)=>{const e=document.getElementById(id);if(e&&v&&!String(e.value||'').trim())e.value=v;};
+    set('reqName',data.nome);
+    set('reqSurname',data.sobrenome);
+    if(data.cpf){const e=document.getElementById('reqCpf');if(e&&!e.value){e.value=data.cpf;if(typeof maskCpf==='function')maskCpf(e);}}
+    set('reqRg',data.rg);
+    if(data.data_nascimento){const e=document.getElementById('reqBirthDate');if(e&&!e.value){const p=data.data_nascimento.split('-');if(p.length===3){e.value=p[2]+'/'+p[1]+'/'+p[0].slice(-2);if(typeof updateReqAge==='function')updateReqAge();}}}
+    return Number(data.confianca||0);
+  }catch(e){
+    console.warn('CNH JSON:',e);
+    return 0;
+  }
 }
 function parseBrDate(v){const m=String(v||'').trim().match(/^(\\d{2})\\/(\\d{2})\\/(\\d{2})$/);if(!m)return null;let y=Number(m[3]);y+=y>=50?1900:2000;const d=new Date(y,Number(m[2])-1,Number(m[1]));return d.getFullYear()===y&&d.getMonth()===Number(m[2])-1&&d.getDate()===Number(m[1])?d:null;}
 function brDateToIso(v){const d=parseBrDate(v);return d?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):'';}
