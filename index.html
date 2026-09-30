@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 038</div>
+<div id="appVersionBadge">VERSÃO 039</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4391,6 +4391,59 @@ document.addEventListener('DOMContentLoaded',()=>{
     e.stopImmediatePropagation();
     goToEmployees();
   },true);
+})();
+</script><style id="employeePermissionBackV39">
+/* V039 — Correção final do retorno: Funcionários fica dentro do ModuleGate */
+</style>
+<script id="employeePermissionBackV39">
+(function(){
+  function goToEmployees(){
+    var gate=document.getElementById('moduleGate');
+    var sectors=document.getElementById('sectorButtons');
+    var master=document.getElementById('masterButtons');
+    var requests=document.getElementById('accessRequestsPanel');
+    var employees=document.getElementById('employeesPanel');
+    var permissions=document.getElementById('employeePermissionPanel');
+    var gateText=document.getElementById('moduleGateText');
+
+    /* employeesPanel está dentro do moduleGate: o gate precisa continuar visível */
+    if(gate) gate.style.display='block';
+    if(sectors) sectors.style.display='none';
+    if(master) master.style.display='none';
+    if(requests) requests.style.display='none';
+    if(permissions) permissions.style.display='none';
+    if(employees) employees.style.display='block';
+    if(gateText) gateText.style.display='none';
+
+    document.body.dataset.module='Master';
+    document.body.dataset.access='master';
+    window.scrollTo(0,0);
+  }
+
+  window.closeEmployeePermissionPanel=goToEmployees;
+  window.returnToEmployeeListFromPermissions=function(e){
+    if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
+    goToEmployees();
+    return false;
+  };
+
+  function bind(){
+    var b=document.getElementById('employeePermissionBackBtn');
+    if(!b)return;
+    b.onclick=function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      goToEmployees();
+      return false;
+    };
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,200);
+  setTimeout(bind,700);
+  setTimeout(bind,1500);
 })();
 </script></body>
 </html>
