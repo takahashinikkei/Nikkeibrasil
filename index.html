@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 056</div>
+<div id="appVersionBadge">VERSÃO 057</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -857,7 +857,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
     <button type="button" onclick="reqFunction('OPERACIONAL')">Operacional</button>
     <button type="button" onclick="reqFunction('FINANCEIRO')">Financeiro</button>
    </div>
-<div id="reqVehicleSection" style="display:none"></div>
+
    <div class="access-plate-grid" id="reqPlateGrid" style="display:none"></div>
    <div class="access-actions"><button class="primary" type="button" id="submitAccessButton" onclick="return safeSubmitAccessRequest(event)">Solicitar acesso</button><button class="secondary" type="button" onclick="showAccessStatus()">Consultar autorização</button></div>
   </div>
@@ -4805,7 +4805,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,1200);
 })();
 </script>
-<script id="accessFormRescueV56">
+<script id="accessFormRescueV57">
 (function(){
   var data=window.__nikkeiAccessData||{functionRole:'',vehicleType:'',vehicleSubtype:'',vehicleConfiguration:'',plateVehicle:'',plateCavalo:'',plateCarreta:'',plateCarreta2:'',cnhFile:null};
   window.__nikkeiAccessData=data;
@@ -4846,23 +4846,6 @@ document.addEventListener('DOMContentLoaded',()=>{
        +btn('Financeiro',false,"reqFunction('FINANCEIRO')");
     }
     fm.innerHTML=h;
-    renderVehicleArea();
-  }
-  function renderVehicleArea(){
-    var area=document.getElementById('reqVehicleSection');
-    if(!area)return;
-    if(data.functionRole!=='MOTORISTA'){area.style.display='none';area.innerHTML='';return;}
-    area.style.display='block';
-    area.innerHTML='<div class="access-type-menu" style="margin-top:6px">'
-      +'<button type="button" class="'+(data.vehicleSubtype==='VAN'?'active':'')+'" onclick="reqVehicleChoice(\'VAN\')">Van</button>'
-      +'<button type="button" class="'+(data.vehicleSubtype==='3/4'?'active':'')+'" onclick="reqVehicleChoice(\'3/4\')">3/4</button>'
-      +'<button type="button" class="'+(data.vehicleSubtype==='TOCO'?'active':'')+'" onclick="reqVehicleChoice(\'TOCO\')">Toco</button>'
-      +'<button type="button" class="'+(data.vehicleSubtype==='TRUCK'?'active':'')+'" onclick="reqVehicleChoice(\'TRUCK\')">Truck</button>'
-      +'<button type="button" class="'+(data.vehicleSubtype==='BITRUCK'?'active':'')+'" onclick="reqVehicleChoice(\'BITRUCK\')">Bitruck</button>'
-      +'<button type="button" class="'+(data.vehicleSubtype==='CAV4X2'?'active':'')+'" onclick="reqVehicleChoice(\'CAV4X2\')">Cavalo 4x2</button>'
-      +'<button type="button" class="'+(data.vehicleSubtype==='CAV6X2'?'active':'')+'" onclick="reqVehicleChoice(\'CAV6X2\')">Cavalo 6x2</button>'
-      +'<button type="button" class="'+(data.vehicleSubtype==='CAV6X4'?'active':'')+'" onclick="reqVehicleChoice(\'CAV6X4\')">Cavalo 6x4</button>'
-      +'</div>';
   }
   window.reqFunction=function(t){
     data.functionRole=t;
