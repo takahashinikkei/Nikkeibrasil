@@ -479,9 +479,198 @@ select,input,button{width:100%;height:48px;border:1px solid #d1d5db;border-radiu
     font-size:15px!important;
   }
 }
+</style><style id="nikkeiEmployeesFinalV22">
+/* V022 — botões de ações iguais aos filtros de função */
+#employeesPanel .employee-actions-row{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  width:100%!important;
+  margin:6px 0 0!important;
+  align-items:stretch!important;
+}
+#employeesPanel .employee-actions-row .employee-action-btn,
+#employeesPanel .employee-actions-row .employee-delete-btn{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:38px!important;
+  min-height:38px!important;
+  max-height:38px!important;
+  margin:0!important;
+  padding:0 6px!important;
+  border:1px solid #d1d5db!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  color:#334155!important;
+  font-size:13px!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#employeesPanel .employee-actions-row .employee-delete-btn{
+  color:#b42318!important;
+  font-size:0!important;
+}
+#employeesPanel .employee-actions-row .employee-delete-btn::before{
+  content:'🗑️'!important;
+  font-size:15px!important;
+  line-height:1!important;
+}
+#employeesPanel .employee-actions-row .employee-action-btn:hover,
+#employeesPanel .employee-actions-row .employee-delete-btn:hover{
+  background:#f8fafc!important;
+}
+
+/* Cadastro do funcionário — mesma lógica de aproveitamento de espaço
+   usada no cadastro inicial. */
+#employeeEditPanel.employee-edit-box{
+  width:min(900px,100%)!important;
+  max-width:900px!important;
+  margin:12px auto 0!important;
+  padding:14px 16px!important;
+  border-radius:18px!important;
+  box-sizing:border-box!important;
+}
+#employeeEditPanel .employee-edit-header{
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin-bottom:5px!important;
+}
+#employeeEditPanel .employee-edit-header h2{
+  margin:0!important;
+  font-size:22px!important;
+  line-height:1.1!important;
+}
+#employeeEditPanel .access-note{
+  margin:0 0 7px!important;
+  font-size:12px!important;
+  line-height:1.25!important;
+}
+#employeeEditPanel .row{
+  display:grid!important;
+  gap:6px!important;
+  margin:5px 0 0!important;
+  width:100%!important;
+}
+#employeeEditPanel .access-two{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+#employeeEditPanel .access-personal-grid,
+#employeeEditPanel .access-address-grid,
+#employeeEditPanel .access-contact-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+#employeeEditPanel .access-location{
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) minmax(0,.65fr)!important;
+}
+#employeeEditPanel .access-location>div,
+#employeeEditPanel .row>div{
+  min-width:0!important;
+  width:100%!important;
+}
+#employeeEditPanel label{
+  display:block!important;
+  margin:0 0 2px!important;
+  font-size:11px!important;
+  line-height:1.1!important;
+  font-weight:800!important;
+  color:#4b5563!important;
+}
+#employeeEditPanel input,
+#employeeEditPanel select{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:6px 8px!important;
+  border-radius:8px!important;
+  font-size:13px!important;
+  box-sizing:border-box!important;
+}
+#employeeEditPanel .employee-password-note{
+  margin:6px 0 0!important;
+  font-size:10px!important;
+  line-height:1.2!important;
+}
+#employeeEditPanel .access-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:6px!important;
+  margin-top:8px!important;
+}
+#employeeEditPanel .access-actions button{
+  width:100%!important;
+  height:40px!important;
+  min-height:40px!important;
+  margin:0!important;
+}
+@media(max-width:700px){
+  #employeesPanel .employee-actions-row .employee-action-btn,
+  #employeesPanel .employee-actions-row .employee-delete-btn{
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+    font-size:11px!important;
+  }
+  #employeesPanel .employee-actions-row .employee-delete-btn{font-size:0!important}
+  #employeesPanel .employee-actions-row .employee-delete-btn::before{font-size:14px!important}
+  #employeeEditPanel.employee-edit-box{
+    width:100%!important;
+    padding:12px!important;
+  }
+  #employeeEditPanel .access-personal-grid,
+  #employeeEditPanel .access-address-grid,
+  #employeeEditPanel .access-contact-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #employeeEditPanel .access-location{
+    grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)!important;
+  }
+  #employeeEditPanel .access-location>div:last-child{
+    grid-column:1/-1!important;
+  }
+}
+@media(max-width:430px){
+  #employeesPanel .employee-actions-row{
+    gap:4px!important;
+  }
+  #employeesPanel .employee-actions-row .employee-action-btn,
+  #employeesPanel .employee-actions-row .employee-delete-btn{
+    height:32px!important;
+    min-height:32px!important;
+    max-height:32px!important;
+    padding:0 3px!important;
+    border-radius:8px!important;
+    font-size:9px!important;
+  }
+  #employeesPanel .employee-actions-row .employee-delete-btn{font-size:0!important}
+  #employeesPanel .employee-actions-row .employee-delete-btn::before{font-size:13px!important}
+  #employeeEditPanel .access-location{
+    grid-template-columns:1fr 1fr!important;
+  }
+  #employeeEditPanel .access-location>div:last-child{
+    grid-column:auto!important;
+  }
+  #employeeEditPanel input,
+  #employeeEditPanel select{
+    height:34px!important;
+    min-height:34px!important;
+    font-size:12px!important;
+    padding:5px 7px!important;
+  }
+  #employeeEditPanel label{font-size:10px!important}
+}
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 021</div>
+<div id="appVersionBadge">VERSÃO 022</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
