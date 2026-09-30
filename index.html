@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 035</div>
+<div id="appVersionBadge">VERSÃO 036</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3651,7 +3651,7 @@ document.addEventListener('DOMContentLoaded',()=>{
      ep.querySelector('#employeeEditBack2').onclick=function(){ep.style.display='none';panel.style.display='block';};
      ep.querySelector('#saveEmployeeEdit').onclick=saveEdit;
    }
-   if(!document.getElementById('editCadastroBtn')){
+   if(false && !document.getElementById('editCadastroBtn')){
      const p=document.getElementById('employeePermissionPanel');
      if(p){
        const actions=p.querySelector('.actions');
@@ -4307,6 +4307,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',clean);else clean();
   setTimeout(clean,300);setTimeout(clean,800);
 })();
-</script></body>
+</script><style id="employeePermissionButtonsV36">
+/* V036 — remover definitivamente o botão Editar cadastro das permissões */
+#employeePermissionPanel #editCadastroBtn,
+#employeePermissionPanel button[id="editCadastroBtn"]{
+  display:none!important;
+}
+#employeePermissionPanel .actions{
+  grid-template-columns:1fr 1fr!important;
+}
+</style></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
