@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 067</div>
+<div id="appVersionBadge">VERSÃO 068</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -5238,6 +5238,35 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bind,200);
 })();
 </script>
-</body>
+<script id="accessServiceTimeFixV68">
+(function(){
+  window.updateReqServiceTime=function(){
+    var d=document.getElementById('reqAdmissionDate'),out=document.getElementById('reqServiceTime');
+    if(!d||!out)return;
+    var adm=(typeof parseBrDate==='function')?parseBrDate(d.value):null;
+    if(!adm){out.value='';return;}
+    var now=new Date();
+    if(adm>now){out.value='';return;}
+    var years=now.getFullYear()-adm.getFullYear();
+    var months=now.getMonth()-adm.getMonth();
+    if(now.getDate()<adm.getDate())months--;
+    if(months<0){years--;months+=12;}
+    if(years<0){out.value='';return;}
+    out.value=years+' '+(years===1?'ano':'anos')+' '+months+' '+(months===1?'mês':'meses');
+  };
+  function bind(){
+    var d=document.getElementById('reqAdmissionDate');
+    if(d&&!d.dataset.v68){
+      d.dataset.v68='1';
+      d.addEventListener('input',window.updateReqServiceTime);
+      d.addEventListener('change',window.updateReqServiceTime);
+    }
+    window.updateReqServiceTime();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,200);
+})();
+</script></body>
 </html>
 <!-- Nikkei Brasil: prompt de instalação removido -->
