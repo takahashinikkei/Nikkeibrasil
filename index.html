@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 043</div>
+<div id="appVersionBadge">VERSÃO 044</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3757,7 +3757,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    try{
      const body={name:document.getElementById('eeName').value.trim(),surname:document.getElementById('eeSurname').value.trim(),username:document.getElementById('eeUsername').value.trim().toLowerCase(),function_role:document.getElementById('eeRole').value,birth_date:document.getElementById('eeBirthDate').value||null,admission_date:document.getElementById('eeAdmissionDate').value||null,phone:document.getElementById('eePhone').value.trim(),phone2:document.getElementById('eePhone2').value.trim(),phone_alt:document.getElementById('eePhoneAlt').value.trim(),cpf:document.getElementById('eeCpf').value.trim(),rg:document.getElementById('eeRg').value.trim(),state:document.getElementById('eeState').value.trim(),city:document.getElementById('eeCity').value.trim(),address:document.getElementById('eeAddress').value.trim(),address_number:document.getElementById('eeAddressNumber').value.trim(),neighborhood:document.getElementById('eeNeighborhood').value.trim(),emergency_contact_name:document.getElementById('eeEmergency').value.trim(),plate:document.getElementById('eePlate').value.trim()};
      const password=document.getElementById('eePassword').value;
-     if(password)body.password_hash=await sha256Text(password);
+     if(password){const __bytes=new TextEncoder().encode(password);const __hash=await crypto.subtle.digest("SHA-256",__bytes);body.password_hash=Array.from(new Uint8Array(__hash)).map(x=>x.toString(16).padStart(2,"0")).join("");}
      const up=await fetch(SUPA+'/rest/v1/employees?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{...H,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(body)});
      if(!up.ok)throw new Error(await up.text());
      if(password){
@@ -4546,6 +4546,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   pointer-events:auto!important;
   user-select:text!important;
   cursor:text!important;
+}
+</style><style id="employeePasswordSaveV44">
+/* V044 — correção do salvamento da nova senha */
+#employeeEditPanel #eePassword{
+  display:block!important;
+  pointer-events:auto!important;
+  user-select:text!important;
 }
 </style></body>
 </html>
