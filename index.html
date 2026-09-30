@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 024</div>
+<div id="appVersionBadge">VERSÃO 025</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3840,6 +3840,103 @@ document.addEventListener('DOMContentLoaded',()=>{
     max-width:36px!important;
     height:32px!important;
     min-height:32px!important;
+  }
+}
+</style><style id="nikkeiFinalFixV25">
+/* V025 — regra final, depois de todas as regras antigas */
+#employeesPanel .employee-actions-row{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  width:100%!important;
+  margin:6px 0 0!important;
+}
+#employeesPanel .employee-actions-row > .employee-action-btn,
+#employeesPanel .employee-actions-row > .employee-delete-btn{
+  grid-column:auto!important;
+  grid-row:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:34px!important;
+  min-height:34px!important;
+  max-height:34px!important;
+  margin:0!important;
+  padding:0 4px!important;
+  box-sizing:border-box!important;
+  border-radius:9px!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  text-overflow:ellipsis!important;
+}
+#employeesPanel .employee-actions-row > .employee-delete-btn{
+  font-size:0!important;
+  padding:0!important;
+}
+#employeesPanel .employee-actions-row > .employee-delete-btn::before{
+  content:'🗑️'!important;
+  font-size:14px!important;
+  line-height:1!important;
+}
+
+/* Datas: separação visível entre os dois campos */
+#employeeEditPanel .access-personal-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  column-gap:10px!important;
+  row-gap:5px!important;
+  width:100%!important;
+}
+#employeeEditPanel .access-personal-grid > div{
+  width:100%!important;
+  min-width:0!important;
+}
+
+/* CEP + Cidade + Estado na mesma linha */
+#employeeEditPanel .access-location{
+  display:grid!important;
+  grid-template-columns:minmax(0,.75fr) minmax(0,1.45fr) minmax(0,.55fr)!important;
+  column-gap:10px!important;
+  row-gap:5px!important;
+  width:100%!important;
+}
+#employeeEditPanel .access-location > div{
+  width:100%!important;
+  min-width:0!important;
+  grid-column:auto!important;
+}
+#employeeEditPanel .access-location > div:last-child{
+  grid-column:auto!important;
+}
+
+@media(max-width:560px){
+  #employeesPanel .employee-actions-row{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+  }
+  #employeesPanel .employee-actions-row > .employee-action-btn,
+  #employeesPanel .employee-actions-row > .employee-delete-btn{
+    height:32px!important;
+    min-height:32px!important;
+    max-height:32px!important;
+    border-radius:8px!important;
+    font-size:9px!important;
+  }
+  #employeesPanel .employee-actions-row > .employee-delete-btn{font-size:0!important}
+  #employeesPanel .employee-actions-row > .employee-delete-btn::before{font-size:13px!important}
+  #employeeEditPanel .access-personal-grid{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    column-gap:8px!important;
+  }
+  #employeeEditPanel .access-location{
+    grid-template-columns:minmax(0,.75fr) minmax(0,1.45fr) minmax(0,.55fr)!important;
+    column-gap:8px!important;
   }
 }
 </style></body>
