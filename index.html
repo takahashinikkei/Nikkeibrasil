@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 079</div>
+<div id="appVersionBadge">VERSÃO 080</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -5402,7 +5402,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 </script><script id="cnhJsonRescueV79">
 (function(){
-  /* V079 — CNH: JSON robusto + idade independente + OCR em duas passagens. */
+  /* V080 — CNH: JSON robusto + idade independente + OCR em duas passagens. */
   function setField(id,v){
     const e=document.getElementById(id);
     if(e&&String(v||'').trim()){e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));}
@@ -5453,7 +5453,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     for(let i=0;i<d.length;i+=4){const y=.299*d[i]+.587*d[i+1]+.114*d[i+2];const v=Math.max(0,Math.min(255,(y-128)*1.7+128));d[i]=d[i+1]=d[i+2]=v;}
     ctx.putImageData(src,0,0);
     let out='';
-    for(const psm of [6,11]){
+    for(const psm of [3,6,11]){
       const r=await worker.recognize(canvas,{tessedit_pageseg_mode:psm});out+='\n'+(r.data&&r.data.text||'');
     }
     return out;
@@ -5492,7 +5492,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       calcAge();
       const n=['reqName','reqSurname','reqCpf','reqRg','reqBirthDate'].filter(id=>String(document.getElementById(id)?.value||'').trim()).length;
       say(n>=2?'✓ CNH lida. Confira os dados preenchidos.':'⚠️ Leitura concluída, mas alguns dados não foram reconhecidos.');
-    }catch(e){console.error('CNH V079',e);say(name+' — erro na leitura: '+(e&&e.message?e.message:'tente novamente.'));}finally{try{if(worker)await worker.terminate();}catch(_){}}
+    }catch(e){console.error('CNH V080',e);say(name+' — erro na leitura: '+(e&&e.message?e.message:'tente novamente.'));}finally{try{if(worker)await worker.terminate();}catch(_){}}
   }
   function bind(){
     const input=document.getElementById('reqCnhFile');if(!input||input.dataset.v79)return;
