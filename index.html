@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 095</div>
+<div id="appVersionBadge">VERSÃO 096</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -8320,3 +8320,37 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
+
+<script id="masterLoginFinalFixV096">
+(function(){
+  // V096 — correção definitiva do acesso Master.
+  // Mantém o restante do login inalterado e garante master/master.
+  function bindMasterLogin(){
+    var b=document.querySelector('#loginPage .access-actions .primary');
+    if(!b || b.dataset.masterFixV096)return;
+    b.dataset.masterFixV096='1';
+    document.addEventListener('click',function(ev){
+      var btn=ev.target && ev.target.closest ? ev.target.closest('#loginPage .access-actions .primary') : null;
+      if(btn!==b)return;
+      var u=((document.getElementById('loginUsername')||{}).value||'').trim().toLowerCase();
+      var p=((document.getElementById('loginPassword')||{}).value||'');
+      if(u==='master' && p==='master'){
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        try{
+          localStorage.setItem('nikkeiMasterSession','1');
+          localStorage.removeItem('nikkeiAccessGranted');
+          if(typeof window.enterMasterAccess==='function') window.enterMasterAccess();
+          else if(typeof window.loginNikkei==='function') window.loginNikkei();
+        }catch(e){
+          var s=document.getElementById('loginStatus');
+          if(s){s.style.display='block';s.textContent='Não foi possível abrir o acesso Master.';}
+        }
+      }
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindMasterLogin);
+  else bindMasterLogin();
+  setTimeout(bindMasterLogin,300);
+})();
+</script>
