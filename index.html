@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 080</div>
+<div id="appVersionBadge">VERSÃO 081</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -842,7 +842,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
  <div class="access-box">
   <h1>Solicitar acesso</h1><p class="access-note">Preencha seus dados para solicitar autorização.</p>
   <div id="accessForm">
-   <div class="driver-cnh"><input id="reqCnhFile" type="file" accept="application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none"><button type="button" class="secondary" onclick="document.getElementById('reqCnhFile').click()">📎 Incluir CNH</button><span id="reqCnhStatus" class="muted">Nenhum documento</span></div>
+   <div class="driver-cnh"><input id="reqCnhFile" type="file" accept="application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none"><button type="button" class="secondary" onclick="document.getElementById('reqCnhFile').click()">📎 Incluir CNH / RG</button><span id="reqCnhStatus" class="muted">Nenhum documento</span></div>
    <div class="row access-two"><div><label>Email</label><input id="reqEmail" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="email"></div><div><label>Senha</label><input id="reqPassword" type="password" autocomplete="new-password"></div></div>
    <div class="row access-two"><div><label>Nome</label><input id="reqName" type="text"></div><div><label>Sobrenome</label><input id="reqSurname" type="text"></div></div>
    <div class="row access-two access-docs-row"><div><label>RG</label><input id="reqRg" type="text"></div><div><label>CPF</label><input id="reqCpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"></div></div>
@@ -2363,164 +2363,131 @@ async function ocrCnhAndFill(file){
  const isPdf=type==='application/pdf'||/\.pdf$/i.test(name);
  const isImage=type.startsWith('image/')||/\.(jpe?g|png|webp|heic|heif)$/i.test(name);
  if(!isPdf&&!isImage){st.textContent=name+' — formato não suportado. Use PDF ou foto JPG/PNG/WEBP.';return;}
- const status=msg=>{if(st)st.textContent=msg;};
- const countFilled=()=>[
-   document.getElementById('reqName')?.value,
-   document.getElementById('reqSurname')?.value,
-   document.getElementById('reqCpf')?.value,
-   document.getElementById('reqRg')?.value,
-   document.getElementById('reqBirthDate')?.value
- ].filter(v=>String(v||'').trim()).length;
- const withTimeout=async(p,ms,label)=>{
-   let timer;
-   const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label||'Tempo esgotado')),ms);});
-   try{return await Promise.race([p,timeout]);}finally{clearTimeout(timer);}
- };
+ const countFilled=()=>[document.getElementById('reqName')?.value||document.getElementById('reqSurname')?.value,document.getElementById('reqCpf')?.value,document.getElementById('reqRg')?.value,document.getElementById('reqBirthDate')?.value].filter(Boolean).length;
+ const status=msg=>{st.textContent=msg;};
  try{
-   let allText='';
-   let pdf=null;
+  let allText='';
+  let pdf=null;
 
-   if(isPdf){
-     if(!window.pdfjsLib)throw new Error('Leitor de PDF indisponível');
-     status('Abrindo PDF...');
-     const buf=await file.arrayBuffer();
-     pdf=await withTimeout(pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise,30000,'PDF demorou para abrir');
-     const pages=Math.min(pdf.numPages,2);
+  if(isPdf){
+   if(!window.pdfjsLib)throw new Error('Leitor de PDF indisponível');
+   status('Abrindo PDF...');
+   const buf=await file.arrayBuffer();
+   pdf=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
+   const pages=Math.min(pdf.numPages,10);
 
-     for(let pageNo=1;pageNo<=pages;pageNo++){
-       status('Lendo dados do PDF... página '+pageNo+'/'+pages);
-       const page=await withTimeout(pdf.getPage(pageNo),20000,'Página do PDF demorou');
-       try{
-         const tc=await withTimeout(page.getTextContent(),15000,'Texto do PDF demorou');
-         allText+='\n'+(tc.items||[]).map(x=>x.str||'').join(' ');
-       }catch(_){}
-     }
-     fillAccessFromCnhText(allText);
-     if(countFilled()>=3){
-       status('✓ Leitura da CNH concluída. Confira os dados.');
-       return;
-     }
+   // Primeiro tenta o texto nativo do PDF.
+   for(let pageNo=1;pageNo<=pages;pageNo++){
+    status('Lendo texto do PDF... página '+pageNo+'/'+pages);
+    const page=await pdf.getPage(pageNo);
+    try{
+     const tc=await page.getTextContent();
+     allText+='\n'+(tc.items||[]).map(x=>x.str||'').join(' ');
+    }catch(_){}
    }
-
-   if(!window.Tesseract)throw new Error('OCR indisponível');
-   status(isPdf?'Preparando leitura OCR do PDF...':'Preparando leitura OCR da foto...');
-   worker=await withTimeout(Tesseract.createWorker('por',1,{
-     logger:m=>{
-       if(m.status&&m.progress!=null){
-         const p=Math.round(m.progress*100);
-         status((isPdf?'Lendo CNH do PDF... ':'Lendo CNH da foto... ')+p+'%');
-       }
-     }
-   }),60000,'OCR demorou para iniciar');
-
-   const recognizeCanvas=async canvas=>{
-     const maxW=2400;
-     if(canvas.width>maxW){
-       const scale=maxW/canvas.width;
-       const tmp=document.createElement('canvas');
-       tmp.width=Math.round(canvas.width*scale);
-       tmp.height=Math.round(canvas.height*scale);
-       const tc=tmp.getContext('2d',{willReadFrequently:true});
-       tc.imageSmoothingEnabled=true;
-       tc.imageSmoothingQuality='high';
-       tc.drawImage(canvas,0,0,tmp.width,tmp.height);
-       canvas=tmp;
-     }
-     const ctx=canvas.getContext('2d',{willReadFrequently:true});
-     const src=ctx.getImageData(0,0,canvas.width,canvas.height);
-     const data=src.data;
-     for(let i=0;i<data.length;i+=4){
-       const y=.299*data[i]+.587*data[i+1]+.114*data[i+2];
-       const v=Math.max(0,Math.min(255,(y-128)*1.65+128));
-       data[i]=data[i+1]=data[i+2]=v;
-     }
-     ctx.putImageData(src,0,0);
-     let text='';
-     for(const psm of [6,11]){
-       try{
-         const r=await withTimeout(worker.recognize(canvas,{tessedit_pageseg_mode:psm}),45000,'OCR demorou nesta página');
-         text+='\n'+(r.data?.text||'');
-         fillAccessFromCnhText(allText+'\n'+text);
-         if(countFilled()>=4)break;
-       }catch(e){console.warn('OCR PSM:',e);}
-     }
-     return text;
-   };
-
-   if(isPdf){
-     const pages=Math.min(pdf.numPages,2);
-     for(let pageNo=1;pageNo<=pages;pageNo++){
-       status('Lendo CNH do PDF... página '+pageNo+'/'+pages);
-       const page=await withTimeout(pdf.getPage(pageNo),20000,'Página do PDF demorou');
-       const viewport=page.getViewport({scale:2.4});
-       const canvas=document.createElement('canvas');
-       canvas.width=Math.ceil(viewport.width);
-       canvas.height=Math.ceil(viewport.height);
-       const ctx=canvas.getContext('2d',{willReadFrequently:true});
-       await withTimeout(page.render({canvasContext:ctx,viewport,background:'white'}).promise,30000,'Renderização do PDF demorou');
-       allText+='\n'+await recognizeCanvas(canvas);
-       fillAccessFromCnhText(allText);
-       if(countFilled()>=4)break;
-       canvas.width=1;canvas.height=1;
-     }
-   }else{
-     status('Lendo CNH da foto...');
-     let img;
-     try{img=await createImageBitmap(file);}
-     catch(_){
-       img=await new Promise((resolve,reject)=>{
-         const u=URL.createObjectURL(file),im=new Image();
-         im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};
-         im.onerror=reject;im.src=u;
-       });
-     }
-     const maxW=2400;
-     const scale=Math.min(1,maxW/(img.width||1));
-     const canvas=document.createElement('canvas');
-     canvas.width=Math.max(1,Math.round((img.width||1)*scale));
-     canvas.height=Math.max(1,Math.round((img.height||1)*scale));
-     const ctx=canvas.getContext('2d',{willReadFrequently:true});
-     ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
-     ctx.drawImage(img,0,0,canvas.width,canvas.height);
-     allText+='\n'+await recognizeCanvas(canvas);
-     if(img.close)img.close();
-   }
-
    fillAccessFromCnhText(allText);
-   const filled=countFilled();
-   status(filled>=2
-     ? '✓ Leitura da CNH concluída — '+filled+' dado(s) identificado(s). Confira os dados.'
-     : '⚠️ Leitura concluída, mas os dados não foram reconhecidos. Confira se a CNH está nítida e tente novamente.');
- }catch(e){
-   console.error('Leitura CNH/RG:',e);
-   status(name+' — erro na leitura: '+(e&&e.message?e.message:'tente novamente.'));
- }finally{
-   try{if(worker)await worker.terminate();}catch(_){}
- }
-}
-async function applyCnhJsonFromText(text){
-  if(!String(text||'').trim())return 0;
-  const status=document.getElementById('reqCnhStatus');
-  try{
-    if(status)status.textContent='Organizando dados da CNH em JSON...';
-    const res=await fetch('https://qincxigrvlvudsqcukxt.supabase.co/functions/v1/parse-cnh-json',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:String(text)})
-    });
-    if(!res.ok)throw new Error('Serviço JSON indisponível');
-    const data=await res.json();
-    const set=(id,v)=>{const e=document.getElementById(id);if(e&&v&&!String(e.value||'').trim())e.value=v;};
-    set('reqName',data.nome);
-    set('reqSurname',data.sobrenome);
-    if(data.cpf){const e=document.getElementById('reqCpf');if(e&&!e.value){e.value=data.cpf;if(typeof maskCpf==='function')maskCpf(e);}}
-    set('reqRg',data.rg);
-    if(data.data_nascimento){const e=document.getElementById('reqBirthDate');if(e&&!e.value){const p=data.data_nascimento.split('-');if(p.length===3){e.value=p[2]+'/'+p[1]+'/'+p[0].slice(-2);if(typeof updateReqAge==='function')updateReqAge();}}}
-    return Number(data.confianca||0);
-  }catch(e){
-    console.warn('CNH JSON:',e);
-    return 0;
+   if(countFilled()>=3){
+    status(name+' — PDF lido e dados identificados. Confira os dados.');
+    return;
+   }
   }
+
+  if(!window.Tesseract)throw new Error('OCR indisponível');
+  status(isPdf?'Preparando OCR do PDF...':'Preparando OCR da foto...');
+  worker=await Tesseract.createWorker('por+eng',1,{
+   logger:m=>{
+    if(m.status&&m.progress!=null){
+     const p=Math.round(m.progress*100);
+     status((isPdf?'Lendo PDF com OCR... ':'Lendo foto com OCR... ')+p+'%');
+    }
+   }
+  });
+
+  const recognizeCanvas=async canvas=>{
+   const maxW=3200;
+   if(canvas.width<maxW){
+    const scale=maxW/canvas.width;
+    const tmp=document.createElement('canvas');
+    tmp.width=Math.round(canvas.width*scale);
+    tmp.height=Math.round(canvas.height*scale);
+    const tc=tmp.getContext('2d',{willReadFrequently:true});
+    tc.imageSmoothingEnabled=true;
+    tc.imageSmoothingQuality='high';
+    tc.drawImage(canvas,0,0,tmp.width,tmp.height);
+    canvas=tmp;
+   }
+
+   const ctx=canvas.getContext('2d',{willReadFrequently:true});
+   const src=ctx.getImageData(0,0,canvas.width,canvas.height);
+   const gray=new Uint8ClampedArray(src.data);
+   for(let i=0;i<gray.length;i+=4){
+    const y=.299*gray[i]+.587*gray[i+1]+.114*gray[i+2];
+    const v=Math.max(0,Math.min(255,(y-128)*1.55+128));
+    gray[i]=gray[i+1]=gray[i+2]=v;
+   }
+   ctx.putImageData(new ImageData(gray,canvas.width,canvas.height),0,0);
+
+   const texts=[];
+   for(const psm of [6,11,12]){
+    try{
+     const r=await worker.recognize(canvas,{tessedit_pageseg_mode:psm});
+     texts.push(r.data?.text||'');
+    }catch(_){}
+    if(countFilled()>=4)break;
+   }
+   return texts.join('\n');
+  };
+
+  if(isPdf){
+   const pages=Math.min(pdf.numPages,10);
+   for(let pageNo=1;pageNo<=pages;pageNo++){
+    status('Lendo PDF com OCR... página '+pageNo+'/'+pages);
+    const page=await pdf.getPage(pageNo);
+    const viewport=page.getViewport({scale:3.2});
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.ceil(viewport.width);
+    canvas.height=Math.ceil(viewport.height);
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});
+    await page.render({canvasContext:ctx,viewport,background:'white'}).promise;
+    allText+='\n'+await recognizeCanvas(canvas);
+    fillAccessFromCnhText(allText);
+    canvas.width=1;canvas.height=1;
+    if(countFilled()>=4)break;
+   }
+  }else{
+   status('Lendo foto com OCR...');
+   let img;
+   try{img=await createImageBitmap(file);}
+   catch(_){
+    img=await new Promise((resolve,reject)=>{
+     const u=URL.createObjectURL(file),im=new Image();
+     im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};
+     im.onerror=reject;im.src=u;
+    });
+   }
+   const maxW=3200;
+   const scale=Math.min(1,maxW/(img.width||1));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round((img.width||1)*scale));
+   canvas.height=Math.max(1,Math.round((img.height||1)*scale));
+   const ctx=canvas.getContext('2d',{willReadFrequently:true});
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+   ctx.drawImage(img,0,0,canvas.width,canvas.height);
+   allText+='\n'+await recognizeCanvas(canvas);
+   if(img.close)img.close();
+  }
+
+  try{await worker.terminate();}catch(_){} worker=null;
+  fillAccessFromCnhText(allText);
+  const filled=countFilled();
+  status(filled>=2
+   ? name+' — '+filled+' dado(s) identificado(s). Confira os dados.'
+   : name+' — PDF/foto lido, mas os dados não foram reconhecidos. Tente uma imagem nítida da frente e do verso.');
+ }catch(e){
+  try{if(worker)await worker.terminate();}catch(_){}
+  console.error('Leitura CNH/RG:',e);
+  status(name+' — não foi possível ler o documento. O sistema aceita PDF e fotos de CNH ou RG.');
+ }
 }
 function parseBrDate(v){const m=String(v||'').trim().match(/^(\\d{2})\\/(\\d{2})\\/(\\d{2})$/);if(!m)return null;let y=Number(m[3]);y+=y>=50?1900:2000;const d=new Date(y,Number(m[2])-1,Number(m[1]));return d.getFullYear()===y&&d.getMonth()===Number(m[2])-1&&d.getDate()===Number(m[1])?d:null;}
 function brDateToIso(v){const d=parseBrDate(v);return d?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):'';}
@@ -5346,163 +5313,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   window.__nikkeiVehicleDisplayNames=Object.assign({},window.__nikkeiVehicleDisplayNames||{},{
     VAN:'Van/Delivery',BITRUCK:'Bitruck',CAVALO:'Carreteiro',CAV6X4:'Rodotrem'
   });
-})();
-</script><script id="cnhStorageDownloadV75">
-(function(){
-  const URL='https://qincxigrvlvudsqcukxt.supabase.co';
-  const KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2';
-  const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'};
-
-  /* Download da CNH gravada no Storage, usando URL assinada temporária. */
-  window.nikkeiDownloadDriverCnh=async function(id){
-    try{
-      const q=await fetch(URL+'/rest/v1/employees?id=eq.'+encodeURIComponent(id)+'&select=id,cnh_path,cnh_name,cnh_mime',{headers:H});
-      if(!q.ok)throw new Error('Não foi possível localizar o funcionário.');
-      const rows=await q.json();
-      const emp=rows[0];
-      if(!emp||!emp.cnh_path)throw new Error('CNH não cadastrada para este funcionário.');
-      const s=await fetch(URL+'/storage/v1/object/sign/driver-documents/'+emp.cnh_path,{
-        method:'POST',headers:H,body:JSON.stringify({expiresIn:3600})
-      });
-      if(!s.ok)throw new Error('Não foi possível gerar o download da CNH.');
-      const data=await s.json();
-      const signed=data&&data.signedURL;
-      if(!signed)throw new Error('URL de download não disponível.');
-      const full=signed.startsWith('http')?signed:URL+'/storage/v1'+signed;
-      const a=document.createElement('a');
-      a.href=full;
-      a.target='_blank';
-      a.rel='noopener';
-      a.download=emp.cnh_name||'CNH';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }catch(e){
-      alert(e&&e.message?e.message:'Não foi possível baixar a CNH.');
-    }
-  };
-
-  /* Garante que a CNH escolhida seja processada tanto como foto quanto PDF. */
-  function bindCnh(){
-    const input=document.getElementById('reqCnhFile');
-    if(!input||input.dataset.v75)return;
-    input.dataset.v75='1';
-    input.setAttribute('accept','application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif');
-    input.addEventListener('change',function(){
-      const f=input.files&&input.files[0];
-      if(!f)return;
-      const status=document.getElementById('reqCnhStatus');
-      if(status)status.textContent=f.name+' — lendo CNH...';
-      if(typeof ocrCnhAndFill==='function')ocrCnhAndFill(f);
-    });
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindCnh);
-  else bindCnh();
-  setTimeout(bindCnh,300);
-})();
-</script><script id="cnhJsonRescueV79">
-(function(){
-  /* V080 — CNH: JSON robusto + idade independente + OCR em duas passagens. */
-  function setField(id,v){
-    const e=document.getElementById(id);
-    if(e&&String(v||'').trim()){e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));}
-  }
-  function calcAge(){
-    const b=document.getElementById('reqBirthDate'),a=document.getElementById('reqAge');
-    if(!b||!a)return;
-    const m=String(b.value||'').match(/^(\d{2})\/(\d{2})\/(\d{2}|\d{4})$/);
-    if(!m){a.value='';return;}
-    let y=Number(m[3]);if(y<100)y+=y>=50?1900:2000;
-    const d=new Date(y,Number(m[2])-1,Number(m[1])),now=new Date();
-    if(isNaN(d.getTime())){a.value='';return;}
-    let age=now.getFullYear()-d.getFullYear();
-    if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;
-    a.value=(age>=0&&age<=130)?String(age):'';
-  }
-  async function jsonFill(text){
-    if(!String(text||'').trim())return 0;
-    const res=await fetch('https://qincxigrvlvudsqcukxt.supabase.co/functions/v1/parse-cnh-json',{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:String(text)})
-    });
-    if(!res.ok)throw new Error('Serviço JSON indisponível');
-    const d=await res.json();
-    setField('reqName',d.nome||''); setField('reqSurname',d.sobrenome||'');
-    if(d.cpf){setField('reqCpf',d.cpf);if(typeof window.maskCpf==='function')window.maskCpf(document.getElementById('reqCpf'));}
-    setField('reqRg',d.rg||'');
-    if(d.data_nascimento){
-      const p=d.data_nascimento.split('-');
-      if(p.length===3)setField('reqBirthDate',p[2]+'/'+p[1]+'/'+p[0].slice(-2));
-    }
-    calcAge();
-    return Number(d.confianca||0);
-  }
-  async function ocrImage(source,worker){
-    let canvas;
-    if(source instanceof HTMLCanvasElement){canvas=source;}
-    else{
-      let img;
-      try{img=await createImageBitmap(source);}catch(_){
-        img=await new Promise((resolve,reject)=>{const u=URL.createObjectURL(source),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=reject;im.src=u;});
-      }
-      const scale=Math.min(1,2400/(img.width||1));
-      canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
-      const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      if(img.close)img.close();
-    }
-    const ctx=canvas.getContext('2d',{willReadFrequently:true}),src=ctx.getImageData(0,0,canvas.width,canvas.height),d=src.data;
-    for(let i=0;i<d.length;i+=4){const y=.299*d[i]+.587*d[i+1]+.114*d[i+2];const v=Math.max(0,Math.min(255,(y-128)*1.7+128));d[i]=d[i+1]=d[i+2]=v;}
-    ctx.putImageData(src,0,0);
-    let out='';
-    for(const psm of [3,6,11]){
-      const r=await worker.recognize(canvas,{tessedit_pageseg_mode:psm});out+='\n'+(r.data&&r.data.text||'');
-    }
-    return out;
-  }
-  async function readCnh(file){
-    const st=document.getElementById('reqCnhStatus'),say=x=>{if(st)st.textContent=x},name=file.name||'CNH';
-    let worker=null;
-    try{
-      say(name+' — abrindo documento...');
-      let text='';
-      const isPdf=file.type==='application/pdf'||/\.pdf$/i.test(name);
-      if(isPdf){
-        if(!window.pdfjsLib)throw new Error('Leitor de PDF indisponível');
-        const doc=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
-        const pages=Math.min(doc.numPages,2);
-        for(let n=1;n<=pages;n++){say(name+' — extraindo texto '+n+'/'+pages+'...');const p=await doc.getPage(n),tc=await p.getTextContent();text+='\n'+(tc.items||[]).map(x=>x.str||'').join(' ');}
-        let got=await jsonFill(text);
-        if(got>=4){say('✓ CNH lida e dados preenchidos.');return;}
-        if(!window.Tesseract)throw new Error('OCR indisponível');
-        say(name+' — preparando OCR...');
-        worker=await Tesseract.createWorker('por',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)say(name+' — OCR '+Math.round(m.progress*100)+'%');}});
-        for(let n=1;n<=pages;n++){
-          say(name+' — lendo CNH '+n+'/'+pages+'...');
-          const p=await doc.getPage(n),vp=p.getViewport({scale:2.4}),c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
-          await p.render({canvasContext:c.getContext('2d'),viewport:vp,background:'white'}).promise;
-          text+='\n'+await ocrImage(c,worker);got=await jsonFill(text);if(got>=4)break;
-        }
-      }else{
-        if(!window.Tesseract)throw new Error('OCR indisponível');
-        say(name+' — preparando OCR da foto...');
-        worker=await Tesseract.createWorker('por',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)say(name+' — OCR '+Math.round(m.progress*100)+'%');}});
-        text=await ocrImage(file,worker);
-        say(name+' — organizando dados em JSON...');
-        await jsonFill(text);
-      }
-      calcAge();
-      const n=['reqName','reqSurname','reqCpf','reqRg','reqBirthDate'].filter(id=>String(document.getElementById(id)?.value||'').trim()).length;
-      say(n>=2?'✓ CNH lida. Confira os dados preenchidos.':'⚠️ Leitura concluída, mas alguns dados não foram reconhecidos.');
-    }catch(e){console.error('CNH V080',e);say(name+' — erro na leitura: '+(e&&e.message?e.message:'tente novamente.'));}finally{try{if(worker)await worker.terminate();}catch(_){}}
-  }
-  function bind(){
-    const input=document.getElementById('reqCnhFile');if(!input||input.dataset.v79)return;
-    input.dataset.v79='1';input.setAttribute('accept','application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif');
-    input.addEventListener('change',function(e){e.stopImmediatePropagation();const f=input.files&&input.files[0];if(f)readCnh(f);},true);
-    const birth=document.getElementById('reqBirthDate');if(birth&&!birth.dataset.v79Age){birth.dataset.v79Age='1';birth.addEventListener('input',calcAge);birth.addEventListener('change',calcAge);}
-  }
-  window.nikkeiReadCnhJson=readCnh;window.nikkeiCalcAge=calcAge;
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
-  setTimeout(bind,100);setTimeout(bind,800);
 })();
 </script></body>
 </html>
