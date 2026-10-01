@@ -8354,3 +8354,59 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(bindMasterLogin,300);
 })();
 </script>
+
+<script id="moduleButtonsFinalFixV096">
+(function(){
+  function openSector(module){
+    var gate=document.getElementById('moduleGate');
+    var sectors=document.getElementById('sectorButtons');
+    var master=document.getElementById('masterButtons');
+    var title=document.getElementById('moduleGateText');
+    if(!gate)return;
+    if(module==='Master'){
+      if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Acesso Master restrito ao usuário administrador.');return;}
+      if(sectors)sectors.style.display='none';
+      if(master)master.style.display='grid';
+      if(title)title.textContent='Master';
+      return;
+    }
+    if(module==='Frota'){
+      gate.style.display='none';
+      var header=document.querySelector('header.app-header'), main=document.querySelector('main');
+      if(header)header.style.display='';
+      if(main)main.style.display='';
+      document.querySelectorAll('main > .card').forEach(function(x){x.style.display='';});
+      document.body.dataset.module='Frota'; document.body.dataset.access='vehicles';
+      return;
+    }
+    alert('Este setor será configurado posteriormente.');
+  }
+  function bind(){
+    document.querySelectorAll('#sectorButtons button[data-module]').forEach(function(b){
+      b.onclick=function(e){e.preventDefault();e.stopPropagation();openSector(b.dataset.module);return false;};
+    });
+    var back=document.querySelector('#masterButtons button[data-action="backGate"]');
+    if(back)back.onclick=function(e){e.preventDefault();e.stopPropagation();
+      document.getElementById('masterButtons').style.display='none';
+      document.getElementById('sectorButtons').style.display='grid';
+      document.getElementById('moduleGateText').textContent='Selecione o setor para entrar';
+      return false;
+    };
+    var veh=document.querySelector('#masterButtons button[data-action="vehicles"]');
+    if(veh)veh.onclick=function(e){e.preventDefault();e.stopPropagation();
+      if(localStorage.getItem('nikkeiMasterSession')!=='1'){alert('Somente o Master pode acessar Veículos.');return false;}
+      if(typeof window.openMasterVehicleCadastro==='function'){window.openMasterVehicleCadastro();return false;}
+      var gate=document.getElementById('moduleGate');if(gate)gate.style.display='none';
+      var header=document.querySelector('header.app-header'),main=document.querySelector('main');if(header)header.style.display='';if(main)main.style.display='';
+      return false;
+    };
+    var req=document.querySelector('#masterButtons button[data-action="requests"]');
+    if(req)req.onclick=function(e){e.preventDefault();e.stopPropagation();
+      if(typeof window.openAccessRequestsPanel==='function'){window.openAccessRequestsPanel();return false;}
+      req.dispatchEvent(new Event('click',{bubbles:true}));return false;
+    };
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+  setTimeout(bind,300);setTimeout(bind,1000);
+})();
+</script>
