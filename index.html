@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 086</div>
+<div id="appVersionBadge">VERSÃO 087</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -7749,6 +7749,44 @@ document.addEventListener('DOMContentLoaded',()=>{
         e.dataset.v86Mask='1';
         e.oninput=null;
         e.onchange=null;
+        e.addEventListener('input',function(){
+          formatDateField(e);
+          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
+          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
+        },true);
+        e.addEventListener('change',function(){
+          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
+          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
+        },true);
+      }
+    });
+  }
+  window.maskBrDate=formatDateField;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);
+})();
+</script>
+<!-- V087 — correção final da máscara DD/MM/AA -->
+<script id="accessDateMaskFinalV087">
+(function(){
+  function formatDateField(e){
+    if(!e)return;
+    var raw=String(e.value||'').replace(/\D/g,'').slice(0,6);
+    if(raw.length>4)e.value=raw.slice(0,2)+'/'+raw.slice(2,4)+'/'+raw.slice(4);
+    else if(raw.length>2)e.value=raw.slice(0,2)+'/'+raw.slice(2);
+    else e.value=raw;
+  }
+  function bind(){
+    ['reqBirthDate','reqAdmissionDate'].forEach(function(id){
+      var e=document.getElementById(id);
+      if(!e)return;
+      e.type='text';
+      e.inputMode='numeric';
+      e.maxLength=8;
+      e.placeholder='DD/MM/AA';
+      if(!e.dataset.v87final){
+        e.dataset.v87final='1';
         e.addEventListener('input',function(){
           formatDateField(e);
           if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
