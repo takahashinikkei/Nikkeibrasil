@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 084</div>
+<div id="appVersionBadge">VERSÃO 085</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -7680,6 +7680,47 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('change',function(e){
     if(e.target && (e.target.id==='reqBirthDate'||e.target.id==='reqAdmissionDate')) refresh();
   },true);
+})();
+</script>
+<!-- V085 — datas com máscara automática DD/MM/AA -->
+<style id="accessDateMaskV085">
+#accessPage #reqBirthDate,#accessPage #reqAdmissionDate{
+  cursor:text!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:.3px!important;
+}
+</style>
+<script id="accessDateMaskV085">
+(function(){
+  function apply(){
+    ['reqBirthDate','reqAdmissionDate'].forEach(function(id){
+      var e=document.getElementById(id);
+      if(!e)return;
+      e.type='text';
+      e.inputMode='numeric';
+      e.maxLength=8;
+      e.placeholder='DD/MM/AA';
+      e.removeAttribute('onclick');
+      if(!e.dataset.v85Mask){
+        e.dataset.v85Mask='1';
+        e.addEventListener('input',function(){
+          var v=String(e.value||'').replace(/\\D/g,'').slice(0,6);
+          if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+          else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);
+          e.value=v;
+          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
+          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
+        });
+        e.addEventListener('change',function(){
+          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
+          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
+        });
+      }
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);
+  else apply();
+  setTimeout(apply,100);setTimeout(apply,500);setTimeout(apply,1200);
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
