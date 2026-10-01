@@ -3075,7 +3075,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 085</div>
+<div id="appVersionBadge">VERSÃO 086</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -7969,6 +7969,91 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(function(){wrapCep();bind();},100);
   setTimeout(function(){wrapCep();bind();},600);
   setTimeout(function(){wrapCep();bind();},1500);
+})();
+</script>
+<!-- V086 — mantém calendário nativo, exibe datas somente em números e corrige idade/tempo de serviço -->
+<style id="accessDateDisplayV086">
+#accessPage .nikkei-date-wrap{position:relative;width:100%}
+#accessPage .nikkei-date-wrap>input[type="date"]{width:100%!important}
+#accessPage .nikkei-date-display{
+  position:absolute;left:13px;right:42px;top:50%;transform:translateY(-50%);
+  pointer-events:none;background:transparent;color:#111827;font-size:16px;
+  line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-variant-numeric:tabular-nums;z-index:2;
+}
+#accessPage .nikkei-date-wrap>input[type="date"].nikkei-hide-native-text{
+  color:transparent!important;-webkit-text-fill-color:transparent!important;
+}
+</style>
+<script id="accessDateDisplayV086">
+(function(){
+  function isoToShort(v){
+    var m=String(v||'').match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
+    return m?m[3]+'/'+m[2]+'/'+m[1].slice(-2):'';
+  }
+  function ageFromIso(v){
+    var m=String(v||'').match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
+    if(!m)return '';
+    var y=Number(m[1]),mo=Number(m[2])-1,d=Number(m[3]),now=new Date();
+    var age=now.getFullYear()-y;
+    if(now.getMonth()<mo || (now.getMonth()===mo && now.getDate()<d))age--;
+    return age>=0&&age<=130?String(age):'';
+  }
+  function serviceFromIso(v){
+    var m=String(v||'').match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
+    if(!m)return '';
+    var adm=new Date(Number(m[1]),Number(m[2])-1,Number(m[3])),now=new Date();
+    if(isNaN(adm.getTime())||adm>now)return '';
+    var years=now.getFullYear()-adm.getFullYear();
+    var months=now.getMonth()-adm.getMonth();
+    if(now.getDate()<adm.getDate())months--;
+    if(months<0){years--;months+=12;}
+    if(years<0)return '';
+    return years+' '+(years===1?'ano':'anos')+' '+months+' '+(months===1?'mês':'meses');
+  }
+  function update(){
+    var b=document.getElementById('reqBirthDate'),a=document.getElementById('reqAge');
+    var ad=document.getElementById('reqAdmissionDate'),st=document.getElementById('reqServiceTime');
+    if(b){
+      var bw=b.parentElement;
+      if(!bw.classList.contains('nikkei-date-wrap')){
+        var w=document.createElement('div');w.className='nikkei-date-wrap';
+        bw.insertBefore(w,b);w.appendChild(b);
+        var ds=document.createElement('span');ds.className='nikkei-date-display';ds.id='reqBirthDateDisplay';w.appendChild(ds);
+        b.classList.add('nikkei-hide-native-text');
+      }
+      var bd=document.getElementById('reqBirthDateDisplay');if(bd)bd.textContent=isoToShort(b.value);
+      if(a)a.value=ageFromIso(b.value);
+    }
+    if(ad){
+      var aw=ad.parentElement;
+      if(!aw.classList.contains('nikkei-date-wrap')){
+        var w2=document.createElement('div');w2.className='nikkei-date-wrap';
+        aw.insertBefore(w2,ad);w2.appendChild(ad);
+        var ds2=document.createElement('span');ds2.className='nikkei-date-display';ds2.id='reqAdmissionDateDisplay';w2.appendChild(ds2);
+        ad.classList.add('nikkei-hide-native-text');
+      }
+      var adp=document.getElementById('reqAdmissionDateDisplay');if(adp)adp.textContent=isoToShort(ad.value);
+      if(st)st.value=serviceFromIso(ad.value);
+    }
+  }
+  function bind(){
+    var b=document.getElementById('reqBirthDate'),ad=document.getElementById('reqAdmissionDate');
+    if(b&&!b.dataset.v86){
+      b.dataset.v86='1';
+      b.addEventListener('change',update,true);
+      b.addEventListener('input',update,true);
+    }
+    if(ad&&!ad.dataset.v86){
+      ad.dataset.v86='1';
+      ad.addEventListener('change',update,true);
+      ad.addEventListener('input',update,true);
+    }
+    update();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
