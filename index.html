@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 088</div>
+<div id="appVersionBadge">VERSÃO 089</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -846,8 +846,8 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
    <div class="row access-two"><div><label>Email</label><input id="reqEmail" type="email" inputmode="email" placeholder="seuemail@exemplo.com" autocomplete="email"></div><div><label>Senha</label><input id="reqPassword" type="password" autocomplete="new-password"></div></div>
    <div class="row access-two"><div><label>Nome</label><input id="reqName" type="text"></div><div><label>Sobrenome</label><input id="reqSurname" type="text"></div></div>
    <div class="row access-two access-docs-row"><div><label>RG</label><input id="reqRg" type="text"></div><div><label>CPF</label><input id="reqCpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"></div></div>
-   <div class="row access-two access-personal-row"><div><label>Data Nasc.</label><input id="reqBirthDate" class="access-birthdate" type="text" inputmode="numeric" maxlength="8" placeholder="DD/MM/AA"></div><div><label>Idade</label><input id="reqAge" type="text" readonly placeholder="Automática"></div></div>
-   <div class="row access-two access-admission-row"><div><label>Data Admissão</label><input id="reqAdmissionDate" type="text" inputmode="numeric" maxlength="8" placeholder="DD/MM/AA"></div><div><label>Tempo de Serviço</label><input id="reqServiceTime" type="text" readonly placeholder="Automático"></div></div>
+   <div class="row access-two access-personal-row"><div><label>Data Nasc.</label><input id="reqBirthDate" class="access-birthdate" type="date"></div><div><label>Idade</label><input id="reqAge" type="text" readonly placeholder="Automática"></div></div>
+   <div class="row access-two access-admission-row"><div><label>Data Admissão</label><input id="reqAdmissionDate" type="date"></div><div><label>Tempo de Serviço</label><input id="reqServiceTime" type="text" readonly placeholder="Automático"></div></div>
    <div class="row access-location"><div><label>CEP</label><input id="reqCep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code"></div><div><label>Cidade</label><select id="reqCity" disabled><option>Informe o CEP</option></select></div><div><label>Estado</label><select id="reqState" disabled><option value="">Informe o CEP</option></select></div></div>
    <div class="row access-address-main"><div><label>Endereço</label><input id="reqAddress" type="text" readonly></div><div><label>Nº</label><input id="reqAddressNumber" type="text" disabled></div><div><label>Complemento</label><input id="reqComplement" type="text" placeholder="Apto, bloco, sala..."></div></div>
    <div class="row access-address-neighborhood"><div><label>Bairro</label><input id="reqNeighborhood" type="text" readonly></div><div><label>Observações</label><input id="reqObservations" type="text" placeholder="Observações"></div></div>
@@ -7682,182 +7682,34 @@ document.addEventListener('DOMContentLoaded',()=>{
   },true);
 })();
 </script>
-<!-- V085 — datas com máscara automática DD/MM/AA -->
-<style id="accessDateMaskV085">
-#accessPage #reqBirthDate,#accessPage #reqAdmissionDate{
-  cursor:text!important;
-  font-variant-numeric:tabular-nums!important;
-  letter-spacing:.3px!important;
-}
-</style>
-<script id="accessDateMaskV085">
+<!-- V089 — datas nativas, sem máscara -->
+<script id="accessDateNativeV089">
 (function(){
-  function apply(){
-    ['reqBirthDate','reqAdmissionDate'].forEach(function(id){
-      var e=document.getElementById(id);
-      if(!e)return;
-      e.type='text';
-      e.inputMode='numeric';
-      e.maxLength=8;
-      e.placeholder='DD/MM/AA';
-      e.removeAttribute('onclick');
-      if(!e.dataset.v85Mask){
-        e.dataset.v85Mask='1';
-        e.addEventListener('input',function(){
-          var v=String(e.value||'').replace(/\\D/g,'').slice(0,6);
-          if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
-          else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);
-          e.value=v;
-          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
-          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
-        });
-        e.addEventListener('change',function(){
-          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
-          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
-        });
-      }
-    });
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);
-  else apply();
-  setTimeout(apply,100);setTimeout(apply,500);setTimeout(apply,1200);
-})();
-</script>
-<!-- V086 — correção definitiva da máscara de datas -->
-<script id="accessDateMaskV086">
-(function(){
-  function formatDateField(e){
-    if(!e)return;
-    var raw=String(e.value||'').replace(/\\D/g,'').slice(0,8);
-    if(raw.length>4){
-      e.value=raw.slice(0,2)+'/'+raw.slice(2,4)+'/'+raw.slice(4);
-    }else if(raw.length>2){
-      e.value=raw.slice(0,2)+'/'+raw.slice(2);
-    }else{
-      e.value=raw;
-    }
-  }
-  function bind(){
-    ['reqBirthDate','reqAdmissionDate'].forEach(function(id){
-      var e=document.getElementById(id);
-      if(!e)return;
-      e.type='text';
-      e.inputMode='numeric';
-      e.maxLength=10;
-      e.placeholder='DD/MM/AAAA';
-      if(!e.dataset.v86Mask){
-        e.dataset.v86Mask='1';
-        e.oninput=null;
-        e.onchange=null;
-        e.addEventListener('input',function(){
-          formatDateField(e);
-          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
-          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
-        },true);
-        e.addEventListener('change',function(){
-          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
-          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
-        },true);
-      }
-    });
-  }
-  window.maskBrDate=formatDateField;
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
-  else bind();
-  setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);
-})();
-</script>
-<!-- V087 — correção final da máscara DD/MM/AA -->
-<script id="accessDateMaskFinalV087">
-(function(){
-  function formatDateField(e){
-    if(!e)return;
-    var raw=String(e.value||'').replace(/\D/g,'').slice(0,6);
-    if(raw.length>4)e.value=raw.slice(0,2)+'/'+raw.slice(2,4)+'/'+raw.slice(4);
-    else if(raw.length>2)e.value=raw.slice(0,2)+'/'+raw.slice(2);
-    else e.value=raw;
-  }
-  function bind(){
-    ['reqBirthDate','reqAdmissionDate'].forEach(function(id){
-      var e=document.getElementById(id);
-      if(!e)return;
-      e.type='text';
-      e.inputMode='numeric';
-      e.maxLength=8;
-      e.placeholder='DD/MM/AA';
-      if(!e.dataset.v87final){
-        e.dataset.v87final='1';
-        e.addEventListener('input',function(){
-          formatDateField(e);
-          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
-          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
-        },true);
-        e.addEventListener('change',function(){
-          if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
-          if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
-        },true);
-      }
-    });
-  }
-  window.maskBrDate=formatDateField;
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
-  else bind();
-  setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);
-})();
-</script>
-<!-- V088 — calendário nativo definitivo para nascimento e admissão -->
-<script id="accessDateCalendarV088">
-(function(){
-  function toIso(v){
-    var s=String(v||'').trim();
-    if(/^\\d{4}-\\d{2}-\\d{2}$/.test(s))return s;
-    var m=s.match(/^(\\d{2})\\/(\\d{2})\\/(\\d{2,4})$/);
-    if(!m)return '';
-    var y=m[3]; if(y.length===2)y=(Number(y)>=50?'19':'20')+y;
-    return y+'-'+m[2]+'-'+m[1];
-  }
-  function install(id){
-    var old=document.getElementById(id);
-    if(!old || old.dataset.v88==='1')return;
-    var n=old.cloneNode(true);
-    var iso=toIso(old.value);
-    n.type='date';
-    n.value=iso;
-    n.removeAttribute('maxlength');
-    n.removeAttribute('inputmode');
-    n.removeAttribute('placeholder');
-    n.dataset.v88='1';
-    old.parentNode.replaceChild(n,old);
-    n.addEventListener('click',function(){
-      try{ if(n.showPicker)n.showPicker(); }catch(_){}
-    });
-    n.addEventListener('change',function(){
-      if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
-      if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
-    });
-  }
-  function bind(){
-    install('reqBirthDate');
-    install('reqAdmissionDate');
-  }
+  window.maskBrDate=function(el){ return el && el.value ? el.value : ''; };
   window.parseBrDate=function(v){
-    var s=String(v||'').trim(),m=s.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
-    if(m){
-      var d=new Date(+m[1],+m[2]-1,+m[3]);
-      return d.getFullYear()===+m[1]&&d.getMonth()===+m[2]-1&&d.getDate()===+m[3]?d:null;
-    }
-    m=s.match(/^(\\d{2})\\/(\\d{2})\\/(\\d{2,4})$/);
+    var s=String(v||'').trim(),m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if(!m)return null;
-    var y=m[3].length===2?(+m[3]>=50?1900+ +m[3]:2000+ +m[3]):+m[3];
-    var d2=new Date(y,+m[2]-1,+m[1]);
-    return d2.getFullYear()===y&&d2.getMonth()===+m[2]-1&&d2.getDate()===+m[1]?d2:null;
+    var d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
+    return d.getFullYear()===Number(m[1])&&d.getMonth()===Number(m[2])-1&&d.getDate()===Number(m[3])?d:null;
   };
   window.brDateToIso=function(v){
-    return toIso(v);
+    var s=String(v||'').trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:'';
   };
+  function bind(){
+    ['reqBirthDate','reqAdmissionDate'].forEach(function(id){
+      var e=document.getElementById(id);
+      if(!e)return;
+      e.type='date';
+      e.removeAttribute('maxlength');
+      e.removeAttribute('inputmode');
+      e.removeAttribute('placeholder');
+      e.style.cursor='pointer';
+    });
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
   else bind();
-  setTimeout(bind,50);setTimeout(bind,250);setTimeout(bind,800);setTimeout(bind,1500);
+  setTimeout(bind,100);setTimeout(bind,500);
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
