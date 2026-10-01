@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 091</div>
+<div id="appVersionBadge">VERSÃO 092</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -2344,7 +2344,7 @@ async function lookupAccessCep(){
   const d=await resp.json();
   if(d.erro)throw new Error('CEP não encontrado');
   addr.value=d.logradouro||'';bairro.value=d.bairro||'';
-  state.innerHTML='<option value="'+d.uf+'">'+(d.estado||d.uf)+'</option>';state.value=d.uf;state.disabled=true;
+  state.innerHTML='<option value="'+d.uf+'">'+d.uf+'</option>';state.value=d.uf;state.disabled=true;
   city.innerHTML='<option value="'+d.localidade+'">'+d.localidade+'</option>';city.value=d.localidade;city.disabled=true;
   num.disabled=false;num.focus();
  }catch(e){
@@ -3075,7 +3075,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 086</div>
+<div id="appVersionBadge">VERSÃO 092</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -8054,6 +8054,71 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
   else bind();
   setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);
+})();
+</script>
+<!-- V092 — datas visíveis em DD/MM/AA, máscara automática e cálculo de idade/tempo -->
+<style id="accessDateFinalV092">
+#accessPage #reqBirthDate,#accessPage #reqAdmissionDate{
+  type:text!important;
+  cursor:text!important;
+  font-variant-numeric:tabular-nums!important;
+}
+</style>
+<script id="accessDateFinalV092">
+(function(){
+  function fmt(el){
+    if(!el)return;
+    var v=String(el.value||'').replace(/\D/g,'').slice(0,6);
+    if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+    else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);
+    el.value=v;
+  }
+  function parse(v){
+    var m=String(v||'').match(/^(\d{2})\/(\d{2})\/(\d{2})$/);
+    if(!m)return null;
+    var y=Number(m[3]); y+=y>=50?1900:2000;
+    var d=new Date(y,Number(m[2])-1,Number(m[1]));
+    return d.getFullYear()===y&&d.getMonth()===Number(m[2])-1&&d.getDate()===Number(m[1])?d:null;
+  }
+  function refresh(){
+    var b=document.getElementById('reqBirthDate'),a=document.getElementById('reqAge');
+    var ad=document.getElementById('reqAdmissionDate'),st=document.getElementById('reqServiceTime');
+    if(b){
+      if(b.type!=='text')b.type='text';
+      b.inputMode='numeric';b.maxLength=8;b.placeholder='DD/MM/AA';
+      fmt(b);
+      var bd=parse(b.value);
+      if(a)a.value=bd?String((function(d){var n=new Date(),x=n.getFullYear()-d.getFullYear();if(n.getMonth()<d.getMonth()||(n.getMonth()===d.getMonth()&&n.getDate()<d.getDate()))x--;return x>=0&&x<=130?x:''})(bd)):'';
+    }
+    if(ad){
+      if(ad.type!=='text')ad.type='text';
+      ad.inputMode='numeric';ad.maxLength=8;ad.placeholder='DD/MM/AA';
+      fmt(ad);
+      var da=parse(ad.value);
+      if(st&&da){
+        var n=new Date(),y=n.getFullYear()-da.getFullYear(),m=n.getMonth()-da.getMonth();
+        if(n.getDate()<da.getDate())m--;
+        if(m<0){y--;m+=12;}
+        st.value=y>=0?y+' '+(y===1?'ano':'anos')+' '+m+' '+(m===1?'mês':'meses'):'';
+      }else if(st)st.value='';
+    }
+  }
+  function bind(){
+    ['reqBirthDate','reqAdmissionDate'].forEach(function(id){
+      var e=document.getElementById(id);
+      if(!e)return;
+      e.type='text';e.inputMode='numeric';e.maxLength=8;e.placeholder='DD/MM/AA';
+      if(!e.dataset.v92){
+        e.dataset.v92='1';
+        e.addEventListener('input',function(){fmt(e);refresh();});
+        e.addEventListener('change',refresh);
+      }
+    });
+    refresh();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);setTimeout(bind,2000);
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
