@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 093</div>
+<div id="appVersionBadge">VERSÃO 094</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4811,7 +4811,7 @@ async function submitAccessRequest(){
  if(phones.some(v=>v&&!validDriverPhone(v))){alert('Os telefones preenchidos devem estar no formato (11) 99999-9999.');return}
  const URL='https://qincxigrvlvudsqcukxt.supabase.co',KEY='sb_publishable_e3bIXsAi37nk21uMohyC5Q_DM1mhYE2',headers={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=representation'};
  try{
-  const row={username:email,password_hash:await sha256Text(document.getElementById('reqPassword').value),name:g('reqName'),surname:g('reqSurname'),birth_date:g('reqBirthDate'),address:g('reqAddress'),address_number:g('reqAddressNumber'),neighborhood:g('reqNeighborhood'),state:document.getElementById('reqState').value,city:document.getElementById('reqCity').value,phone:phones[0],phone2:phones[1],phone_alt:phones[2],emergency_contact_name:g('reqEmergencyName'),cpf:g('reqCpf'),rg:g('reqRg'),function_role:reqData.functionRole,vehicle_type:reqData.vehicleType||null,vehicle_subtype:reqData.vehicleSubtype||null,body_type:reqData.bodyType||null,pallets:reqData.pallets||null,body_height:reqData.bodyHeight||null,body_width:reqData.bodyWidth||null,body_length:reqData.bodyLength||null,vehicle_configuration:reqData.vehicleConfiguration||null,plate:reqData.plateVehicle||null,plate_cavalo:reqData.plateCavalo||null,plate_carreta:reqData.plateCarreta||null,plate_carreta2:reqData.plateCarreta2||null,status:'pending'};
+  const row={username:email,password_hash:await sha256Text(document.getElementById('reqPassword').value),name:g('reqName'),surname:g('reqSurname'),birth_date:(typeof brDateToIso==='function'?brDateToIso(g('reqBirthDate')):g('reqBirthDate')),admission_date:(typeof brDateToIso==='function'?brDateToIso(g('reqAdmissionDate')):(g('reqAdmissionDate')||null)),address:g('reqAddress'),address_number:g('reqAddressNumber'),neighborhood:g('reqNeighborhood'),state:document.getElementById('reqState').value,city:document.getElementById('reqCity').value,phone:phones[0],phone2:phones[1],phone_alt:phones[2],emergency_contact_name:g('reqEmergencyName'),cpf:g('reqCpf'),rg:g('reqRg'),function_role:reqData.functionRole,vehicle_type:reqData.vehicleType||null,vehicle_subtype:reqData.vehicleSubtype||null,body_type:reqData.bodyType||null,pallets:reqData.pallets||null,body_height:reqData.bodyHeight||null,body_width:reqData.bodyWidth||null,body_length:reqData.bodyLength||null,vehicle_configuration:reqData.vehicleConfiguration||null,plate:reqData.plateVehicle||null,plate_cavalo:reqData.plateCavalo||null,plate_carreta:reqData.plateCarreta||null,plate_carreta2:reqData.plateCarreta2||null,status:'pending'};
   const q=await fetch(URL+'/rest/v1/access_requests?username=eq.'+encodeURIComponent(email)+'&select=id,status',{headers});
   if(!q.ok)throw new Error('Não foi possível consultar a solicitação no banco.');
   const found=await q.json(); let data;
@@ -8232,6 +8232,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   window.brDateToIso=function(v){
     var d=parse(v);return d?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):'';
   };
+})();
+</script>
+<!-- V094 — correção do envio das datas -->
+<script id="accessSubmitDateFixV094">
+(function(){
+  function patchSubmit(){
+    if(typeof window.submitAccessRequest!=='function'||window.submitAccessRequest.__v94)return;
+    var original=window.submitAccessRequest;
+    // A função principal já converte as datas para ISO no objeto enviado.
+    original.__v94=true;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patchSubmit);
+  else patchSubmit();
+  setTimeout(patchSubmit,300);
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
