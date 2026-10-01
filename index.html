@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 092</div>
+<div id="appVersionBadge">VERSÃO 093</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -8119,6 +8119,119 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
   else bind();
   setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);setTimeout(bind,2000);
+})();
+</script>
+<!-- V093 — correção final das datas e Estado -->
+<style id="accessDateStateFinalV093">
+#accessPage .access-location{
+  display:grid!important;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) 58px!important;
+  gap:8px!important;
+}
+#accessPage .access-location>div{min-width:0!important;width:100%!important}
+#accessPage .access-location>div:last-child{grid-column:auto!important}
+#accessPage #reqState{
+  width:100%!important;
+  min-width:0!important;
+  padding-left:4px!important;
+  padding-right:4px!important;
+  text-align:center!important;
+}
+#accessPage #reqBirthDate,#accessPage #reqAdmissionDate{
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:.2px!important;
+}
+@media(max-width:700px){
+  #accessPage .access-location{
+    grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) 58px!important;
+  }
+}
+</style>
+<script id="accessDateStateFinalV093">
+(function(){
+  function toShort(v){
+    var s=String(v||'').trim();
+    var m=s.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
+    if(m)return m[3]+'/'+m[2]+'/'+m[1].slice(-2);
+    m=s.match(/^(\\d{2})[\\/.-](\\d{2})[\\/.-](\\d{4})$/);
+    return m?m[1]+'/'+m[2]+'/'+m[3].slice(-2):s;
+  }
+  function parse(v){
+    var m=String(v||'').match(/^(\\d{2})\\/(\\d{2})\\/(\\d{2})$/);
+    if(!m)return null;
+    var y=Number(m[3])+(Number(m[3])>=50?1900:2000);
+    var d=new Date(y,Number(m[2])-1,Number(m[1]));
+    return d.getFullYear()===y&&d.getMonth()===Number(m[2])-1&&d.getDate()===Number(m[1])?d:null;
+  }
+  function mask(e){
+    var raw=String(e.value||'').replace(/\\D/g,'').slice(0,6);
+    e.value=raw.length>4?raw.slice(0,2)+'/'+raw.slice(2,4)+'/'+raw.slice(4):
+             raw.length>2?raw.slice(0,2)+'/'+raw.slice(2):raw;
+  }
+  function calc(){
+    var b=document.getElementById('reqBirthDate'),a=document.getElementById('reqAge');
+    var ad=document.getElementById('reqAdmissionDate'),st=document.getElementById('reqServiceTime');
+    var bd=b&&parse(b.value);
+    if(a){
+      if(!bd)a.value='';
+      else{
+        var n=new Date(),age=n.getFullYear()-bd.getFullYear();
+        if(n.getMonth()<bd.getMonth()||(n.getMonth()===bd.getMonth()&&n.getDate()<bd.getDate()))age--;
+        a.value=(age>=0&&age<=130)?String(age):'';
+      }
+    }
+    var da=ad&&parse(ad.value);
+    if(st){
+      if(!da||da>new Date()){st.value='';}
+      else{
+        var now=new Date(),y=now.getFullYear()-da.getFullYear(),m=now.getMonth()-da.getMonth();
+        if(now.getDate()<da.getDate())m--;
+        if(m<0){y--;m+=12;}
+        st.value=y>=0?y+' '+(y===1?'ano':'anos')+' '+m+' '+(m===1?'mês':'meses'):'';
+      }
+    }
+  }
+  function replaceDate(id){
+    var old=document.getElementById(id);
+    if(!old)return;
+    var e=old.cloneNode(true);
+    e.type='text';
+    e.inputMode='numeric';
+    e.maxLength=8;
+    e.placeholder='DD/MM/AA';
+    e.removeAttribute('min');e.removeAttribute('max');e.removeAttribute('step');
+    e.value=toShort(old.value);
+    old.parentNode.replaceChild(e,old);
+    e.addEventListener('input',function(){mask(e);calc();});
+    e.addEventListener('change',calc);
+    e.addEventListener('blur',calc);
+    mask(e);
+  }
+  function fixState(){
+    var st=document.getElementById('reqState');
+    if(!st)return;
+    for(var i=0;i<st.options.length;i++){
+      var o=st.options[i],v=String(o.value||'').toUpperCase(),t=String(o.textContent||'').trim();
+      if(/^[A-Z]{2}$/.test(v)){o.textContent=v;continue;}
+      var m=t.match(/(?:^|\\s)([A-Z]{2})$/i);
+      if(m){o.value=m[1].toUpperCase();o.textContent=m[1].toUpperCase();}
+    }
+  }
+  function bind(){
+    replaceDate('reqBirthDate');
+    replaceDate('reqAdmissionDate');
+    fixState();
+    calc();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);setTimeout(bind,2500);
+  window.updateReqAge=calc;
+  window.updateReqServiceTime=calc;
+  window.parseBrDate=parse;
+  window.brDateToIso=function(v){
+    var d=parse(v);return d?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):'';
+  };
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
