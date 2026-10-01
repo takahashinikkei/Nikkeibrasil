@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 083</div>
+<div id="appVersionBadge">VERSÃO 084</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4628,7 +4628,7 @@ async function lookupAccessCep(){
   alert('CEP não encontrado. Digite um CEP válido para preencher o endereço.');
  }
 }
-function initAccessForm(){const cep=document.getElementById('reqCep');if(cep){cep.oninput=function(){maskCep(this)};cep.onblur=lookupAccessCep;}const s=document.getElementById('reqState');if(!s||s.options.length>1)return;s.innerHTML='<option value="">Selecione o estado</option>'+reqStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');s.onchange=async()=>{const st=s.value,c=document.getElementById('reqCity');c.innerHTML='<option>Carregando cidades...</option>';c.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();c.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');c.disabled=false}catch(e){c.innerHTML='<option>Erro ao carregar</option>'}};['reqPhone','reqPhone2','reqPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});document.getElementById('reqCpf').oninput=function(){maskCpf(this)};document.getElementById('reqBirthDate').onchange=updateReqAge;var adm=document.getElementById('reqAdmissionDate');if(adm)adm.onchange=updateReqServiceTime;document.getElementById('reqCnhFile').onchange=function(){reqData.cnhFile=this.files[0]||null;const f=reqData.cnhFile;if(f){document.getElementById('reqCnhStatus').textContent=f.name+' — iniciando leitura da CNH...';ocrCnhAndFill(f);}else document.getElementById('reqCnhStatus').textContent='Nenhuma CNH';};renderReqType()}
+function initAccessForm(){const cep=document.getElementById('reqCep');if(cep){cep.oninput=function(){maskCep(this)};cep.onblur=lookupAccessCep;}const s=document.getElementById('reqState');if(!s||s.options.length>1)return;s.innerHTML='<option value="">Selecione o estado</option>'+reqStates.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');s.onchange=async()=>{const st=s.value,c=document.getElementById('reqCity');c.innerHTML='<option>Carregando cidades...</option>';c.disabled=true;if(!st)return;try{const a=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+st+'/municipios?orderBy=nome');const rows=await a.json();c.innerHTML='<option value="">Selecione a cidade</option>'+rows.map(x=>'<option>'+x.nome+'</option>').join('');c.disabled=false}catch(e){c.innerHTML='<option>Erro ao carregar</option>'}};['reqPhone','reqPhone2','reqPhoneAlt'].forEach(id=>document.getElementById(id).oninput=function(){maskDriverPhone(this)});document.getElementById('reqCpf').oninput=function(){maskCpf(this)};document.getElementById('reqBirthDate').onchange=updateReqAge;var adm=document.getElementById('reqAdmissionDate');if(adm)adm.onchange=updateReqServiceTime;document.getElementById('reqCnhFile').onchange=function(){reqData.cnhFile=this.files[0]||null;window.__nikkeiCnhFile=reqData.cnhFile;const f=reqData.cnhFile;const st=document.getElementById('reqCnhStatus');if(st)st.textContent=f?'📎 '+f.name+' — documento anexado e será salvo ao enviar a solicitação.':'Nenhum documento';};renderReqType()}
 async function ocrCnhAndFill(file){
  const st=document.getElementById('reqCnhStatus');
  let worker=null;
@@ -4823,8 +4823,9 @@ async function submitAccessRequest(){
    const r=await fetch(URL+'/rest/v1/access_requests',{method:'POST',headers,body:JSON.stringify(row)});
    if(!r.ok)throw new Error('Não foi possível criar a solicitação: '+await r.text()); data=(await r.json())[0];
   }
-  if(reqData.cnhFile){
-   const file=reqData.cnhFile;
+  const cnhFileForSave=reqData.cnhFile||window.__nikkeiCnhFile||null;
+  if(cnhFileForSave){
+   const file=cnhFileForSave;
    const form=new FormData();
    form.append('file',file,file.name);
    form.append('request_id',data.id);
@@ -7600,4 +7601,22 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 </script></body>
 </html>
+<script id="cnhAttachRescueV084">
+(function(){
+  function bind(){
+    var f=document.getElementById('reqCnhFile');
+    if(!f)return;
+    if(f.dataset.v84Bound)return;
+    f.dataset.v84Bound='1';
+    f.addEventListener('change',function(){
+      window.__nikkeiCnhFile=this.files&&this.files[0]?this.files[0]:null;
+      var st=document.getElementById('reqCnhStatus');
+      if(st)st.textContent=window.__nikkeiCnhFile?'📎 '+window.__nikkeiCnhFile.name+' — documento anexado e será salvo ao enviar a solicitação.':'Nenhum documento';
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,200);setTimeout(bind,800);setTimeout(bind,1500);
+})();
+</script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
