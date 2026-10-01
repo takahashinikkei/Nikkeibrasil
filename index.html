@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 078</div>
+<div id="appVersionBadge">VERSÃO 079</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -5400,104 +5400,108 @@ document.addEventListener('DOMContentLoaded',()=>{
   else bindCnh();
   setTimeout(bindCnh,300);
 })();
-</script><script id="cnhJsonRescueV78">
+</script><script id="cnhJsonRescueV79">
 (function(){
-  /* V078 — leitor CNH independente do script principal. Evita travamento causado
-     por erro de parsing no script legado e entrega os campos por JSON. */
+  /* V079 — CNH: JSON robusto + idade independente + OCR em duas passagens. */
+  function setField(id,v){
+    const e=document.getElementById(id);
+    if(e&&String(v||'').trim()){e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));}
+  }
+  function calcAge(){
+    const b=document.getElementById('reqBirthDate'),a=document.getElementById('reqAge');
+    if(!b||!a)return;
+    const m=String(b.value||'').match(/^(\d{2})\/(\d{2})\/(\d{2}|\d{4})$/);
+    if(!m){a.value='';return;}
+    let y=Number(m[3]);if(y<100)y+=y>=50?1900:2000;
+    const d=new Date(y,Number(m[2])-1,Number(m[1])),now=new Date();
+    if(isNaN(d.getTime())){a.value='';return;}
+    let age=now.getFullYear()-d.getFullYear();
+    if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;
+    a.value=(age>=0&&age<=130)?String(age):'';
+  }
   async function jsonFill(text){
     if(!String(text||'').trim())return 0;
     const res=await fetch('https://qincxigrvlvudsqcukxt.supabase.co/functions/v1/parse-cnh-json',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:String(text)})
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:String(text)})
     });
     if(!res.ok)throw new Error('Serviço JSON indisponível');
     const d=await res.json();
-    const put=(id,v)=>{const e=document.getElementById(id);if(e&&v){e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));}};
-    put('reqName',d.nome||''); put('reqSurname',d.sobrenome||'');
-    if(d.cpf){put('reqCpf',d.cpf);if(typeof window.maskCpf==='function')window.maskCpf(document.getElementById('reqCpf'));}
-    put('reqRg',d.rg||'');
+    setField('reqName',d.nome||''); setField('reqSurname',d.sobrenome||'');
+    if(d.cpf){setField('reqCpf',d.cpf);if(typeof window.maskCpf==='function')window.maskCpf(document.getElementById('reqCpf'));}
+    setField('reqRg',d.rg||'');
     if(d.data_nascimento){
       const p=d.data_nascimento.split('-');
-      if(p.length===3){put('reqBirthDate',p[2]+'/'+p[1]+'/'+p[0].slice(-2));if(typeof window.updateReqAge==='function')window.updateReqAge();}
+      if(p.length===3)setField('reqBirthDate',p[2]+'/'+p[1]+'/'+p[0].slice(-2));
     }
+    calcAge();
     return Number(d.confianca||0);
   }
-
+  async function ocrImage(source,worker){
+    let canvas;
+    if(source instanceof HTMLCanvasElement){canvas=source;}
+    else{
+      let img;
+      try{img=await createImageBitmap(source);}catch(_){
+        img=await new Promise((resolve,reject)=>{const u=URL.createObjectURL(source),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=reject;im.src=u;});
+      }
+      const scale=Math.min(1,2400/(img.width||1));
+      canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+      const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      if(img.close)img.close();
+    }
+    const ctx=canvas.getContext('2d',{willReadFrequently:true}),src=ctx.getImageData(0,0,canvas.width,canvas.height),d=src.data;
+    for(let i=0;i<d.length;i+=4){const y=.299*d[i]+.587*d[i+1]+.114*d[i+2];const v=Math.max(0,Math.min(255,(y-128)*1.7+128));d[i]=d[i+1]=d[i+2]=v;}
+    ctx.putImageData(src,0,0);
+    let out='';
+    for(const psm of [6,11]){
+      const r=await worker.recognize(canvas,{tessedit_pageseg_mode:psm});out+='\n'+(r.data&&r.data.text||'');
+    }
+    return out;
+  }
   async function readCnh(file){
-    const st=document.getElementById('reqCnhStatus');
-    const say=x=>{if(st)st.textContent=x;};
-    const name=file.name||'CNH';
+    const st=document.getElementById('reqCnhStatus'),say=x=>{if(st)st.textContent=x},name=file.name||'CNH';
+    let worker=null;
     try{
       say(name+' — abrindo documento...');
       let text='';
-      const pdf=window.pdfjsLib && (file.type==='application/pdf'||/\.pdf$/i.test(name));
-      if(pdf){
-        const buf=await file.arrayBuffer();
-        const doc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
-        const pages=Math.min(doc.numPages,3);
-        for(let n=1;n<=pages;n++){
-          say(name+' — extraindo texto '+n+'/'+pages+'...');
-          const page=await doc.getPage(n);
-          const tc=await page.getTextContent();
-          text+='\n'+(tc.items||[]).map(x=>x.str||'').join(' ');
-        }
-        if(text.trim().length>20){
-          say(name+' — interpretando dados...');
-          const got=await jsonFill(text);
-          if(got>=2){say('✓ CNH lida e dados preenchidos.');return;}
-        }
-        /* PDF escaneado: renderiza a primeira página para OCR. */
+      const isPdf=file.type==='application/pdf'||/\.pdf$/i.test(name);
+      if(isPdf){
+        if(!window.pdfjsLib)throw new Error('Leitor de PDF indisponível');
+        const doc=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+        const pages=Math.min(doc.numPages,2);
+        for(let n=1;n<=pages;n++){say(name+' — extraindo texto '+n+'/'+pages+'...');const p=await doc.getPage(n),tc=await p.getTextContent();text+='\n'+(tc.items||[]).map(x=>x.str||'').join(' ');}
+        let got=await jsonFill(text);
+        if(got>=4){say('✓ CNH lida e dados preenchidos.');return;}
         if(!window.Tesseract)throw new Error('OCR indisponível');
         say(name+' — preparando OCR...');
-        const worker=await Tesseract.createWorker('por',1,{logger:m=>{
-          if(m.status==='recognizing text'&&m.progress!=null)say(name+' — OCR '+Math.round(m.progress*100)+'%');
-        }});
-        try{
-          for(let n=1;n<=pages;n++){
-            say(name+' — lendo CNH '+n+'/'+pages+'...');
-            const page=await doc.getPage(n);
-            const vp=page.getViewport({scale:2});
-            const c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
-            await page.render({canvasContext:c.getContext('2d'),viewport:vp,background:'white'}).promise;
-            const r=await worker.recognize(c);
-            text+='\n'+(r.data&&r.data.text||'');
-            const got=await jsonFill(text);
-            if(got>=2){say('✓ CNH lida e dados preenchidos.');return;}
-          }
-        }finally{try{await worker.terminate();}catch(_){}}
+        worker=await Tesseract.createWorker('por',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)say(name+' — OCR '+Math.round(m.progress*100)+'%');}});
+        for(let n=1;n<=pages;n++){
+          say(name+' — lendo CNH '+n+'/'+pages+'...');
+          const p=await doc.getPage(n),vp=p.getViewport({scale:2.4}),c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+          await p.render({canvasContext:c.getContext('2d'),viewport:vp,background:'white'}).promise;
+          text+='\n'+await ocrImage(c,worker);got=await jsonFill(text);if(got>=4)break;
+        }
       }else{
         if(!window.Tesseract)throw new Error('OCR indisponível');
         say(name+' — preparando OCR da foto...');
-        const worker=await Tesseract.createWorker('por',1,{logger:m=>{
-          if(m.status==='recognizing text'&&m.progress!=null)say(name+' — OCR '+Math.round(m.progress*100)+'%');
-        }});
-        try{
-          const r=await worker.recognize(file);
-          text=r.data&&r.data.text||'';
-        }finally{try{await worker.terminate();}catch(_){}}
-        say(name+' — interpretando dados...');
-        const got=await jsonFill(text);
-        if(got>=2){say('✓ CNH lida e dados preenchidos.');return;}
+        worker=await Tesseract.createWorker('por',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)say(name+' — OCR '+Math.round(m.progress*100)+'%');}});
+        text=await ocrImage(file,worker);
+        say(name+' — organizando dados em JSON...');
+        await jsonFill(text);
       }
-      say('⚠️ Leitura concluída, mas não foi possível identificar os dados. Confira o documento.');
-    }catch(e){
-      console.error('CNH V078',e);
-      say(name+' — erro na leitura: '+(e&&e.message?e.message:'tente novamente.'));
-    }
+      calcAge();
+      const n=['reqName','reqSurname','reqCpf','reqRg','reqBirthDate'].filter(id=>String(document.getElementById(id)?.value||'').trim()).length;
+      say(n>=2?'✓ CNH lida. Confira os dados preenchidos.':'⚠️ Leitura concluída, mas alguns dados não foram reconhecidos.');
+    }catch(e){console.error('CNH V079',e);say(name+' — erro na leitura: '+(e&&e.message?e.message:'tente novamente.'));}finally{try{if(worker)await worker.terminate();}catch(_){}}
   }
-
   function bind(){
-    const input=document.getElementById('reqCnhFile');
-    if(!input||input.dataset.v78)return;
-    input.dataset.v78='1';
-    input.setAttribute('accept','application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif');
-    input.addEventListener('change',function(){
-      const f=input.files&&input.files[0]; if(f)readCnh(f);
-    },true);
+    const input=document.getElementById('reqCnhFile');if(!input||input.dataset.v79)return;
+    input.dataset.v79='1';input.setAttribute('accept','application/pdf,.pdf,image/*,.jpg,.jpeg,.png,.webp,.heic,.heif');
+    input.addEventListener('change',function(e){e.stopImmediatePropagation();const f=input.files&&input.files[0];if(f)readCnh(f);},true);
+    const birth=document.getElementById('reqBirthDate');if(birth&&!birth.dataset.v79Age){birth.dataset.v79Age='1';birth.addEventListener('input',calcAge);birth.addEventListener('change',calcAge);}
   }
-  window.nikkeiReadCnhJson=readCnh;
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
-  else bind();
+  window.nikkeiReadCnhJson=readCnh;window.nikkeiCalcAge=calcAge;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
   setTimeout(bind,100);setTimeout(bind,800);
 })();
 </script></body>
