@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 082</div>
+<div id="appVersionBadge">VERSÃO 083</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -3075,7 +3075,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 082</div>
+<div id="appVersionBadge">VERSÃO 083</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -4824,9 +4824,18 @@ async function submitAccessRequest(){
    if(!r.ok)throw new Error('Não foi possível criar a solicitação: '+await r.text()); data=(await r.json())[0];
   }
   if(reqData.cnhFile){
-   const file=reqData.cnhFile,ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'')||'bin',path='access-requests/'+data.id+'/cnh-'+Date.now()+'.'+ext;
-   const up=await fetch(URL+'/storage/v1/object/driver-documents/'+path,{method:'POST',headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file});
-   if(up.ok){await fetch(URL+'/rest/v1/access_requests?id=eq.'+encodeURIComponent(data.id),{method:'PATCH',headers,body:JSON.stringify({cnh_path:path,cnh_name:file.name,cnh_mime:file.type||'application/octet-stream'})});}
+   const file=reqData.cnhFile;
+   const form=new FormData();
+   form.append('file',file,file.name);
+   form.append('request_id',data.id);
+   const up=await fetch(URL+'/functions/v1/upload-access-cnh',{method:'POST',headers:{'apikey':KEY},body:form});
+   if(!up.ok){
+     const msg=await up.text();
+     throw new Error('Não foi possível salvar a CNH: '+msg);
+   }
+   const savedCnh=await up.json();
+   if(!savedCnh.ok)throw new Error('Não foi possível salvar a CNH: '+(savedCnh.error||'erro desconhecido'));
+   const st=document.getElementById('reqCnhStatus');if(st)st.textContent='✓ CNH salva: '+file.name;
   }
   localStorage.setItem('nikkeiAccessRequestId',data.id);
   try{
