@@ -1,4 +1,4 @@
-const CACHE='nikkeibrasil-v86';
+const CACHE='nikkeibrasil-v96';
 const APP_SHELL=['./','./index.html','./manifest.json','./Nikkei-logo.png.PNG','./Nikkei-logo.png.PNG'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));
