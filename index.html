@@ -800,7 +800,7 @@ body:has(#moduleGate[style*="display: block"]) #appVersionBadge{
 }
 </style></head>
 <body>
-<div id="appVersionBadge">VERSÃO 087</div>
+<div id="appVersionBadge">VERSÃO 088</div>
 <div id="loginPage" class="access-page">
  <div class="access-box">
   <div class="brand-logo-wrap"><img class="brand-logo" src="nikkei_branco_800x244_300-800KB.png" alt="Nikkei Brasil"></div>
@@ -7803,6 +7803,61 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
   else bind();
   setTimeout(bind,100);setTimeout(bind,500);setTimeout(bind,1200);
+})();
+</script>
+<!-- V088 — calendário nativo definitivo para nascimento e admissão -->
+<script id="accessDateCalendarV088">
+(function(){
+  function toIso(v){
+    var s=String(v||'').trim();
+    if(/^\\d{4}-\\d{2}-\\d{2}$/.test(s))return s;
+    var m=s.match(/^(\\d{2})\\/(\\d{2})\\/(\\d{2,4})$/);
+    if(!m)return '';
+    var y=m[3]; if(y.length===2)y=(Number(y)>=50?'19':'20')+y;
+    return y+'-'+m[2]+'-'+m[1];
+  }
+  function install(id){
+    var old=document.getElementById(id);
+    if(!old || old.dataset.v88==='1')return;
+    var n=old.cloneNode(true);
+    var iso=toIso(old.value);
+    n.type='date';
+    n.value=iso;
+    n.removeAttribute('maxlength');
+    n.removeAttribute('inputmode');
+    n.removeAttribute('placeholder');
+    n.dataset.v88='1';
+    old.parentNode.replaceChild(n,old);
+    n.addEventListener('click',function(){
+      try{ if(n.showPicker)n.showPicker(); }catch(_){}
+    });
+    n.addEventListener('change',function(){
+      if(id==='reqBirthDate' && typeof updateReqAge==='function')updateReqAge();
+      if(id==='reqAdmissionDate' && typeof updateReqServiceTime==='function')updateReqServiceTime();
+    });
+  }
+  function bind(){
+    install('reqBirthDate');
+    install('reqAdmissionDate');
+  }
+  window.parseBrDate=function(v){
+    var s=String(v||'').trim(),m=s.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
+    if(m){
+      var d=new Date(+m[1],+m[2]-1,+m[3]);
+      return d.getFullYear()===+m[1]&&d.getMonth()===+m[2]-1&&d.getDate()===+m[3]?d:null;
+    }
+    m=s.match(/^(\\d{2})\\/(\\d{2})\\/(\\d{2,4})$/);
+    if(!m)return null;
+    var y=m[3].length===2?(+m[3]>=50?1900+ +m[3]:2000+ +m[3]):+m[3];
+    var d2=new Date(y,+m[2]-1,+m[1]);
+    return d2.getFullYear()===y&&d2.getMonth()===+m[2]-1&&d2.getDate()===+m[1]?d2:null;
+  };
+  window.brDateToIso=function(v){
+    return toIso(v);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  setTimeout(bind,50);setTimeout(bind,250);setTimeout(bind,800);setTimeout(bind,1500);
 })();
 </script>
 <!-- Nikkei Brasil: prompt de instalação removido -->
