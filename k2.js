@@ -1,1 +1,2 @@
-window.__k2='lishab';
+'use strict';
+// Retired legacy script. No credentials or application behavior.

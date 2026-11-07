@@ -1,1 +1,2 @@
-window.__k4='BNNyPV_i';
+'use strict';
+// Retired legacy script. No credentials or application behavior.

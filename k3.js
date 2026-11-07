@@ -1,1 +1,2 @@
-window.__k3='le_0pTV';
+'use strict';
+// Retired legacy script. No credentials or application behavior.

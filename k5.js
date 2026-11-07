@@ -1,1 +1,2 @@
-window.__k5='MIkd_I2Z';
+'use strict';
+// Retired legacy script. No credentials or application behavior.

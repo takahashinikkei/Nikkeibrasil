@@ -1,1 +1,2 @@
-window.__k6='Sw_-6h8x';
+'use strict';
+// Retired legacy script. No credentials or application behavior.
